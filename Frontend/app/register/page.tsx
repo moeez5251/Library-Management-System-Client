@@ -6,13 +6,7 @@ import * as React from "react"
 import { useRouter } from 'next/navigation';
 export default function HomePage() {
   const [showPassword, setShowPassword] = React.useState<boolean>(false);
-  const [inputs, setinputs] = React.useState({ email: "", password: "" });
   const router = useRouter();
-  const handlechange = (e: React.ChangeEvent<HTMLInputElement>):void => {
-   setinputs({ ...inputs, [e.target.name]: e.target.value }); 
-  }
- 
-  
   return (
     <>
       <div className='w-full h-screen flex items-center justify-center'>
@@ -60,8 +54,8 @@ export default function HomePage() {
               ASPIRE LMS
             </div >
             <div className='flex flex-col items-start gap-2'>
-              <h2 className='font-semibold text-xl'>Login to Aspire LMS</h2>
-              <p className='text-[#989b9a]'>USER LOGIN</p>
+              <h2 className='font-semibold text-xl'>Register in Aspire LMS</h2>
+              <p className='text-[#989b9a]'>USER REGISTRATION</p>
             </div>
             <button onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
               className="cursor-pointer text-black flex gap-2 items-center bg-white py-2 font-medium text-sm hover:bg-[#f7f7f7] transition-all ease-in duration-200 border border-[#f2f2f2] justify-center  my-1 rounded-sm  "
@@ -88,21 +82,28 @@ export default function HomePage() {
             </button>
             <div className='relative my-2'>
               <div className='border-b-1 w-full'></div>
-              <p className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-4 font-semibold '>or Sign in with</p>
+              <p className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-4 font-semibold '>or Sign up with</p>
+            </div>
+            <div className='flex flex-col gap-2 '>
+              <label className='font-semibold text-sm' htmlFor="email">Name</label>
+              <div className='border border-[#dedede] flex items-center rounded-sm py-2 px-3 gap-2'>
+                <User size={20} />
+                <input autoFocus className='border-none outline-0 w-full' name='Name' type="email" placeholder='Name' />
+              </div>
             </div>
             <div className='flex flex-col gap-2 '>
               <label className='font-semibold text-sm' htmlFor="email">Email</label>
               <div className='border border-[#dedede] flex items-center rounded-sm py-2 px-3 gap-2'>
                 <User size={20} />
-                <input value={inputs.email} onChange={handlechange} autoFocus className='border-none outline-0 w-full' name='email' type="email" placeholder='Email' />
+                <input className='border-none outline-0 w-full' name='email' type="email" placeholder='Email' />
               </div>
             </div>
             <div className='flex flex-col gap-2 relative '>
               <label className='font-semibold text-sm' htmlFor="password">Password</label>
               <div className='border border-[#dedede] flex items-center rounded-sm py-2 px-3 gap-2'>
                 <KeyRound size={20} />
-                <input value={inputs.password} onChange={handlechange} className='border-none outline-0 w-[80%]' type={showPassword ? 'text' : 'password'} name='password' placeholder='Password' />
-                <p className='text-sm text-[#6941c5] absolute right-0 -bottom-6 cursor-pointer hover:underline font-semibold'>Forgot Password ?</p>
+                <input className='border-none outline-0 w-[80%]' type={showPassword ? 'text' : 'password'} name='password' placeholder='Password' />
+               
                 <div className='absolute right-3'>
                   {
                     showPassword ?
@@ -113,8 +114,8 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
-            <button className='bg-[#6941c5] text-white py-2 w-full rounded-sm font-semibold mt-6 cursor-pointer transition-colors hover:bg-[#5a3bb3]'>Sign In</button>
-            <p onClick={() => router.replace('/register')} className='font-semibold text-sm text-center'>Don't have an account ? <span className='text-[#6941c5] cursor-pointer hover:underline font-semibold'>Create an account</span></p>
+              <button className='bg-[#6941c5] text-white py-2 w-full rounded-sm font-semibold cursor-pointer transition-colors hover:bg-[#5a3bb3]'>Sign Up</button>
+              <p onClick={() => router.replace('/')} className='font-semibold text-sm text-center'>Already have an account ? <span className='text-[#6941c5] cursor-pointer hover:underline font-semibold'>Sign In</span></p>
           </div>
         </div>
 

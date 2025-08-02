@@ -1,0 +1,7 @@
+# Ignore this file/folder
+.env
+__pycache__/
+*.pyc
+
+# Ignore virtual environment
+venv/

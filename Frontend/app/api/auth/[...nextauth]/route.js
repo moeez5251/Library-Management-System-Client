@@ -11,9 +11,8 @@ export const authOptions = {
   ],
   callbacks: {
     async jwt({ token, account, profile }) {
-      // On initial sign-in, save Google user ID (sub) into token
       if (account && profile) {
-        token.googleId = profile.sub;  // Google’s unique user ID
+        token.googleId = profile.sub;  
       }
       return token;
     },
