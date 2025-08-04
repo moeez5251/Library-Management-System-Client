@@ -6,13 +6,19 @@ import * as React from "react"
 import { useRouter } from 'next/navigation';
 export default function HomePage() {
   const [showPassword, setShowPassword] = React.useState<boolean>(false);
-  const [inputs, setinputs] = React.useState({ email: "", password: "" });
+  const [inputs, setinputs] = React.useState<{
+    email: string;
+    password: string;
+  }>({
+    email: "",
+    password: ""
+  });
   const router = useRouter();
-  const handlechange = (e: React.ChangeEvent<HTMLInputElement>):void => {
-   setinputs({ ...inputs, [e.target.name]: e.target.value }); 
+  const handlechange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    setinputs({ ...inputs, [e.target.name]: e.target.value });
   }
- 
-  
+
+
   return (
     <>
       <div className='w-full h-screen flex items-center justify-center'>
@@ -27,9 +33,9 @@ export default function HomePage() {
         </div>
 
         <div className='w-[55%]  h-full flex flex-col justify-center'>
-          <div className='w-[65%] flex flex-col gap-4  mx-auto'>
+          <div className='w-[65%] flex flex-col gap-5  mx-auto'>
 
-            <div className="flex items-center  text-[#6841c4] text-xl font-bold gap-2 border border-[#e3e7ea] w-fit px-2 py-1 ">
+            <div className="flex items-center  text-[#6841c4] text-xl font-bold gap-2 border border-[#e3e7ea] w-fit px-2 py-1 mx-auto ">
               <div>
 
                 <svg

@@ -6,6 +6,18 @@ import * as React from "react"
 import { useRouter } from 'next/navigation';
 export default function HomePage() {
   const [showPassword, setShowPassword] = React.useState<boolean>(false);
+  const [inputs, setInputs] = React.useState<{
+    name: string;
+    email: string;
+    password: string;
+  }>({
+    name: "",
+    email: "",
+    password: ""
+  });
+  const handlechange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    setInputs({ ...inputs, [e.target.name]: e.target.value });
+  }
   const router = useRouter();
   return (
     <>
@@ -21,9 +33,9 @@ export default function HomePage() {
         </div>
 
         <div className='w-[55%]  h-full flex flex-col justify-center'>
-          <div className='w-[65%] flex flex-col gap-4  mx-auto'>
+          <div className='w-[65%] flex flex-col gap-3  mx-auto'>
 
-            <div className="flex items-center  text-[#6841c4] text-xl font-bold gap-2 border border-[#e3e7ea] w-fit px-2 py-1 ">
+            <div className="flex items-center  text-[#6841c4] text-xl font-bold gap-2 border border-[#e3e7ea] w-fit px-2 py-1 mx-auto ">
               <div>
 
                 <svg
@@ -88,22 +100,22 @@ export default function HomePage() {
               <label className='font-semibold text-sm' htmlFor="email">Name</label>
               <div className='border border-[#dedede] flex items-center rounded-sm py-2 px-3 gap-2'>
                 <User size={20} />
-                <input autoFocus className='border-none outline-0 w-full' name='Name' type="email" placeholder='Name' />
+                <input value={inputs.name} onChange={handlechange} autoFocus className='border-none outline-0 w-full' name='name' type="email" placeholder='Name' />
               </div>
             </div>
             <div className='flex flex-col gap-2 '>
               <label className='font-semibold text-sm' htmlFor="email">Email</label>
               <div className='border border-[#dedede] flex items-center rounded-sm py-2 px-3 gap-2'>
                 <User size={20} />
-                <input className='border-none outline-0 w-full' name='email' type="email" placeholder='Email' />
+                <input value={inputs.email} onChange={handlechange} className='border-none outline-0 w-full' name='email' type="email" placeholder='Email' />
               </div>
             </div>
             <div className='flex flex-col gap-2 relative '>
               <label className='font-semibold text-sm' htmlFor="password">Password</label>
               <div className='border border-[#dedede] flex items-center rounded-sm py-2 px-3 gap-2'>
                 <KeyRound size={20} />
-                <input className='border-none outline-0 w-[80%]' type={showPassword ? 'text' : 'password'} name='password' placeholder='Password' />
-               
+                <input  value={inputs.password} onChange={handlechange} className='border-none outline-0 w-[80%]' type={showPassword ? 'text' : 'password'} name='password' placeholder='Password' />
+
                 <div className='absolute right-3'>
                   {
                     showPassword ?
@@ -114,8 +126,8 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
-              <button className='bg-[#6941c5] text-white py-2 w-full rounded-sm font-semibold cursor-pointer transition-colors hover:bg-[#5a3bb3]'>Sign Up</button>
-              <p onClick={() => router.replace('/')} className='font-semibold text-sm text-center'>Already have an account ? <span className='text-[#6941c5] cursor-pointer hover:underline font-semibold'>Sign In</span></p>
+            <button className='bg-[#6941c5] text-white py-2 w-full rounded-sm font-semibold cursor-pointer transition-colors hover:bg-[#5a3bb3]'>Sign Up</button>
+            <p onClick={() => router.replace('/')} className='font-semibold text-sm text-center'>Already have an account ? <span className='text-[#6941c5] cursor-pointer hover:underline font-semibold'>Sign In</span></p>
           </div>
         </div>
 
