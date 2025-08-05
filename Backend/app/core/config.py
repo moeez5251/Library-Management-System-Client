@@ -5,7 +5,7 @@ class Settings(BaseSettings):
     db_database: str
     db_username: str
     db_password: str
-
+    origins: str
     class Config:
         env_file = ".env"
 

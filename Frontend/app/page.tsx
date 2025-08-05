@@ -17,7 +17,7 @@ export default function HomePage() {
   const handlechange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setinputs({ ...inputs, [e.target.name]: e.target.value });
   }
-
+  
 
   return (
     <>

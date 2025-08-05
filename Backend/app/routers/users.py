@@ -31,7 +31,7 @@ def sign_up(user:UserSignUp):
     cursor=conn.cursor()
     try:
         olduser=cursor.execute("SELECT * FROM users WHERE email = ?", (user.email,))
-        if olduser.fetchone() is not None:
+        if olduser.fetchone() is  None:
             uid=str(uuid.uuid4())
             userid=user.name[0]+uid[0:7]
             cursor.execute("INSERT INTO users (User_id,User_Name, Email, password,	Role,Membership_Type,Cost,Status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (userid,user.name,user.email,hash_password(user.password),"Standard-User","English",0,"Active"))
@@ -39,6 +39,8 @@ def sign_up(user:UserSignUp):
             return {"message": "User created successfully"}
         else:
             raise HTTPException(status_code=401,detail="User with this email already exist")
+    except HTTPException:
+        raise  
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to create user: {e}",)
     finally:
