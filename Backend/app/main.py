@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers import users
+from app.routers import users,mails
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 app = FastAPI()
@@ -12,3 +12,4 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.include_router(users.router)
+app.include_router(mails.router)

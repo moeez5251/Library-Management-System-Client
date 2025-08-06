@@ -1,7 +1,7 @@
 "use client"
 import Image from 'next/image'
 import { signIn } from "next-auth/react";
-import { User, KeyRound, Eye, EyeOff, LoaderCircle, CircleAlert } from 'lucide-react';
+import { User, KeyRound, Eye, EyeOff, LoaderCircle, CircleAlert, ShieldCheck } from 'lucide-react';
 import * as React from "react"
 import { useRouter } from 'next/navigation';
 import { Toaster } from "@/components/ui/sonner"
@@ -16,6 +16,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from "@/components/ui/input-otp"
 export default function HomePage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = React.useState<boolean>(false);
@@ -25,11 +31,13 @@ export default function HomePage() {
     password: string;
   }>({
     name: "",
-    email: "",
+    email: "abc@gmail.com",
     password: ""
   });
   const [isubmitting, setisubmitting] = React.useState<boolean>(false)
   const [otp, setotp] = React.useState<boolean>(false)
+  const [otpvalue, setotpvalue] = React.useState<string>("")
+  const [otpinput,setotpinput]=React.useState<boolean>(false)
   const handlechange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setInputs({ ...inputs, [e.target.name]: e.target.value });
   }
@@ -97,9 +105,12 @@ export default function HomePage() {
     }
 
   }
+  const handleverify = async (a:string): Promise<void> => {
+    setotpinput(true)
+  }
   React.useEffect(() => {
     router.prefetch("/dashboard")
-
+    router.prefetch("/")
 
     return () => {
     }
@@ -225,67 +236,58 @@ export default function HomePage() {
       </div>
 
 
-      <Dialog open={otp} onOpenChange={setotp} >
+      <Dialog open={true} onOpenChange={setotp} >
         <DialogContent className="w-full lg:w-1/3 rounded-3xl shadow-lg " >
           <DialogTitle></DialogTitle>
-          <DialogDescription className="flex flex-col items-center justify-center gap-2 my-4">
+          <DialogDescription />
+          <div className="flex flex-col items-center  gap-2 my-0">
+
             <span className=" bg-white rounded-lg  overflow-hidden text-left flex flex-col gap-4 dark:bg-[#1b2536]">
               <span className="p-1 bg-white dark:bg-[#1b2536]">
-                <span className="flex justify-center items-center w-12 h-12 mx-auto bg-red-100 rounded-full ">
-                  <svg
-                    aria-hidden="true"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    className="w-6 h-6 text-red-600"
-                  >
-                    <path
-                      d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    ></path>
-                  </svg>
+                <span className="flex justify-center items-center w-12 h-12 mx-auto bg-green-100 rounded-full ">
+                  <ShieldCheck color='green' size={20} />
                 </span>
-                <span className="mt-3 text-center flex flex-col gap-4">
-                  <span className="text-gray-900 text-base font-semibold leading-6 dark:text-white">Delete Books</span>
-                  <span className="my-2  text-gray-500 leading-5 flex flex-col text-base gap-1 dark:text-gray-200">
-                    Do you really want to delete selected books ?<span> This action cannot be undone</span>
+                <span className="mt-3 text-center flex flex-col gap-3">
+                  <span className="text-gray-900 text-base font-semibold leading-6 dark:text-white">Verify Your Email Address</span>
+                  <span className="my-2  text-[#6941c5]  leading-5 flex flex-col text-base  gap-1 dark:text-gray-200">
+                    Email sent to {inputs.email.slice(0, 3) + " ***@***.com"}
                   </span>
                 </span>
-                {/* {
-                  !Disabledelete &&
-                  <button
-                    type="button"
-                    onClick={() => handledelete()}
-                    className="w-full inline-flex justify-center py-2 my-3 text-white bg-red-600 text-base font-medium rounded-md shadow-sm border border-transparent cursor-pointer transition-all scale-95 hover:scale-100 dark:bg-red-600"
-                  >
-                    Delete
-                  </button>
-                }
-                {
-                  Disabledelete &&
-                  <button
-                    type="button"
-                    className="w-full inline-flex justify-center py-2 my-3 text-white bg-red-600 text-base font-medium rounded-md shadow-sm border border-transparent cursor-auto pointer-events-none transition-all  disabled:bg-red-700"
-                    disabled={true}
-                  >
-                    Deleting...
-                  </button>} */}
+                <div className='my-5'>
+                  <InputOTP maxLength={6} disabled={otpinput} value={otpvalue} onChange={async (value) => {
+                  if(value.length === 6){
+                    handleverify(value);
+                  }
+                    setotpvalue(value);
+                  }}>
+                    <InputOTPGroup>
+                      <InputOTPSlot autoFocus={true} className="text-xl text-[#6841c4] dark:text-white" index={0} />
+                      <InputOTPSlot className="text-xl text-[#6841c4] dark:text-white" index={1} />
+                      <InputOTPSlot className="text-xl text-[#6841c4] dark:text-white" index={2} />
+                    </InputOTPGroup>
+                    <InputOTPSeparator />
+                    <InputOTPGroup>
+                      <InputOTPSlot className="text-xl text-[#6841c4] dark:text-white" index={3} />
+                      <InputOTPSlot className="text-xl text-[#6841c4] dark:text-white" index={4} />
+                      <InputOTPSlot className="text-xl text-[#6841c4] dark:text-white" index={5} />
+                    </InputOTPGroup>
+                  </InputOTP>
+                </div>
+
                 <button
                   type="button"
-                  // onClick={() => setDelete(false)}
+                  onClick={() => setotp(false)}
                   className="w-full inline-flex justify-center  py-2 bg-white text-gray-700 text-base font-medium rounded-md shadow-sm border border-gray-300 cursor-pointer transition-all scale-95 hover:scale-100 dark:bg-[#1b2536] dark:text-white dark:border-[#2b3649]"
                 >
                   Cancel
                 </button>
               </span>
             </span>
+          </div>
 
 
 
-          </DialogDescription>
-          <button className='absolute top-3 cursor-pointer right-3 bg-gray-300  p-1 rounded-2xl z-40 '>
+          <button onClick={() => setotp(false)} className='absolute top-3 cursor-pointer right-3 bg-gray-300  p-1 rounded-2xl z-40 '>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width={15}

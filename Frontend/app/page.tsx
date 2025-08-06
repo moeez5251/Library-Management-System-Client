@@ -5,6 +5,7 @@ import { User, KeyRound, Eye, EyeOff } from 'lucide-react';
 import * as React from "react"
 import { useRouter } from 'next/navigation';
 export default function HomePage() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = React.useState<boolean>(false);
   const [inputs, setinputs] = React.useState<{
     email: string;
@@ -13,10 +14,16 @@ export default function HomePage() {
     email: "",
     password: ""
   });
-  const router = useRouter();
   const handlechange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setinputs({ ...inputs, [e.target.name]: e.target.value });
   }
+  React.useEffect(() => {
+    router.prefetch("/register")
+  
+    return () => {
+      
+    }
+  }, [router])
   
 
   return (

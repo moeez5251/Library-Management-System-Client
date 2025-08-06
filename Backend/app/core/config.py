@@ -6,6 +6,8 @@ class Settings(BaseSettings):
     db_username: str
     db_password: str
     origins: str
+    Email:str
+    Password:str
     class Config:
         env_file = ".env"
 
