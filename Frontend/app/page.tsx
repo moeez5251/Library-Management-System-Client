@@ -120,7 +120,7 @@ export default function HomePage() {
               </div>
             </div>
             <button className='bg-[#6941c5] text-white py-2 w-full rounded-sm font-semibold mt-6 cursor-pointer transition-colors hover:bg-[#5a3bb3]'>Sign In</button>
-            <p onClick={() => router.replace('/register')} className='font-semibold text-sm text-center'>Don't have an account ? <span className='text-[#6941c5] cursor-pointer hover:underline font-semibold'>Create an account</span></p>
+            <p onClick={() => router.replace('/register')} className='font-semibold text-sm text-center'>Don&apost; have an account ? <span className='text-[#6941c5] cursor-pointer hover:underline font-semibold'>Create an account</span></p>
           </div>
         </div>
 

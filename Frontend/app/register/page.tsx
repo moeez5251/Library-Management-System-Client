@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { Toaster } from "@/components/ui/sonner"
 import { toast } from "sonner"
 import { validate } from 'email-validator';
+
 import {
   Dialog,
   DialogContent,
@@ -40,24 +41,26 @@ export default function HomePage() {
       return
     }
     if (!validate(inputs.email)) {
-      toast.custom((t: any) => (
-        <div className={`bg-red-700 text-white p-4 rounded-md shadow-lg flex items-center gap-3
-                ${t.visible ? 'animate-enter' : 'animate-leave'}`}>
+
+      toast.custom((id: string | number) => (
+        <div
+          className="bg-red-700 text-white p-4 rounded-md shadow-lg flex items-center gap-3"
+        >
           <CircleAlert size={20} />
-          <p className='text-sm'>Please enter a valid email address.</p>
+          <p className="text-sm">Please enter a valid email address.</p>
         </div>
       ));
       setisubmitting(false)
       return
     }
     if (inputs.password.length < 8) {
-      toast.custom((t: any) => (
-        <div className={`bg-red-700 text-white p-4 rounded-md shadow-lg flex items-center gap-3
-                ${t.visible ? 'animate-enter' : 'animate-leave'}`}>
+      toast.custom((id: string | number) => (
+        <div className="bg-red-700 text-white p-4 rounded-md shadow-lg flex items-center gap-3">
           <CircleAlert size={20} />
-          <p className='text-sm'>Password must be at least 8 characters long.</p>
+          <p className="text-sm">Password must be at least 8 characters long.</p>
         </div>
       ));
+
       setisubmitting(false)
       return
     }
