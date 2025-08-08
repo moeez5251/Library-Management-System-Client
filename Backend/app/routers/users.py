@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from app.database import get_connection
-from app.schemas.user import UserCreate,UserSignUp
+from app.schemas.user import UserCreate,UserSignUp,EmailRequest
 from app.passwords.verify import hash_password,verify_password
 import uuid
 router = APIRouter(prefix="/users", tags=["users"])
@@ -43,5 +43,20 @@ def sign_up(user:UserSignUp):
         raise  
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to create user: {e}",)
+    finally:
+        conn.close()
+@router.post("/exist")
+def exist(email:EmailRequest):
+    conn=get_connection()
+    cursor=conn.cursor()
+    try:
+        cursor.execute("SELECT * FROM users WHERE Email = ?", (email.email,))
+        result=cursor.fetchone()
+        if result is None:
+            return {"exist":False}
+        else:
+            return {"exist":True}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Database error {e}",)
     finally:
         conn.close()

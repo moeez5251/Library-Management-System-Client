@@ -2,10 +2,22 @@ from fastapi import APIRouter, HTTPException
 router = APIRouter(prefix="/mail", tags=["mails"])
 from app.mailer.mail import send_email
 from app.schemas.mails import Mail
+from app.database import get_connection
 import random
+from threading import Timer
+
+
+
+def otpremove(email):
+    conn=get_connection()
+    cursor=conn.cursor()
+    cursor.execute("DELETE FROM otps WHERE Email = ?", (email,))
+    conn.commit()
+    conn.close()
 @router.post("/send-mail")
-def send_mail(body: Mail):
-    
+def send_otp(body: Mail):
+    conn = get_connection()
+    cursor = conn.cursor()
     try:
        randomotp=str(random.randint(100000,999999))
        html = f"""
@@ -166,11 +178,15 @@ def send_mail(body: Mail):
 
         © 2025 XLMS. All rights reserved.
         """
+       cursor.execute("INSERT INTO otps (Email, OTPCode) VALUES (?, ?)", (body.to, randomotp))
+       conn.commit()
        send_email(body.to, "XLMS Email Verification", text, html)
-       
+       Timer(10 * 60, otpremove, [body.to]).start()
        return {"message": "Email sent successfully"}
 
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=f"Failed to send email: {e}")
-    
+    finally:
+        conn.close()
+

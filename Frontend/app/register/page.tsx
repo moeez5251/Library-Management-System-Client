@@ -31,13 +31,13 @@ export default function HomePage() {
     password: string;
   }>({
     name: "",
-    email: "abc@gmail.com",
+    email: "",
     password: ""
   });
   const [isubmitting, setisubmitting] = React.useState<boolean>(false)
   const [otp, setotp] = React.useState<boolean>(false)
   const [otpvalue, setotpvalue] = React.useState<string>("")
-  const [otpinput,setotpinput]=React.useState<boolean>(false)
+  const [otpinput, setotpinput] = React.useState<boolean>(false)
   const handlechange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setInputs({ ...inputs, [e.target.name]: e.target.value });
   }
@@ -72,41 +72,130 @@ export default function HomePage() {
       setisubmitting(false)
       return
     }
-    try {
+    // try {
 
-      // const data = await fetch("http://127.0.0.1:8000/users/signup", {
-      //   method: "POST",
-      //   credentials: "include",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify(inputs)
-      // })
-      // if (!data.ok) {
-      //   const error = await data.json()
-      //   toast.error(error.detail)
-      //   setisubmitting(false)
-      //   return
-      // }
-      // const response = await data.json()
-      // toast.success(response.message)
-      setisubmitting(false)
+    //   // const data = await fetch("http://127.0.0.1:8000/users/signup", {
+    //   //   method: "POST",
+    //   //   credentials: "include",
+    //   //   headers: {
+    //   //     "Content-Type": "application/json",
+    //   //   },
+    //   //   body: JSON.stringify(inputs)
+    //   // })
+    //   // if (!data.ok) {
+    //   //   const error = await data.json()
+    //   //   toast.error(error.detail)
+    //   //   setisubmitting(false)
+    //   //   return
+    //   // }
+    //   // const response = await data.json()
+    //   // toast.success(response.message)
+    //   setisubmitting(false)
+    //   setotp(true)
+    //   // setInputs({
+    //   //   name: "",
+    //   //   email: "",
+    //   //   password: ""
+    //   // })
+    //   // router.push("/dashboard")
+    // }
+    // catch {
+    //   toast.error("Server Error")
+    //   setisubmitting(false)
+    // }
+
+    try {
+      const existinguser = await fetch("http://127.0.0.1:8000/users/exist", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: inputs.email
+        })
+      })
+      const response = await existinguser.json()
+      if (response.exist) {
+        toast.error("User already exist")
+        setisubmitting(false)
+        return
+      }
       setotp(true)
-      // setInputs({
-      //   name: "",
-      //   email: "",
-      //   password: ""
-      // })
-      // router.push("/dashboard")
+      const data = await fetch("http://127.0.0.1:8000/mail/send-mail", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: inputs.name,
+          to: inputs.email
+        })
+      })
+      if (!data.ok) {
+        toast.error("Failed to create account")
+        setotp(false)
+      }
+
     }
     catch {
       toast.error("Server Error")
       setisubmitting(false)
+      setotp(false)
     }
 
   }
-  const handleverify = async (a:string): Promise<void> => {
+  const handleverify = async (a: string): Promise<void> => {
     setotpinput(true)
+    try {
+
+      const verify = await fetch("http://127.0.0.1:8000/otp/verify", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: inputs.email,
+          otp: a
+        })
+
+      })
+      if (!verify.ok) {
+        const error = await verify.json()
+        toast.error(error.detail)
+        setotpinput(false)
+        return
+      }
+      const r = await verify.json()
+      const data = await fetch("http://127.0.0.1:8000/users/signup", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(inputs)
+      })
+      if (!data.ok) {
+        const error = await data.json()
+        toast.error(error.detail)
+        setisubmitting(false)
+        return
+      }
+      const response = await data.json()
+      setisubmitting(false)
+      setotp(false)
+      setInputs({
+        name: "",
+        email: "",
+        password: ""
+      })
+      router.push("/dashboard")
+    }
+    catch {
+
+    }
   }
   React.useEffect(() => {
     router.prefetch("/dashboard")
@@ -236,7 +325,7 @@ export default function HomePage() {
       </div>
 
 
-      <Dialog open={true} onOpenChange={setotp} >
+      <Dialog open={otp} onOpenChange={setotp} >
         <DialogContent className="w-full lg:w-1/3 rounded-3xl shadow-lg " >
           <DialogTitle></DialogTitle>
           <DialogDescription />
@@ -255,9 +344,9 @@ export default function HomePage() {
                 </span>
                 <div className='my-5'>
                   <InputOTP maxLength={6} disabled={otpinput} value={otpvalue} onChange={async (value) => {
-                  if(value.length === 6){
-                    handleverify(value);
-                  }
+                    if (value.length === 6) {
+                      handleverify(value);
+                    }
                     setotpvalue(value);
                   }}>
                     <InputOTPGroup>
@@ -276,8 +365,9 @@ export default function HomePage() {
 
                 <button
                   type="button"
-                  onClick={() => setotp(false)}
-                  className="w-full inline-flex justify-center  py-2 bg-white text-gray-700 text-base font-medium rounded-md shadow-sm border border-gray-300 cursor-pointer transition-all scale-95 hover:scale-100 dark:bg-[#1b2536] dark:text-white dark:border-[#2b3649]"
+                  onClick={() => { setotp(false); setisubmitting(false) }}
+                  disabled={otpinput}
+                  className="w-full inline-flex justify-center  py-2 bg-white text-gray-700 text-base font-medium rounded-md shadow-sm border border-gray-300 cursor-pointer transition-all scale-95 hover:scale-100 dark:bg-[#1b2536] dark:text-white dark:border-[#2b3649] disabled:pointer-events-none disabled:cursor-default disabled:opacity-70"
                 >
                   Cancel
                 </button>
@@ -285,9 +375,7 @@ export default function HomePage() {
             </span>
           </div>
 
-
-
-          <button onClick={() => setotp(false)} className='absolute top-3 cursor-pointer right-3 bg-gray-300  p-1 rounded-2xl z-40 '>
+          <button disabled={otpinput} onClick={() => { setotp(false); setisubmitting(false) }} className='absolute top-3 cursor-pointer right-3 bg-gray-300  p-1 rounded-2xl z-40 disabled:pointer-events-none '>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width={15}
