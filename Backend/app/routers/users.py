@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 from app.database import get_connection
 from app.schemas.user import UserCreate,UserSignUp,EmailRequest
 from app.passwords.verify import hash_password,verify_password
+from app.schemas.authusers import AuthUser
 import uuid
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -60,3 +61,22 @@ def exist(email:EmailRequest):
         raise HTTPException(status_code=500, detail=f"Database error {e}",)
     finally:
         conn.close()
+@router.post("/auth-users")
+def createuser(user:AuthUser):
+    conn=get_connection()
+    cursor=conn.cursor()
+    try:
+        cursor.execute("Select * FROM Google WHERE email = ?", (user.email,))
+        result=cursor.fetchone()
+        cursor.execute("Select * FROM users WHERE email = ?", (user.email,))
+        result2=cursor.fetchone()
+        if result2 is not None:
+            return {"userID":result2.User_id}
+        if result is  None:
+            cursor.execute("INSERT into Google (google_id,email,name) VALUES (?,?,?)", (user.google_id,user.email,user.name))
+            conn.commit()
+            return {"userID":user.google_id}
+        else:
+            return {"userID":result.google_id}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Database error {e}",)

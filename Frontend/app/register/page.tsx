@@ -117,7 +117,12 @@ export default function HomePage() {
       })
       const response = await existinguser.json()
       if (response.exist) {
-        toast.error("User already exist")
+        toast.custom((id: string | number) => (
+          <div className="bg-red-700 text-white p-4 rounded-md shadow-lg flex items-center gap-3">
+            <CircleAlert size={20} />
+            <p className="text-sm">User with this email already exist</p>
+          </div>
+        ))
         setisubmitting(false)
         return
       }
