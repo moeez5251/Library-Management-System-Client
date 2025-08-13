@@ -1,12 +1,17 @@
 "use client"
 import Image from 'next/image'
 import { signIn } from "next-auth/react";
-import { User, KeyRound, Eye, EyeOff } from 'lucide-react';
+import { User, KeyRound, Eye, EyeOff, LoaderCircle, CircleAlert } from 'lucide-react';
 import * as React from "react"
 import { useRouter } from 'next/navigation';
+import { validate } from 'email-validator';
+import { Toaster } from '@/components/ui/sonner';
+import { toast } from 'sonner';
+
 export default function HomePage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = React.useState<boolean>(false);
+  const [issubmitting, setissubmitting] = React.useState<boolean>(false)
   const [inputs, setinputs] = React.useState<{
     email: string;
     password: string;
@@ -19,15 +24,35 @@ export default function HomePage() {
   }
   React.useEffect(() => {
     router.prefetch("/register")
-  
+
     return () => {
-      
+
     }
   }, [router])
-  
+  const handlesubmit = async (): Promise<void> => {
+    setissubmitting(true)
+    if (!inputs.email || !inputs.password) {
+      toast.error("All fields are required")
+      setissubmitting(false)
+      return
+    }
+    if (!validate(inputs.email)) {
+      toast.custom((id: string | number) => (
+        <div
+          className="bg-red-700 text-white p-4 rounded-md shadow-lg flex items-center gap-3"
+        >
+          <CircleAlert size={20} />
+          <p className="text-sm">Please enter a valid email address.</p>
+        </div>
+      ));
+      setissubmitting(false)
+      return
+    }
+  }
 
   return (
     <>
+      <Toaster />
       <div className='w-full h-screen flex items-center justify-center'>
         <div className="w-[45%] h-full relative">
           <Image
@@ -126,7 +151,11 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
-            <button className='bg-[#6941c5] text-white py-2 w-full rounded-sm font-semibold mt-6 cursor-pointer transition-colors hover:bg-[#5a3bb3]'>Sign In</button>
+            {
+              !issubmitting ?
+                <button onClick={handlesubmit} className='bg-[#6941c5] text-white py-2 w-full rounded-sm font-semibold mt-6 cursor-pointer transition-colors hover:bg-[#5a3bb3]'>Sign In</button> :
+                <button disabled className='bg-[#6941c5] text-white py-2 w-full rounded-sm font-semibold cursor-pointer transition-colors hover:bg-[#5a3bb3] flex items-center justify-center gap-1.5 disabled:bg-gray-500 pointer-events-none'>Sign In <LoaderCircle color='white' className='animate-spin' size={16} /></button>}
+
             <p onClick={() => router.replace('/register')} className='font-semibold text-sm text-center'>Do not have an account ? <span className='text-[#6941c5] cursor-pointer hover:underline font-semibold'>Create an account</span></p>
           </div>
         </div>

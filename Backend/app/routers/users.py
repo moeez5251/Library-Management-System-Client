@@ -11,10 +11,11 @@ def read_users(user: UserCreate):
     conn = get_connection()
     cursor = conn.cursor()
     try:
-        cursor.execute("SELECT * FROM users WHERE email = ?", (user.email,))
+        cursor.execute("SELECT * FROM users WHERE email = ? AND Role='Standard-User'", (user.email,))
         result=cursor.fetchone()
+        print(result)
         if result is None:
-            raise HTTPException(status_code=404, detail="Invalid credentials")
+            raise HTTPException(status_code=401, detail="Invalid credentials")
         columns = [col[0] for col in cursor.description]
         row_dict = dict(zip(columns, result))
         if verify_password(user.password, row_dict["password"]):
@@ -22,6 +23,8 @@ def read_users(user: UserCreate):
             return {"user_id": row_dict["User_id"]}
         else:
             raise HTTPException(status_code=401, detail="Invalid credentials")
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Database error {e}",)
     finally:
@@ -53,7 +56,9 @@ def exist(email:EmailRequest):
     try:
         cursor.execute("SELECT * FROM users WHERE Email = ?", (email.email,))
         result=cursor.fetchone()
-        if result is None:
+        cursor.execute("SELECT * FROM Google WHERE Email = ?", (email.email,))
+        result2=cursor.fetchone()
+        if result is None and result2 is None:
             return {"exist":False}
         else:
             return {"exist":True}
