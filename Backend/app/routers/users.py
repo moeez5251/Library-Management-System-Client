@@ -40,7 +40,7 @@ def sign_up(user:UserSignUp):
             userid=user.name[0]+uid[0:7]
             cursor.execute("INSERT INTO users (User_id,User_Name, Email, password,	Role,Membership_Type,Cost,Status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (userid,user.name,user.email,hash_password(user.password),"Standard-User","English",0,"Active"))
             conn.commit()
-            return {"message": "User created successfully"}
+            return {"message": "User created successfully","user_id":userid}
         else:
             raise HTTPException(status_code=401,detail="User with this email already exist")
     except HTTPException:

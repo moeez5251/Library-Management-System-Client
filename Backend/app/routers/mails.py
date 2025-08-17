@@ -178,6 +178,8 @@ def send_otp(body: Mail):
 
         © 2025 XLMS. All rights reserved.
         """
+       cursor.execute("DELETE FROM otps WHERE Email = ?", (body.to,))
+       conn.commit()
        cursor.execute("INSERT INTO otps (Email, OTPCode) VALUES (?, ?)", (body.to, randomotp))
        conn.commit()
        send_email(body.to, "XLMS Email Verification", text, html)

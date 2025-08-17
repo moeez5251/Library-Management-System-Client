@@ -7,11 +7,21 @@ import { useRouter } from 'next/navigation';
 import { validate } from 'email-validator';
 import { Toaster } from '@/components/ui/sonner';
 import { toast } from 'sonner';
-
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 export default function HomePage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = React.useState<boolean>(false);
-  const [issubmitting, setissubmitting] = React.useState<boolean>(false)
+  const [issubmitting, setissubmitting] = React.useState<boolean>(false);
+  const [loading, setloading] = React.useState<boolean>(false)
+  const [open, setOpen] = React.useState<boolean>(false);
+  const [resetting, setresetting] = React.useState<boolean>(false)
   const [inputs, setinputs] = React.useState<{
     email: string;
     password: string;
@@ -24,7 +34,7 @@ export default function HomePage() {
   }
   React.useEffect(() => {
     router.prefetch("/register")
-
+    router.prefetch("/dashboard")
     return () => {
 
     }
@@ -48,6 +58,30 @@ export default function HomePage() {
       setissubmitting(false)
       return
     }
+    const data = await fetch("http://127.0.0.1:8000/users/login", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(inputs)
+    })
+    if (!data.ok) {
+      const errormessage = await data.json()
+      toast.custom((id: string | number) => (
+        <div
+          className="bg-red-700 text-white p-4 rounded-md shadow-lg flex items-center gap-3"
+        >
+          <CircleAlert size={20} />
+          <p className="text-sm">{errormessage.detail}</p>
+        </div>
+      ))
+      setissubmitting(false)
+      return
+    }
+    const response = await data.json()
+    localStorage.setItem("user", JSON.stringify(response.user_id))
+    router.push("/dashboard")
   }
 
   return (
@@ -101,29 +135,38 @@ export default function HomePage() {
               <h2 className='font-semibold text-xl'>Login to Aspire LMS</h2>
               <p className='text-[#989b9a]'>USER LOGIN</p>
             </div>
-            <button onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
-              className="cursor-pointer text-black flex gap-2 items-center bg-white py-2 font-medium text-sm hover:bg-[#f7f7f7] transition-all ease-in duration-200 border border-[#f2f2f2] justify-center  my-1 rounded-sm  "
-            >
-              <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" className="w-6">
-                <path
-                  d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"
-                  fill="#FFC107"
-                ></path>
-                <path
-                  d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"
-                  fill="#FF3D00"
-                ></path>
-                <path
-                  d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"
-                  fill="#4CAF50"
-                ></path>
-                <path
-                  d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"
-                  fill="#1976D2"
-                ></path>
-              </svg>
-              Google
-            </button>
+            {
+              !loading ?
+                <button onClick={() => { signIn("google", { callbackUrl: "/dashboard" }); setloading(true) }}
+                  className="cursor-pointer text-black flex gap-2 items-center bg-white py-2 font-medium text-sm hover:bg-[#f7f7f7] transition-all ease-in duration-200 border border-[#f2f2f2] justify-center  my-1 rounded-sm  "
+                >
+                  <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" className="w-6">
+                    <path
+                      d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"
+                      fill="#FFC107"
+                    ></path>
+                    <path
+                      d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"
+                      fill="#FF3D00"
+                    ></path>
+                    <path
+                      d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"
+                      fill="#4CAF50"
+                    ></path>
+                    <path
+                      d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"
+                      fill="#1976D2"
+                    ></path>
+                  </svg>
+                  Google
+                </button> :
+                <button disabled
+                  className=" text-black flex gap-2 items-center bg-gray-100 cursor-auto pointer-events-none py-2 font-medium text-sm hover:bg-[#f7f7f7] transition-all ease-in duration-200 border border-[#f2f2f2] justify-center  my-1 rounded-sm  "
+                >
+                  <LoaderCircle color='gray' className='animate-spin' size={15} />
+                </button>
+            }
+
             <div className='relative my-2'>
               <div className='border-b-1 w-full'></div>
               <p className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-4 font-semibold '>or Sign in with</p>
@@ -140,7 +183,7 @@ export default function HomePage() {
               <div className='border border-[#dedede] flex items-center rounded-sm py-2 px-3 gap-2'>
                 <KeyRound size={20} />
                 <input value={inputs.password} onChange={handlechange} className='border-none outline-0 w-[80%]' type={showPassword ? 'text' : 'password'} name='password' placeholder='Password' />
-                <p className='text-sm text-[#6941c5] absolute right-0 -bottom-6 cursor-pointer hover:underline font-semibold'>Forgot Password ?</p>
+                <p onClick={() => setOpen(true)} className='text-sm text-[#6941c5] absolute right-0 -bottom-6 cursor-pointer hover:underline font-semibold'>Forgot Password ?</p>
                 <div className='absolute right-3'>
                   {
                     showPassword ?
@@ -154,13 +197,58 @@ export default function HomePage() {
             {
               !issubmitting ?
                 <button onClick={handlesubmit} className='bg-[#6941c5] text-white py-2 w-full rounded-sm font-semibold mt-6 cursor-pointer transition-colors hover:bg-[#5a3bb3]'>Sign In</button> :
-                <button disabled className='bg-[#6941c5] text-white py-2 w-full rounded-sm font-semibold cursor-pointer transition-colors hover:bg-[#5a3bb3] flex items-center justify-center gap-1.5 disabled:bg-gray-500 pointer-events-none'>Sign In <LoaderCircle color='white' className='animate-spin' size={16} /></button>}
+                <button disabled className='bg-[#6941c5] text-white py-2 w-full rounded-sm font-semibold cursor-pointer transition-colors hover:bg-[#5a3bb3] flex items-center justify-center gap-1.5 disabled:bg-gray-500 pointer-events-none my-4'>Sign In <LoaderCircle color='white' className='animate-spin' size={16} /></button>}
 
             <p onClick={() => router.replace('/register')} className='font-semibold text-sm text-center'>Do not have an account ? <span className='text-[#6941c5] cursor-pointer hover:underline font-semibold'>Create an account</span></p>
           </div>
         </div>
 
       </div>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogTitle className='w-full text-center'>Enter Your Email Address</DialogTitle>
+          <DialogDescription />
+          <p className='text-gray-500 text-sm'>Enter your email address and we'll send you a link to reset your password</p>
+
+          <div className="relative  group my-3">
+            <input
+              required
+              type="email"
+              className="peer w-full border-b border-gray-600 bg-transparent px-2 pt-3 pb-1 text-base text-black focus:outline-none"
+              autoFocus
+            />
+            <label
+              className="absolute left-2 top-3 text-gray-500 text-base transition-all peer-focus:-top-5 peer-focus:text-sm peer-focus:text-[#5a3bb3] peer-valid:-top-5 peer-valid:text-sm peer-valid:text-[#5a3bb3] ">
+              Enter Your Email
+            </label>
+            <span className="bar"></span>
+            <span className="highlight"></span>
+          </div>
+          {!resetting ? <button className='bg-red-500  text-white py-2 w-full rounded-sm font-semibold mt-6 cursor-pointer transition-all scale-100 hover:scale-105 hover:bg-red-600'>Reset Password</button> :
+            <button disabled className='bg-red-400  text-white py-2 w-full rounded-sm font-semibold mt-6 cursor-auto pointer-events-none  '>Reset Password</button>}
+          <button onClick={() => setOpen(false)} className='absolute top-3 cursor-pointer right-3 bg-gray-300  p-1 rounded-2xl z-40 disabled:pointer-events-none '>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width={15}
+              height={15}
+              fill="none"
+              className="injected-svg"
+              color="black"
+              data-src="https://cdn.hugeicons.com/icons/multiplication-sign-solid-rounded.svg"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill="black"
+                fillRule="evenodd"
+                d="M5.116 5.116a1.25 1.25 0 0 1 1.768 0L12 10.232l5.116-5.116a1.25 1.25 0 0 1 1.768 1.768L13.768 12l5.116 5.116a1.25 1.25 0 0 1-1.768 1.768L12 13.768l-5.116 5.116a1.25 1.25 0 0 1-1.768-1.768L10.232 12 5.116 6.884a1.25 1.25 0 0 1 0-1.768Z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </button>
+        </DialogContent>
+
+      </Dialog>
     </>
+
   )
 }
