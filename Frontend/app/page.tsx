@@ -1,7 +1,7 @@
 "use client"
 import Image from 'next/image'
 import { signIn } from "next-auth/react";
-import { User, KeyRound, Eye, EyeOff, LoaderCircle, CircleAlert } from 'lucide-react';
+import { User, KeyRound, Eye, EyeOff, LoaderCircle, CircleAlert, CircleCheck } from 'lucide-react';
 import * as React from "react"
 import { useRouter } from 'next/navigation';
 import { validate } from 'email-validator';
@@ -21,6 +21,7 @@ export default function HomePage() {
   const [issubmitting, setissubmitting] = React.useState<boolean>(false);
   const [loading, setloading] = React.useState<boolean>(false)
   const [open, setOpen] = React.useState<boolean>(false);
+  const [resetemail, setResetemail] = React.useState<string>("")
   const [resetting, setresetting] = React.useState<boolean>(false)
   const [inputs, setinputs] = React.useState<{
     email: string;
@@ -82,6 +83,54 @@ export default function HomePage() {
     const response = await data.json()
     localStorage.setItem("user", JSON.stringify(response.user_id))
     router.push("/dashboard")
+  }
+  const handleReset = async (): Promise<void> => {
+    setresetting(true)
+    if (!validate(resetemail)) {
+      toast.custom((id: string | number) => (
+        <div
+          className="bg-red-700 text-white p-4 rounded-md shadow-lg flex items-center gap-3"
+        >
+          <CircleAlert size={20} />
+          <p className="text-sm">Please enter a valid email address.</p>
+        </div>
+      ))
+      setresetting(false)
+      return
+    }
+    const data = await fetch("http://127.0.0.1:8000/resetpass/create", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email: resetemail })
+    })
+    if (!data.ok) {
+      const errormessage = await data.json()
+      toast.custom((id: string | number) => (
+        <div
+          className="bg-red-700 text-white p-4 rounded-md shadow-lg flex items-center gap-3"
+        >
+          <CircleAlert size={20} />
+          <p className="text-sm">{errormessage.detail}</p>
+        </div>
+      ))
+      setresetting(false)
+      return
+    }
+    const response = await data.json()
+    toast.custom((id: string | number) => (
+      <div
+        className="bg-green-700 text-white px-4 py-3 rounded-md shadow-lg flex items-center gap-3"
+      >
+        <CircleCheck size={20} />
+        <p className="text-sm">{response.message}</p>
+      </div>
+    ))
+    setOpen(false)
+    setResetemail("")
+    setresetting(false)
   }
 
   return (
@@ -206,25 +255,41 @@ export default function HomePage() {
       </div>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
-          <DialogTitle className='w-full text-center'>Enter Your Email Address</DialogTitle>
+          <DialogTitle className='w-full text-center'>Reset Password</DialogTitle>
           <DialogDescription />
-          <p className='text-gray-500 text-sm'>Enter your email address and we'll send you a link to reset your password</p>
+          <p className='text-gray-500 text-[16px]'>Enter your email address and we'll send you a link to reset your password</p>
 
-          <div className="relative  group my-3">
+          <div className="relative group my-6">
             <input
               required
               type="email"
               className="peer w-full border-b border-gray-600 bg-transparent px-2 pt-3 pb-1 text-base text-black focus:outline-none"
               autoFocus
+              value={resetemail}
+              onChange={(e) => setResetemail(e.target.value)}
+              placeholder=" " // Needed for placeholder-shown logic
             />
             <label
-              className="absolute left-2 top-3 text-gray-500 text-base transition-all peer-focus:-top-5 peer-focus:text-sm peer-focus:text-[#5a3bb3] peer-valid:-top-5 peer-valid:text-sm peer-valid:text-[#5a3bb3] ">
+              className="absolute left-2 transition-all
+      peer-placeholder-shown:top-3
+      peer-placeholder-shown:text-base
+      peer-placeholder-shown:text-gray-500
+      peer-focus:-top-5
+      peer-focus:text-sm
+      peer-focus:text-[#5a3bb3]
+      peer-not-placeholder-shown:-top-5
+      peer-not-placeholder-shown:text-sm
+      peer-not-placeholder-shown:text-[#5a3bb3]"
+            >
               Enter Your Email
             </label>
+
             <span className="bar"></span>
             <span className="highlight"></span>
           </div>
-          {!resetting ? <button className='bg-red-500  text-white py-2 w-full rounded-sm font-semibold mt-6 cursor-pointer transition-all scale-100 hover:scale-105 hover:bg-red-600'>Reset Password</button> :
+
+
+          {!resetting ? <button onClick={handleReset} className='bg-red-500  text-white py-2 w-full rounded-sm font-semibold mt-6 cursor-pointer transition-all scale-100 hover:scale-105 hover:bg-red-600'>Reset Password</button> :
             <button disabled className='bg-red-400  text-white py-2 w-full rounded-sm font-semibold mt-6 cursor-auto pointer-events-none  '>Reset Password</button>}
           <button onClick={() => setOpen(false)} className='absolute top-3 cursor-pointer right-3 bg-gray-300  p-1 rounded-2xl z-40 disabled:pointer-events-none '>
             <svg

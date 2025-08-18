@@ -191,4 +191,3 @@ def send_otp(body: Mail):
         raise HTTPException(status_code=500, detail=f"Failed to send email: {e}")
     finally:
         conn.close()
-

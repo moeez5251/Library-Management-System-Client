@@ -13,7 +13,6 @@ def read_users(user: UserCreate):
     try:
         cursor.execute("SELECT * FROM users WHERE email = ? AND Role='Standard-User'", (user.email,))
         result=cursor.fetchone()
-        print(result)
         if result is None:
             raise HTTPException(status_code=401, detail="Invalid credentials")
         columns = [col[0] for col in cursor.description]
@@ -85,3 +84,6 @@ def createuser(user:AuthUser):
             return {"userID":result.google_id}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Database error {e}",)
+@router.post("/resetpass")
+def resetpassword():
+    pass
