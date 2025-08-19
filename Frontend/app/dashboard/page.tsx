@@ -51,12 +51,6 @@ export default function DashboardPage() {
 
   return <>
     <Toaster />
-    <button
-      onClick={() => signOut({ redirect: false }).then(() => router.push("/"))}
-    >
-      Logout
-    </button>
-
-    <div>Welcome, {session?.user?.name}</div>;
+    This is dashboard
   </>
 }
