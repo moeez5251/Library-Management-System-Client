@@ -21,7 +21,7 @@ export default function RootLayout({
                     <div className='w-[20%] px-6'>
                         <Sidebar />
                     </div>
-                        <section className='w-[80%] bg-[#f4f8fb] p-3 rounded-lg   '>
+                        <section className='w-[80%] bg-[#f4f8fb] p-3 rounded-lg  overflow-y-scroll '>
     
 
                         {children}
