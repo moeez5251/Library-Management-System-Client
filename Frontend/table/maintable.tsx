@@ -10,9 +10,11 @@ import {
   ColumnDef,
   SortingState,
   PaginationState,
+
 } from "@tanstack/react-table"
 import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react"
 import { PaginationControls } from "./pagination"
+import { ColumnVisibilityDropdown } from "./dropdown"
 interface DataTableProps<TData> {
   data: TData[]
   columns: ColumnDef<TData, any>[]
@@ -33,6 +35,7 @@ export function DataTable<TData>({
     pageIndex: 0,
     pageSize: initialPageSize,
   })
+  const [columnVisibility, setColumnVisibility] = useState({})
 
   const table = useReactTable({
     data,
@@ -41,6 +44,7 @@ export function DataTable<TData>({
       globalFilter: externalFilter,
       sorting,
       pagination,
+      columnVisibility,
     },
     onSortingChange: setSorting,
     onPaginationChange: setPagination,
@@ -48,6 +52,7 @@ export function DataTable<TData>({
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
     enableRowSelection: true,
   })
 
@@ -57,7 +62,9 @@ export function DataTable<TData>({
 
   return (
     <div className="p-4 space-y-4">
-      {/* Table */}
+      <div className="flex items-center justify-between">
+        <ColumnVisibilityDropdown table={table} />
+      </div>
       <table className="w-full text-left">
         <thead className="bg-[#f6f8fa] dark:bg-[#394455]">
           {loading ? (
@@ -89,9 +96,9 @@ export function DataTable<TData>({
                         {header.isPlaceholder
                           ? null
                           : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
 
                         {isSortable && (
                           <>
