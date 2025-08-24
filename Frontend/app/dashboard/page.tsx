@@ -14,37 +14,37 @@ export default function DashboardPage() {
   const router = useRouter();
   const { data: session } = useSession();
   const [Trigger, settrigger] = React.useState<boolean>(false)
-  React.useEffect(() => {
-    if (session && !Trigger) {
-      (async () => {
-        const data = await fetch("http://127.0.0.1:8000/users/auth-users", {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: session.user?.email,
-            google_id: session.user?.googleId,
-            name: session.user?.name
+  // React.useEffect(() => {
+  //   if (session && !Trigger) {
+  //     (async () => {
+  //       const data = await fetch("http://127.0.0.1:8000/users/auth-users", {
+  //         method: "POST",
+  //         credentials: "include",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify({
+  //           email: session.user?.email,
+  //           google_id: session.user?.googleId,
+  //           name: session.user?.name
 
-          })
-        })
-        if (!data.ok) {
-          toast.error("Failed to authenticate user")
-          router.push("/")
-          return
-        }
-        const response = await data.json()
-        localStorage.setItem("user", JSON.stringify(response.userID))
-        settrigger(true)
-      })()
-    }
+  //         })
+  //       })
+  //       if (!data.ok) {
+  //         toast.error("Failed to authenticate user")
+  //         router.push("/")
+  //         return
+  //       }
+  //       const response = await data.json()
+  //       localStorage.setItem("user", JSON.stringify(response.userID))
+  //       settrigger(true)
+  //     })()
+  //   }
 
-    return () => {
+  //   return () => {
 
-    }
-  }, [session])
+  //   }
+  // }, [session])
   React.useEffect(() => {
     router.prefetch("/");
     return () => {
@@ -83,7 +83,7 @@ export default function DashboardPage() {
       </div>
 
     </div>
-    <div className="flex items-center justify-between my-10 mx-5">
+    <div className="flex items-center justify-between my-8 mx-5">
       <div className="bg-white w-fit flex items-center justify-center px-6 py-5 gap-4 rounded-lg">
         <div className="bg-[#28cac9] px-3 py-2 rounded-md text-white animate-pulse ">
           XX

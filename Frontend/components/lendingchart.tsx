@@ -26,10 +26,10 @@ import {
 export const description = "A multiple line chart"
 
 const chartData = [
-  { month: "ABC", desktop: 186, mobile: 80 },
+  { month: "ABC", desktop: 1811, mobile: 840 },
   { month: "June", desktop: 2114, mobile: 140 },
   { month: "June", desktop: 1114, mobile: 10 },
-  { month: "June", desktop: 114, mobile: 1110 },
+  { month: "June", desktop: 114, mobile: 2110 },
   { month: "June", desktop: 1114, mobile: 0 },
   { month: "June", desktop: 14, mobile: 11111 },
 ]
@@ -51,7 +51,7 @@ export function ChartLineMultiple() {
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
               data={chartData}
-              margin={{ top: 10, bottom: 20, left: 10, right: 10 }} // small margins to prevent overflow
+              margin={{ top: 10, bottom: 20, left: 10, right: 10 }} 
             >
               <CartesianGrid vertical={false} />
 

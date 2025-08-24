@@ -45,7 +45,7 @@ export function ChartPieDonut() {
     <Card data-swapy-item="a" className="flex flex-col dark:bg-[#1b2536] h-full border-none">
       <CardHeader className="items-center pb-0">
         <CardTitle>Fines</CardTitle>
-        <CardDescription className="font-semibold">Overview of pie chart</CardDescription>
+        <CardDescription className="font-semibold">Overview of fines</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer

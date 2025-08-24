@@ -16,16 +16,20 @@ export default function RootLayout({
         <html lang="en">
             <body >
                 <Navbar />
-                <div className='flex  gap-3 mx-3 my-5 h-[85vh]'>
+                <div className='flex  gap-3 mx-3 mt-5 h-[83vh]'>
 
                     <div className='w-[20%] px-6'>
                         <Sidebar />
                     </div>
-                        <section className='w-[80%] bg-[#f4f8fb] p-3 rounded-lg  overflow-y-scroll '>
+                        <section className='w-[80%] bg-[#f4f8fb] p-3 rounded-lg  overflow-y-auto '>
     
 
                         {children}
                     </section>
+                </div>
+                <div className='flex items-center justify-between mx-5 my-1'>
+                        <div className='font-semibold text-[#7c7c7c] text-sm'>XLMS - LMS version 1.0</div>
+                        <div className='font-semibold text-[#7c7c7c] text-sm'>&copy; 2025 XLMS, All Rights Reserved</div>
                 </div>
             </body>
         </html>
