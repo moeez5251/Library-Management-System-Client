@@ -1,8 +1,6 @@
 "use client"
-import { DataTable } from '@/table/maintable'
-import React from 'react'
-import columns from './column'
-
+import { Search } from 'lucide-react'
+import React, { useState } from 'react'
 type Book = {
   id: number
   title: string
@@ -28,10 +26,20 @@ const data: Book[] = [
 ]
 
 const Catalog = () => {
+  const [search, setsearch] = useState<string>("")
   return (
-    <div>
-       <DataTable data={data} columns={columns} pageSize={8} loading={false} externalFilter=''  />
-    </div>
+    <>
+      <h1 className='text-2xl font-extrabold mx-3 my-2  '>Browse Books</h1>
+      <div className='flex items-center mx-3 my-3 gap-3 bg-white p-3 rounded-lg'>
+        <div>
+          <Search className='text-[#6841c4]' size={22} />
+        </div>
+        <input value={search} onChange={(e) => setsearch(e.target.value)} className='bg-none border-none outline-none w-full font-medium' type="text" name="search" id="search" placeholder='Search by title,author or genre' />
+      </div>
+      <div>
+        
+      </div>
+    </>
   )
 }
 
