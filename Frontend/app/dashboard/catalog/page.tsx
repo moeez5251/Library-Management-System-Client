@@ -1,4 +1,5 @@
 "use client"
+import SelectComponent from '@/components/select'
 import { Search } from 'lucide-react'
 import React, { useState } from 'react'
 type Book = {
@@ -37,7 +38,11 @@ const Catalog = () => {
         <input value={search} onChange={(e) => setsearch(e.target.value)} className='bg-none border-none outline-none w-full font-medium' type="text" name="search" id="search" placeholder='Search by title,author or genre' />
       </div>
       <div>
-        
+      </div>
+      <div className='flex items-center gap-4 mx-3'>
+        <SelectComponent name="Genre" array={["light", "dark", "system", 1, 2]} />
+        <SelectComponent name="Author" array={["light"]} />
+        <SelectComponent name="Availability" array={["light", "dark", "system", 1, 2]} />
       </div>
     </>
   )
