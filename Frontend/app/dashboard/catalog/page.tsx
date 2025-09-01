@@ -1,29 +1,71 @@
 "use client"
 import SelectComponent from '@/components/select'
+import { ProductsGrid } from '@/table/maintable'
 import { Search } from 'lucide-react'
 import React, { useState } from 'react'
-type Book = {
-  id: number
-  title: string
-  author: string
-  year: number
-}
-const data: Book[] = [
-  { id: 1, title: "Clean Code", author: "Robert C. Martin", year: 2008 },
-  { id: 1, title: "Clean Code", author: "Robert C. Martin", year: 2008 },
-  { id: 1, title: "Clean Code", author: "Robert C. Martin", year: 2008 },
-  { id: 1, title: "Clean Code", author: "Robert C. Martin", year: 2008 },
-  { id: 1, title: "Clean Code", author: "Robert C. Martin", year: 2008 },
-  { id: 1, title: "Clean Code", author: "Robert C. Martin", year: 2008 },
-  { id: 1, title: "Clean Code", author: "Robert C. Martin", year: 2008 },
-  { id: 1, title: "Clean Code", author: "Robert C. Martin", year: 2008 },
-  { id: 1, title: "Clean Code", author: "Robert C. Martin", year: 2008 },
-  { id: 1, title: "Clean Code", author: "Robert C. Martin", year: 2008 },
-  { id: 1, title: "Clean Code", author: "Robert C. Martin", year: 2008 },
-  { id: 1, title: "Clean Code", author: "Robert C. Martin", year: 2008 },
-  { id: 1, title: "Clean Code", author: "Robert C. Martin", year: 2008 },
-  { id: 2, title: "Design Patterns", author: "Erich Gamma", year: 1994 },
-  { id: 3, title: "Refactoring", author: "Martin Fowler", year: 1999 },
+import { productColumns } from './column'
+
+const products = [
+  {
+    id: 1,
+    name: "Wireless Headphones",
+    price: 99.99,
+    image: "https://via.placeholder.com/300x200?text=Headphones",
+  },
+  {
+    id: 2,
+    name: "Smart Watch",
+    price: 149.99,
+    image: "https://via.placeholder.com/300x200?text=Smart+Watch",
+  },
+  {
+    id: 3,
+    name: "Bluetooth Speaker",
+    price: 79.99,
+    image: "https://via.placeholder.com/300x200?text=Speaker",
+  },
+  {
+    id: 4,
+    name: "Gaming Mouse",
+    price: 49.99,
+    image: "https://via.placeholder.com/300x200?text=Mouse",
+  },
+  {
+    id: 5,
+    name: "Mechanical Keyboard",
+    price: 119.99,
+    image: "https://via.placeholder.com/300x200?text=Keyboard",
+  },
+  {
+    id: 6,
+    name: "4K Monitor",
+    price: 399.99,
+    image: "https://via.placeholder.com/300x200?text=Monitor",
+  },
+  {
+    id: 7,
+    name: "External SSD",
+    price: 89.99,
+    image: "https://via.placeholder.com/300x200?text=SSD",
+  },
+  {
+    id: 8,
+    name: "Drone",
+    price: 499.99,
+    image: "https://via.placeholder.com/300x200?text=Drone",
+  },
+  {
+    id: 9,
+    name: "Action Camera",
+    price: 199.99,
+    image: "https://via.placeholder.com/300x200?text=Camera",
+  },
+  {
+    id: 10,
+    name: "VR Headset",
+    price: 299.99,
+    image: "https://via.placeholder.com/300x200?text=VR+Headset",
+  },
 ]
 
 const Catalog = () => {
@@ -44,8 +86,8 @@ const Catalog = () => {
         <SelectComponent name="Author" array={["light"]} />
         <SelectComponent name="Availability" array={["light", "dark", "system", 1, 2]} />
       </div>
+       <ProductsGrid data={products} columns={productColumns} pageSize={3} loading={false} />
     </>
   )
 }
-
 export default Catalog

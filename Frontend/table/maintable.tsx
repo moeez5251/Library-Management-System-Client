@@ -10,32 +10,28 @@ import {
   ColumnDef,
   SortingState,
   PaginationState,
-
 } from "@tanstack/react-table"
-import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react"
 import { PaginationControls } from "./pagination"
-import { ColumnVisibilityDropdown } from "./dropdown"
-interface DataTableProps<TData> {
+interface ProductsGridProps<TData> {
   data: TData[]
-  columns: ColumnDef<TData, any>[]
+  columns: ColumnDef<TData, any>[] // still needed so TanStack knows how to access fields
   externalFilter?: string
   pageSize?: number
   loading?: boolean
 }
 
-export function DataTable<TData>({
+export function ProductsGrid<TData>({
   data,
   columns,
   externalFilter,
-  pageSize: initialPageSize = 10,
+  pageSize: initialPageSize = 6,
   loading = true,
-}: DataTableProps<TData>) {
+}: ProductsGridProps<TData>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: initialPageSize,
   })
-  const [columnVisibility, setColumnVisibility] = useState({})
 
   const table = useReactTable({
     data,
@@ -44,7 +40,6 @@ export function DataTable<TData>({
       globalFilter: externalFilter,
       sorting,
       pagination,
-      columnVisibility,
     },
     onSortingChange: setSorting,
     onPaginationChange: setPagination,
@@ -52,8 +47,6 @@ export function DataTable<TData>({
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    enableRowSelection: true,
   })
 
   useEffect(() => {
@@ -61,91 +54,34 @@ export function DataTable<TData>({
   }, [initialPageSize, table])
 
   return (
-    <div className="p-4 space-y-4">
-      <div className="flex items-center justify-between">
-        <ColumnVisibilityDropdown table={table} />
-      </div>
-      <table className="w-full text-left">
-        <thead className="bg-[#f6f8fa] dark:bg-[#394455]">
-          {loading ? (
-            <tr>
-              {[...Array(columns.length)].map((_, idx) => (
-                <th key={idx} className="p-2 border-b">
-                  <div className="h-5 w-24 card__skeleton rounded-md" />
-                </th>
+    <div className="p-4 space-y-6">
+      {/* Products Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        {loading ? (
+          // Skeleton loaders
+          [...Array(initialPageSize)].map((_, idx) => (
+            <div
+              key={idx}
+              className="h-40 w-full rounded-lg bg-gray-200 animate-pulse"
+            />
+          ))
+        ) : (
+          table.getRowModel().rows.map((row) => (
+            <div
+              key={row.id}
+              className="border rounded-lg p-4 shadow-sm bg-white dark:bg-[#1b2536]"
+            >
+              {row.getVisibleCells().map((cell) => (
+                <div key={cell.id}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </div>
               ))}
-            </tr>
-          ) : (
-            table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  const isSortable = header.column.getCanSort()
-                  const sortDirection = header.column.getIsSorted()
+            </div>
+          ))
+        )}
+      </div>
 
-                  return (
-                    <th
-                      key={header.id}
-                      className="p-2 border-b cursor-pointer select-none text-nowrap"
-                      onClick={
-                        isSortable
-                          ? header.column.getToggleSortingHandler()
-                          : undefined
-                      }
-                    >
-                      <div className="flex items-center gap-1 font-semibold">
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-
-                        {isSortable && (
-                          <>
-                            {sortDirection === "asc" && <ArrowUp size={16} />}
-                            {sortDirection === "desc" && <ArrowDown size={16} />}
-                            {!sortDirection && (
-                              <ArrowUpDown size={16} className="opacity-40" />
-                            )}
-                          </>
-                        )}
-                      </div>
-                    </th>
-                  )
-                })}
-              </tr>
-            ))
-          )}
-        </thead>
-
-        <tbody>
-          {loading ? (
-            [...Array(5)].map((_, rowIdx) => (
-              <tr key={`loading-row-${rowIdx}`}>
-                {[...Array(columns.length)].map((_, colIdx) => (
-                  <td key={colIdx} className="p-2 border-b">
-                    <div className="h-5 w-24 card__skeleton rounded-md" />
-                  </td>
-                ))}
-              </tr>
-            ))
-          ) : (
-            table.getRowModel().rows.map((row) => (
-              <tr
-                key={row.id}
-                className="hover:bg-gray-50 text-[16px] font-medium dark:bg-[#1b2536]"
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className="p-2 border-b">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
-
+      {/* Pagination Controls */}
       <PaginationControls table={table} />
     </div>
   )
