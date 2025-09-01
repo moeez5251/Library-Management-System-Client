@@ -39,6 +39,15 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-book-1: var(--book-1);
+  --color-book-2: var(--book-2);
+  --color-book-3: var(--book-3);
+  --color-book-4: var(--book-4);
+  --color-book-5: var(--book-5);
+  --color-book-6: var(--book-6);
+  --color-book-7: var(--book-7);
+  --color-book-8: var(--book-8);
+  --color-book-9: var(--book-9);
 }
 
 :root {
@@ -74,6 +83,15 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --book-1: #eef0f0;
+  --book-2: #0f2630;
+  --book-3: #154149;
+  --book-4: #eb603f;
+  --book-5: #b8d2c8;
+  --book-6: #f8efe7;
+  --book-7: #1f4047;
+  --book-8: #1f4f54;
+  --book-9: #f2f3f4;
 }
 
 .dark {
@@ -123,6 +141,7 @@
     @apply bg-background text-foreground;
   }
 }
+
 .bar {
   position: relative;
   display: block;
@@ -143,12 +162,13 @@
 .bar::before {
   left: 50%;
 }
+
 .bar::after {
   right: 50%;
 }
 
-input:focus ~ .bar::before,
-input:focus ~ .bar::after {
+input:focus~.bar::before,
+input:focus~.bar::after {
   width: 50%;
 }
 
@@ -162,7 +182,7 @@ input:focus ~ .bar::after {
   opacity: 0.5;
 }
 
-input:focus ~ .highlight {
+input:focus~.highlight {
   animation: inputHighlighter 0.3s ease;
 }
 
@@ -170,6 +190,7 @@ input:focus ~ .highlight {
   from {
     background: #5264AE;
   }
+
   to {
     width: 0;
     background: transparent;

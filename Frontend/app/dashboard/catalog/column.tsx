@@ -1,5 +1,7 @@
 "use client"
 import { ColumnDef } from "@tanstack/react-table"
+import { Book,BookOpen,BookOpenText,BookText,BookMinus,BookCopy } from "lucide-react"
+import { ProductImageCell } from "./productimage"
 export type Product = {
   id: number
   name: string
@@ -11,10 +13,7 @@ export const productColumns: ColumnDef<Product>[] = [
   {
     accessorKey: "image",
     header: "Image",
-    cell: ({ row }) => (
-      <div>
-      </div>
-    ),
+    cell:ProductImageCell
   },
   {
     accessorKey: "name",

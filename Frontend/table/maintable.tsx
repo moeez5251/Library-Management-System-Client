@@ -14,7 +14,7 @@ import {
 import { PaginationControls } from "./pagination"
 interface ProductsGridProps<TData> {
   data: TData[]
-  columns: ColumnDef<TData, any>[] // still needed so TanStack knows how to access fields
+  columns: ColumnDef<TData, any>[] 
   externalFilter?: string
   pageSize?: number
   loading?: boolean
@@ -52,13 +52,11 @@ export function ProductsGrid<TData>({
   useEffect(() => {
     table.setPageSize(initialPageSize)
   }, [initialPageSize, table])
-
   return (
     <div className="p-4 space-y-6">
       {/* Products Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {loading ? (
-          // Skeleton loaders
           [...Array(initialPageSize)].map((_, idx) => (
             <div
               key={idx}
@@ -69,7 +67,7 @@ export function ProductsGrid<TData>({
           table.getRowModel().rows.map((row) => (
             <div
               key={row.id}
-              className="border rounded-lg p-4 shadow-sm bg-white dark:bg-[#1b2536]"
+              className={`rounded-lg shadow-sm `}
             >
               {row.getVisibleCells().map((cell) => (
                 <div key={cell.id}>
