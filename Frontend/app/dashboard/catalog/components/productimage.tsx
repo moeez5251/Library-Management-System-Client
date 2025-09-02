@@ -1,7 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
 import { BookOpenText } from "lucide-react";
-
+export type image = {
+    id: (number | string)
+}
 const bookColors = [
     "bg-book-1",
     "bg-book-2",
@@ -14,17 +16,16 @@ const bookColors = [
     "bg-book-9",
 ];
 
-export const ProductImageCell = () => {
+export const ProductImageCell: React.FC<image> = ({ id}) => {
     const [color, setColor] = useState<string>("bg-book-1");
-    console.log(color);
     useEffect(() => {
         const randomIndex = Math.floor(Math.random() * bookColors.length);
         setColor(bookColors[randomIndex]);
     }, []);
 
     return (
-        <div className={`${color} h-50 rounded-sm flex items-center justify-center`}>
-            <BookOpenText className={` ${color == "bg-book-6" || color == "bg-book-1" || color == "bg-book-9" ? "text-black":"text-white"}`} size={120} />
+        <div data-id={id} className={`${color} h-50  rounded-t-md flex items-center justify-center`}>
+            <BookOpenText className={` ${color == "bg-book-6" || color == "bg-book-1" ? "text-black" : "text-white"}`} size={120} />
         </div>
     );
 };

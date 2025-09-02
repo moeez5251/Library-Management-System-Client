@@ -83,7 +83,7 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  --book-1: #eef0f0;
+  --book-1: #cfefef;
   --book-2: #0f2630;
   --book-3: #154149;
   --book-4: #eb603f;
@@ -91,7 +91,7 @@
   --book-6: #f8efe7;
   --book-7: #1f4047;
   --book-8: #1f4f54;
-  --book-9: #f2f3f4;
+  --book-9: #c9d0d7;
 }
 
 .dark {
@@ -194,5 +194,20 @@ input:focus~.highlight {
   to {
     width: 0;
     background: transparent;
+  }
+}
+.card__skeleton {
+  background-image: linear-gradient(90deg,
+      #ccc 0px,
+      rgb(229 229 229 / 90%) 40px,
+      #f1f1fd 80px);
+  background-size: 300%;
+  background-position: 100% 0;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -100% 0;
   }
 }

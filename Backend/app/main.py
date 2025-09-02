@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers import users,mails,otp,resetpassword
+from app.routers import users,mails,otp,resetpassword,books
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from fastapi.responses import HTMLResponse
@@ -16,6 +16,7 @@ app.include_router(users.router)
 app.include_router(mails.router)
 app.include_router(otp.router)
 app.include_router(resetpassword.router)
+app.include_router(books.router)
 @app.get("/",response_class=HTMLResponse)
 async def read_root():
     return """
