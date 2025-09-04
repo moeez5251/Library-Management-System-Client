@@ -9,9 +9,9 @@ def get_books():
     conn=get_connection()
     cursor=conn.cursor()
     try:
-       cursor.execute("SELECT * FROM books")
+       cursor.execute("SELECT Book_ID, Book_Title, Author, Category, Language, Status, Pages, Price, Available FROM books")
        result=cursor.fetchall()
-       keys=["Book_ID", "Book_Title", "Author", "Category", "Language", "Total_Copies", "Status", "Pages", "Price", "Available"]
+       keys=["id", "name", "Author", "Category", "Language", "Status", "Pages", "price", "Available_Copies"]
        books_dict_list = [dict(zip(keys, book)) for book in result]
        return books_dict_list
     except Exception as e:  

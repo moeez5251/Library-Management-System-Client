@@ -2,87 +2,53 @@
 import SelectComponent from '@/components/select'
 import { ProductsGrid } from '@/table/maintable'
 import { Search } from 'lucide-react'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { productColumns } from './components/column'
-const products = [
-  {
-    id: "1",
-    name: "Wireless Headphones",
-    price: 99.99,
-    Author: "John Doe",
-    Language: "English",
-    Available_Copies: 10,
-    Status: "Available",
-  },
-  {
-    id: "2",
-    name: "Smart Watch",
-    price: 149.99,
-    Author: "Jane Smith",
-    Language: "English",
-    Available_Copies: 5,
-    Status: "Available",
-  },
-  {
-    id: "3",
-    name: "Gaming Mouse",
-    price: 59.99,
-    Author: "Alex Johnson",
-    Language: "English",
-    Available_Copies: 0,
-    Status: "Out of Stock",
-  },
-  {
-    id: "4",
-    name: "Mechanical Keyboard",
-    price: 129.99,
-    Author: "Emily Davis",
-    Language: "English",
-    Available_Copies: 7,
-    Status: "Available",
-  },
-  {
-    id: "5",
-    name: "VR Headset",
-    price: 299.99,
-    Author: "Michael Brown",
-    Language: "English",
-    Available_Copies: 2,
-    Status: "Available",
-  },
-  {
-    id: "6",
-    name: "Bluetooth Speaker",
-    price: 79.99,
-    Author: "Sarah Wilson",
-    Language: "English",
-    Available_Copies: 15,
-    Status: "Reserved",
-  },
-  {
-    id: "7",
-    name: "E-book Reader",
-    price: 129.99,
-    Author: "David Lee",
-    Language: "English",
-    Available_Copies: 8,
-    Status: "Available",
-  },
-  {
-    id: "8",
-    name: "Fitness Tracker",
-    price: 89.99,
-    Author: "Laura Martinez",
-    Language: "English",
-    Available_Copies: 0,
-    Status: "Out of Stock",
-  },
-];
+import { Toaster } from '@/components/ui/sonner'
+import { toast } from 'sonner'
 
 const Catalog = () => {
   const [search, setsearch] = useState<string>("")
+  const [BookData, setBookData] = useState([])
+  const [LangugesFilter, setLangugesFilter] = useState<string[]>([])
+  const [Language, setLanguage] = useState<string>("All")
+  const [Author, setAuthor] = useState<string>("All")
+  const [AuthorFilter, setAuthorFilter] = useState<string[]>([])
+  const [status, setstatus] = useState<string>("Available")
+  const [statusFilter, setSetstatusFilter] = useState<string[]>([])
+  const [Loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    (async () => {
+      const data = await fetch("http://127.0.0.1:8000/books/getall")
+      if (!data.ok) {
+        const res = await data.json()
+        toast.error("Unable to fetch data")
+        return
+      }
+      const res = await data.json()
+      setBookData(res)
+      setLoading(false)
+    })()
+
+    return () => {
+
+    }
+  }, [])
+  useEffect(() => {
+    if (BookData.length > 0) {
+      setLangugesFilter(["All", ...new Set(BookData.map((item: any) => item.Language))])
+      setAuthorFilter(["All", ...new Set(BookData.map((item: any) => item.Author))])
+      setSetstatusFilter(["All", ...new Set(BookData.map((item: any) => item.Status))])
+    }
+    return () => {
+
+    }
+  }, [BookData])
+
   return (
     <>
+      <Toaster />
       <h1 className='text-2xl font-extrabold mx-3 my-2  '>Browse Books</h1>
       <div className='flex items-center mx-3 my-3 gap-3 bg-white p-3 rounded-lg'>
         <div>
@@ -93,11 +59,13 @@ const Catalog = () => {
       <div>
       </div>
       <div className='flex items-center gap-4 mx-3'>
-        <SelectComponent name="Language" array={["light", "dark", "system", 1, 2]} />
-        <SelectComponent name="Author" array={["light"]} />
-        <SelectComponent name="Availability" array={["light", "dark", "system", 1, 2]} />
+        <SelectComponent value={Language} onchange={setLanguage} name="Language" array={LangugesFilter} />
+        <SelectComponent value={Author} onchange={setAuthor} name="Author" array={AuthorFilter} />
+        <SelectComponent value={status} onchange={setstatus} name="Availability" array={statusFilter} />
       </div>
-      <ProductsGrid data={products} columns={productColumns} pageSize={6} loading={false} externalFilter={search}  />
+      <ProductsGrid data={BookData} columns={productColumns} pageSize={6} loading={Loading} externalFilter={search} columnFilter={[{ columnId: "Language", value: Language }, { columnId: "Author", value: Author }, { columnId: "Status", value: status }]} />
+
+
     </>
   )
 }

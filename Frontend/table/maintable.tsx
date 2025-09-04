@@ -1,5 +1,7 @@
 "use client"
 import React, { useState, useId, useRef, useEffect } from "react"
+import { BookOpenText } from "lucide-react";
+
 import {
   useReactTable,
   getCoreRowModel,
@@ -10,6 +12,7 @@ import {
   SortingState,
   PaginationState,
   FilterFn,
+  type ColumnFiltersState
 } from "@tanstack/react-table"
 import { AnimatePresence, motion } from "motion/react"
 import { PaginationControls } from "./pagination"
@@ -22,14 +25,16 @@ interface ProductsGridProps<TData> {
   loading?: boolean
   externalFilter?: string
   columns: ColumnDef<TData>[]
+  columnFilter?: { columnId: keyof TData; value: string }[]
 }
 
-export function ProductsGrid<TData extends { id: string | number; name: string; price: number, Author: string, Language: string, Available_Copies: number, Status: string }>({
+export function ProductsGrid<TData extends { id: string | number; name: string; price: number, Author: string, Language: string, Available_Copies: number, Status: string, Category: string, Pages: number }>({
   data,
   columns,
   pageSize: initialPageSize = 6,
   loading = true,
   externalFilter = "",
+  columnFilter
 }: ProductsGridProps<TData>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [pagination, setPagination] = useState<PaginationState>({
@@ -53,6 +58,8 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
       String(val).toLowerCase().includes(search)
     )
   }
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [internalColumnFilters, setInternalColumnFilters] = useState<ColumnFiltersState>([])
 
   const table = useReactTable({
     data,
@@ -61,6 +68,7 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
       sorting,
       pagination,
       globalFilter: externalFilter,
+      columnFilters: internalColumnFilters
     },
     filterFns: {
       global: globalFilterFn,
@@ -72,7 +80,23 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    onColumnFiltersChange: setInternalColumnFilters,
   })
+  useEffect(() => {
+    if (columnFilter && columnFilter.length > 0) {
+      const mapped = columnFilter
+        .filter(f => f.value !== "All")
+        .map(f => ({
+          id: String(f.columnId),
+          value: f.value,
+        }))
+      setInternalColumnFilters(mapped)
+    } else {
+      setInternalColumnFilters([])
+    }
+  }, [columnFilter])
+
+
 
   return (
     <>
@@ -117,6 +141,11 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
 
                 </motion.div>
                 <motion.div className="flex items-center gap-1 ">
+                  <div className="font-semibold">Category :</div>
+                  <div>{active.Category}</div>
+
+                </motion.div>
+                <motion.div className="flex items-center gap-1 ">
                   <div className="font-semibold">Language :</div>
                   <div>{active.Language}</div>
 
@@ -124,6 +153,11 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
                 <motion.div className="flex items-center gap-1 ">
                   <div className="font-semibold">Available Copies :</div>
                   <div>{active.Available_Copies}</div>
+
+                </motion.div>
+                <motion.div className="flex items-center gap-1 ">
+                  <div className="font-semibold">Total Pages :</div>
+                  <div>{active.Pages}</div>
 
                 </motion.div>
                 <motion.div >
@@ -142,7 +176,24 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {loading ? (
             [...Array(initialPageSize)].map((_, idx) => (
-              <div key={idx} className="h-40 w-full rounded-t-lg card__skeleton" />
+              <motion.div
+                key={idx}
+                className="animate-pulse"
+              >
+                <div className="flex items-center justify-center h-48 mb-4 bg-gray-300 rounded-sm dark:bg-gray-700">
+                <BookOpenText className="w-20 h-20 text-gray-200" />
+                </div>
+                <div className="mt-2">
+                  <motion.h2 className="text-lg font-semibold m-3 h-2.5 bg-gray-200 w-32 rounded-md">
+                  </motion.h2>
+                  <div className="flex items-center justify-between">
+
+                    <p className="text-gray-600 mx-3 bg-gray-200 h-2.5 w-20 rounded-md"></p>
+                    <span className="h-2.5 w-12 bg-gray-200 rounded-md"></span>
+                  </div>
+
+                </div>
+              </motion.div>
             ))
           ) : (
             table.getRowModel().rows.map(row => {

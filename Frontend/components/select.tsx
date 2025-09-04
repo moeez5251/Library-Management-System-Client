@@ -10,11 +10,13 @@ import {
 interface SelectComponentProps {
     array: (string | number)[]
     name: string
+    value: string
+    onchange: (value: string) => void
 }
 
-const SelectComponent: React.FC<SelectComponentProps> = ({ array, name }) => {
+const SelectComponent: React.FC<SelectComponentProps> = ({ array, name, value, onchange }) => {
     return (
-        <Select>
+        <Select value={value} onValueChange={onchange} >
             <SelectTrigger className="w-[150px] bg-white text-black  border-none    ">
                 <SelectValue className='text-black' placeholder={name} />
             </SelectTrigger>

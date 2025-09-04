@@ -196,15 +196,7 @@ input:focus~.highlight {
     background: transparent;
   }
 }
-.card__skeleton {
-  background-image: linear-gradient(90deg,
-      #ccc 0px,
-      rgb(229 229 229 / 90%) 40px,
-      #f1f1fd 80px);
-  background-size: 300%;
-  background-position: 100% 0;
-  animation: shimmer 1.5s infinite;
-}
+
 
 @keyframes shimmer {
   to {

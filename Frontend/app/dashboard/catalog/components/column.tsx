@@ -8,6 +8,8 @@ export type Product = {
   Language:string
   Available_Copies:number
   Status:string
+  Category:string
+  Pages:number
 }
 
 export const productColumns: ColumnDef<Product>[] = [
@@ -55,5 +57,11 @@ export const productColumns: ColumnDef<Product>[] = [
       <p className="text-gray-600 m-3">{row.original.Status}</p>
     )
   }
-
+  ,{
+    accessorKey: "Category",
+    header: "Category",
+    cell: ({ row }) => (
+      <p className="text-gray-600 m-3">{row.original.Category}</p>
+    )
+  }
 ]
