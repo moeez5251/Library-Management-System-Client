@@ -1,7 +1,5 @@
 "use client"
 import React, { useState, useId, useRef, useEffect } from "react"
-import { BookOpenText } from "lucide-react";
-
 import {
   useReactTable,
   getCoreRowModel,
@@ -19,6 +17,7 @@ import { PaginationControls } from "./pagination"
 import { useOutsideClick } from "@/hooks/use-outside-click"
 import { ProductImageCell } from "@/app/dashboard/catalog/components/productimage"
 import Badge from "./badge"
+import Lender from "./Lend"
 interface ProductsGridProps<TData> {
   data: TData[]
   pageSize?: number
@@ -58,7 +57,6 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
       String(val).toLowerCase().includes(search)
     )
   }
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [internalColumnFilters, setInternalColumnFilters] = useState<ColumnFiltersState>([])
 
   const table = useReactTable({
@@ -96,6 +94,12 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
     }
   }, [columnFilter])
 
+  useEffect(() => {
+    setPagination(prev => ({
+      ...prev,
+      pageSize: initialPageSize,
+    }))
+  }, [initialPageSize])
 
 
   return (
@@ -117,16 +121,16 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
             <motion.div
               layoutId={`card-${active.id}-${id}`}
               ref={ref}
-              className="w-full max-w-[500px] bg-white rounded-2xl shadow-md overflow-hidden"
+              className="w-full max-w-[500px]  bg-white rounded-2xl shadow-md "
             >
               <motion.div layoutId={`image-${active.id}-${id}`}>
                 <ProductImageCell id={active.id} />
               </motion.div>
-              <div className="p-5 space-y-2 flex flex-col gap-2">
-                <motion.h3 layoutId={`title-${active.id}-${id}`} className="text-lg font-semibold flex items-center justify-between">
+              <div className="p-5 space-y-2 flex flex-col gap-1.5">
+                <motion.h3 layoutId={`title-${active.id}-${id}`} className="text-lg font-semibold flex items-baseline justify-between">
                   {active.name}
                   <span className="text-sm text-muted-foreground">
-                    Book ID:{active.id}
+                    Book ID : {active.id.toString().length > 7 ? active.id.toString().slice(0, 7) + " ..." : active.id.toString()}
 
                   </span>
                 </motion.h3>
@@ -163,7 +167,9 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
                 <motion.div >
                   <Badge status={active.Status} />
                 </motion.div>
-
+                <motion.div className="flex items-center gap-1 w-full">
+                  <Lender status={active.Status !== "Available"} id={active.id} />
+                </motion.div>
 
               </div>
             </motion.div>
@@ -189,7 +195,6 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
                   <motion.h2 className="text-lg font-semibold m-3 h-2.5 bg-gray-200 w-32 rounded-md">
                   </motion.h2>
                   <div className="flex items-center justify-between">
-
                     <p className="text-gray-600 mx-3 bg-gray-200 h-2.5 w-20 rounded-md"></p>
                     <span className="h-2.5 w-12 bg-gray-200 rounded-md"></span>
                   </div>

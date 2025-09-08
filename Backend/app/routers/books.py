@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from app.database import get_connection
-from app.schemas.book import Book 
+from app.schemas.book import Book,LendBook
 router = APIRouter(prefix="/books", tags=["books"])
 
 
@@ -18,3 +18,9 @@ def get_books():
         raise HTTPException(status_code=500, detail=f"Database error {e}",)
     finally:
         conn.close()
+@router.post("/lend")
+def lend_book(book:LendBook):
+    conn=get_connection()
+    cursor=conn.cursor()
+    # try:
+        

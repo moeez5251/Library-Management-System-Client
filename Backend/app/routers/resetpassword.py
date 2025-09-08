@@ -96,7 +96,7 @@ def resetpassword(user:EmailRequest):
 
         🔑 Reset Password:  https://xlms-admin.netlify.app/reset-password?token={token}
 
-        This link is valid for 24 hours.  
+        This link is valid for 30 minutes.  
         If you didn't request a password reset, you can safely ignore this email or contact our support team for help.
 
         © 2025 XLMS. All rights reserved.
