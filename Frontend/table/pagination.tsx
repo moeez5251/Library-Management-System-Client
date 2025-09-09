@@ -15,7 +15,7 @@ export function PaginationControls<TData>({ table }: PaginationControlsProps<TDa
   const pageCount = table.getPageCount()
   const currentPage = table.getState().pagination.pageIndex
   const visiblePages = Array.from({ length: pageCount }, (_, i) => i)
-
+  
   return (
     <div className="flex items-center justify-center gap-2  pt-4 flex-wrap">
       <button
@@ -41,7 +41,7 @@ export function PaginationControls<TData>({ table }: PaginationControlsProps<TDa
           onClick={() => table.setPageIndex(page)}
           className={`${
             currentPage === page
-              ? "bg-[#6841c4] text-white px-3 py-1 rounded-full"
+              ? "bg-[#1f4f54] text-white px-3 py-1 rounded-full"
               : "px-3 py-1"
           } font-semibold mx-1 cursor-pointer`}
         >

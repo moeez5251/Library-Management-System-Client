@@ -24,7 +24,6 @@ const Catalog = () => {
   const [statusFilter, setSetstatusFilter] = useState<string[]>([])
   const [pageSize, setPageSize] = useState<string>("2")
   const [Loading, setLoading] = useState(true)
-
   const fetch_data = async () => {
     const data = await fetch("http://127.0.0.1:8000/books/getall")
     if (!data.ok) {
@@ -39,7 +38,7 @@ const Catalog = () => {
   useEffect(() => {
     fetch_data()
     return () => {
-    
+
     }
   }, [])
 
@@ -53,7 +52,8 @@ const Catalog = () => {
 
     }
   }, [BookData])
-
+  
+  
   return (
     <>
       <Toaster />
@@ -77,7 +77,7 @@ const Catalog = () => {
           <div className='font-semibold text-[#637277]'>
             No of rows :
           </div>
-          <Select value={pageSize} onValueChange={setPageSize}>
+          <Select disabled={Loading} value={pageSize} onValueChange={setPageSize}>
             <SelectTrigger className="w-[70px] bg-white text-black  border-none    ">
               <SelectValue placeholder="Page Size" />
             </SelectTrigger>

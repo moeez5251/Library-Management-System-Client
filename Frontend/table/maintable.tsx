@@ -100,8 +100,8 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
       pageSize: initialPageSize,
     }))
   }, [initialPageSize])
-
-
+ 
+  
   return (
     <>
       <AnimatePresence>
