@@ -17,7 +17,15 @@ import { PaginationControls } from "./pagination"
 import { useOutsideClick } from "@/hooks/use-outside-click"
 import { ProductImageCell } from "@/app/dashboard/catalog/components/productimage"
 import Badge from "./badge"
-import Lender from "./Lend"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { X } from "lucide-react"
 interface ProductsGridProps<TData> {
   data: TData[]
   pageSize?: number
@@ -40,6 +48,7 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
     pageIndex: 0,
     pageSize: initialPageSize,
   })
+  const [trigger, setTrigger] = useState<boolean>(true)
 
   const [active, setActive] = useState<TData | null>(null)
   const id = useId()
@@ -100,8 +109,10 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
       pageSize: initialPageSize,
     }))
   }, [initialPageSize])
- 
-  
+
+  const handleclick = (id: (number | string)) => {
+    setTrigger(true)
+  }
   return (
     <>
       <AnimatePresence>
@@ -168,7 +179,7 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
                   <Badge status={active.Status} />
                 </motion.div>
                 <motion.div className="flex items-center gap-1 w-full">
-                  <Lender status={active.Status !== "Available"} id={active.id} />
+                  <button onClick={() => handleclick(active.id)} disabled={active.Status !== "Available"} className='bg-[#154149] font-semibold text-white px-4 py-2 rounded-md w-full cursor-pointer scale-100 hover:scale-105 transition-transform disabled:bg-gray-400 disabled:cursor-auto disabled:pointer-events-none'>Lend Book</button>
                 </motion.div>
 
               </div>
@@ -233,6 +244,18 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
         </div>
         <PaginationControls table={table} />
       </div>
+      <Dialog open={trigger} onOpenChange={setTrigger}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle/>
+            <DialogDescription />
+
+          </DialogHeader>
+          <div onClick={() => setTrigger(false)} className="bg-gray-400 w-fit p-1 rounded-full cursor-pointer absolute right-2.5 top-2.5 z-10" >
+            <X size={20} />
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   )
 }

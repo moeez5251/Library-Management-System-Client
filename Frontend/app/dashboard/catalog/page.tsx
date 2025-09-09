@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+
 const Catalog = () => {
   const [search, setsearch] = useState<string>("")
   const [BookData, setBookData] = useState([])
@@ -52,47 +53,48 @@ const Catalog = () => {
 
     }
   }, [BookData])
+
   
-  
+
   return (
     <>
       <Toaster />
-      <h1 className='text-2xl font-extrabold mx-3 my-2  '>Browse Books</h1>
-      <div className='flex items-center mx-3 my-3 gap-3 bg-white p-3 rounded-lg'>
-        <div>
-          <Search className='text-[#6841c4]' size={22} />
-        </div>
-        <input value={search} onChange={(e) => setsearch(e.target.value)} className='bg-none border-none outline-none w-full font-medium' type="text" name="search" id="search" placeholder='Search by title,author or genre' />
-        <X onClick={() => setsearch("")} className={`text-[#6841c4] scale-100 hover:scale-105 transition-transform cursor-pointer ${search.length > 0 ? "block" : "hidden"}`} size={20} />
-      </div>
-      <div>
-      </div>
-      <div className='flex items-center justify-between mx-3'>
-        <div className='flex items-center gap-4'>
-          <SelectComponent value={Language} onchange={setLanguage} name="Language" array={LangugesFilter} />
-          <SelectComponent value={Author} onchange={setAuthor} name="Author" array={AuthorFilter} />
-          <SelectComponent value={status} onchange={setstatus} name="Availability" array={statusFilter} />
-        </div>
-        <div className='flex items-center gap-3'>
-          <div className='font-semibold text-[#637277]'>
-            No of rows :
+
+        <h1 className='text-2xl font-extrabold mx-3 my-2  '>Browse Books</h1>
+        <div className='flex items-center mx-3 my-3 gap-3 bg-white p-3 rounded-lg'>
+          <div>
+            <Search className='text-[#6841c4]' size={22} />
           </div>
-          <Select disabled={Loading} value={pageSize} onValueChange={setPageSize}>
-            <SelectTrigger className="w-[70px] bg-white text-black  border-none    ">
-              <SelectValue placeholder="Page Size" />
-            </SelectTrigger>
-            <SelectContent className='bg-white border-none'>
-              <SelectItem value="2">2</SelectItem>
-              <SelectItem value="4">4</SelectItem>
-              <SelectItem value="6">6</SelectItem>
-              <SelectItem value="8">8</SelectItem>
-            </SelectContent>
-          </Select>
+          <input value={search} onChange={(e) => setsearch(e.target.value)} className='bg-none border-none outline-none w-full font-medium' type="text" name="search" id="search" placeholder='Search by title,author or genre' />
+          <X onClick={() => setsearch("")} className={`text-[#6841c4] scale-100 hover:scale-105 transition-transform cursor-pointer ${search.length > 0 ? "block" : "hidden"}`} size={20} />
         </div>
-      </div>
-      <ProductsGrid data={BookData} columns={productColumns} pageSize={parseInt(pageSize) * 3} loading={Loading} externalFilter={search} columnFilter={[{ columnId: "Language", value: Language }, { columnId: "Author", value: Author }, { columnId: "Status", value: status }]} />
-
-
+        <div>
+        </div>
+        <div className='flex items-center justify-between mx-3'>
+          <div className='flex items-center gap-4'>
+            <SelectComponent value={Language} onchange={setLanguage} name="Language" array={LangugesFilter} />
+            <SelectComponent value={Author} onchange={setAuthor} name="Author" array={AuthorFilter} />
+            <SelectComponent value={status} onchange={setstatus} name="Availability" array={statusFilter} />
+          </div>
+          <div className='flex items-center gap-3'>
+            <div className='font-semibold text-[#637277]'>
+              No of rows :
+            </div>
+            <Select disabled={Loading} value={pageSize} onValueChange={setPageSize}>
+              <SelectTrigger className="w-[70px] bg-white text-black  border-none    ">
+                <SelectValue placeholder="Page Size" />
+              </SelectTrigger>
+              <SelectContent className='bg-white border-none'>
+                <SelectItem value="2">2</SelectItem>
+                <SelectItem value="4">4</SelectItem>
+                <SelectItem value="6">6</SelectItem>
+                <SelectItem value="8">8</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <ProductsGrid data={BookData} columns={productColumns} pageSize={parseInt(pageSize) * 3} loading={Loading} externalFilter={search} columnFilter={[{ columnId: "Language", value: Language }, { columnId: "Author", value: Author }, { columnId: "Status", value: status }]} />
+  
     </>
   )
 }
