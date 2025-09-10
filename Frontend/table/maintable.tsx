@@ -247,10 +247,15 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
       <Dialog open={trigger} onOpenChange={setTrigger}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle/>
+            <DialogTitle>Lend Book ?</DialogTitle>
             <DialogDescription />
-
           </DialogHeader>
+          <div>
+            <h1 className="font-semibold">
+
+            Choose number of copies to lend 
+            </h1>
+          </div>
           <div onClick={() => setTrigger(false)} className="bg-gray-400 w-fit p-1 rounded-full cursor-pointer absolute right-2.5 top-2.5 z-10" >
             <X size={20} />
           </div>
