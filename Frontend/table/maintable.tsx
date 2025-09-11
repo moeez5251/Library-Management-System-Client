@@ -25,7 +25,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { X } from "lucide-react"
+import { X, Plus, Minus } from "lucide-react"
 interface ProductsGridProps<TData> {
   data: TData[]
   pageSize?: number
@@ -34,7 +34,13 @@ interface ProductsGridProps<TData> {
   columns: ColumnDef<TData>[]
   columnFilter?: { columnId: keyof TData; value: string }[]
 }
-
+interface Lendedinfo {
+  name: string
+  author: string
+  price: number
+  Language: string
+  Available_Copies: number
+}
 export function ProductsGrid<TData extends { id: string | number; name: string; price: number, Author: string, Language: string, Available_Copies: number, Status: string, Category: string, Pages: number }>({
   data,
   columns,
@@ -48,8 +54,24 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
     pageIndex: 0,
     pageSize: initialPageSize,
   })
-  const [trigger, setTrigger] = useState<boolean>(true)
-
+  const [trigger, setTrigger] = useState<boolean>(false)
+  const [Copies, setCopies] = useState<
+    {
+      current: number
+      max: number
+    }>({ current: 0, max: 0 })
+  const [disabledcartbuttons, setdisabledcartbuttons] = useState<
+    {
+      plus: boolean
+      minus: boolean
+    }>({ plus: false, minus: false })
+  const [lenedbookinfo, setLenedbookinfo] = useState<Lendedinfo>({
+    name: "",
+    author: "",
+    price: 0,
+    Language: "",
+    Available_Copies: 0
+  })
   const [active, setActive] = useState<TData | null>(null)
   const id = useId()
   const ref = useRef<HTMLDivElement>(null)
@@ -111,8 +133,81 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
   }, [initialPageSize])
 
   const handleclick = (id: (number | string)) => {
+    setdisabledcartbuttons({ plus: false, minus: false })
+    setLenedbookinfo({
+      name: active?.name ?? "",
+      author: active?.Author ?? "",
+      price: active?.price ?? 0,
+      Language: active?.Language ?? "",
+      Available_Copies: active?.Available_Copies ?? 0
+
+    })
+    setCopies({
+      current: 0,
+      max: Number(active?.Available_Copies) ?? 0
+    })
+    setActive(null)
     setTrigger(true)
+
   }
+  const handleadd = (): void => {
+    if (Copies.current < Copies.max) {
+      setCopies(prev => ({
+        ...prev,
+        current: prev.current + 1
+      }))
+    } else {
+      setdisabledcartbuttons(prev => ({
+        ...prev,
+        plus: true
+      }))
+    }
+
+    if (Copies.current >= 0) {
+      setdisabledcartbuttons(prev => ({
+        ...prev,
+        minus: false
+      }))
+    }
+  }
+
+  const handleminus = (): void => {
+    if (Copies.current > 0) {
+      setCopies(prev => ({
+        ...prev,
+        current: prev.current - 1
+      }))
+    } else {
+      setdisabledcartbuttons(prev => ({
+        ...prev,
+        minus: true
+      }))
+    }
+    if (Copies.current <= Copies.max) {
+      setdisabledcartbuttons(prev => ({
+        ...prev,
+        plus: false
+      }))
+    }
+  }
+  useEffect(() => {
+    if (Copies.current === Copies.max) {
+      setdisabledcartbuttons(prev => ({
+        ...prev,
+        plus: true
+      }))
+    }
+    if (Copies.current === 0) {
+      setdisabledcartbuttons(prev => ({
+        ...prev,
+        minus: true
+      }))
+    }
+    return () => {
+
+    }
+  }, [Copies])
+
   return (
     <>
       <AnimatePresence>
@@ -245,18 +340,40 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
         <PaginationControls table={table} />
       </div>
       <Dialog open={trigger} onOpenChange={setTrigger}>
-        <DialogContent>
+        <DialogContent className="border-none shadow-md" onInteractOutside={e => e.preventDefault()} onEscapeKeyDown={e => e.preventDefault()}>
           <DialogHeader>
             <DialogTitle>Lend Book ?</DialogTitle>
             <DialogDescription />
           </DialogHeader>
           <div>
-            <h1 className="font-semibold">
+            <div className="mb-4">
+              <h1 className="font-semibold">
 
-            Choose number of copies to lend 
+                Book Details are as follows
+              </h1>
+              <div className="my-2 flex flex-col justify-center gap-1 font-normal">
+                <div>Name : {lenedbookinfo.name}</div>
+                <div>Author : {lenedbookinfo.author}</div>
+                <div>Price Per Copy : {lenedbookinfo.price}</div>
+                <div>Language : {lenedbookinfo.Language}</div>
+                <div>Available Copies : {lenedbookinfo.Available_Copies}</div>
+
+              </div>
+            </div>
+            <h1 className="font-semibold  text-center text-lg">
+
+              Choose number of copies to lend
             </h1>
+            <div className="flex items-center justify-center my-4 gap-2.5">
+              <button disabled={disabledcartbuttons.plus} onClick={handleadd} className="cursor-pointer bg-[#154149] rounded-full p-1 scale-100 hover:scale-110  transition-transform  disabled:bg-gray-400 disabled:pointer-events-none disabled:cursor-auto"><Plus size={20} className="text-white" /></button>
+              <span className="bg-gray-200 px-4  py-0.5 rounded-sm ">{Copies.current}</span>
+              <button disabled={disabledcartbuttons.minus} onClick={handleminus} className="cursor-pointer bg-[#154149] rounded-full p-1 scale-100 hover:scale-110  transition-transform  disabled:bg-gray-400 disabled:pointer-events-none disabled:cursor-auto"><Minus size={20} className="text-white" /></button>
+
+            </div>
+            <div className="font-semibold text-lg my-3">Final Price : {Copies.current * lenedbookinfo.price}</div>
+            <button className="bg-[#154149] text-white p-2 cursor-pointer rounded-md w-full scale-95 hover:scale-100  transition-transform "> Proceed to checkout </button>
           </div>
-          <div onClick={() => setTrigger(false)} className="bg-gray-400 w-fit p-1 rounded-full cursor-pointer absolute right-2.5 top-2.5 z-10" >
+          <div onClick={() => { setTrigger(false); setLenedbookinfo({ name: "", author: "", price: 0, Language: "", Available_Copies: 0 }); setdisabledcartbuttons({ plus: false, minus: false }); setCopies({ current: 0, max: 0 }) }} className="bg-gray-400 w-fit p-1 rounded-full cursor-pointer absolute right-2.5 top-2.5 z-10" >
             <X size={20} />
           </div>
         </DialogContent>
