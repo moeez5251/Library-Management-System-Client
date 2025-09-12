@@ -23,9 +23,16 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 import { X, Plus, Minus } from "lucide-react"
+import { DatePicker } from "@/components/Datepickers"
+import { Modal } from "@/components/custommodal"
 interface ProductsGridProps<TData> {
   data: TData[]
   pageSize?: number
@@ -40,6 +47,7 @@ interface Lendedinfo {
   price: number
   Language: string
   Available_Copies: number
+  Date: Date
 }
 export function ProductsGrid<TData extends { id: string | number; name: string; price: number, Author: string, Language: string, Available_Copies: number, Status: string, Category: string, Pages: number }>({
   data,
@@ -70,12 +78,14 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
     author: "",
     price: 0,
     Language: "",
-    Available_Copies: 0
+    Available_Copies: 0,
+    Date: new Date(),
+
   })
   const [active, setActive] = useState<TData | null>(null)
+  const [checkoutmodal, setCheckoutmodal] = useState<boolean>(true)
   const id = useId()
   const ref = useRef<HTMLDivElement>(null)
-
   useOutsideClick(ref, () => setActive(null))
 
   useEffect(() => {
@@ -135,12 +145,12 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
   const handleclick = (id: (number | string)) => {
     setdisabledcartbuttons({ plus: false, minus: false })
     setLenedbookinfo({
+      ...lenedbookinfo,
       name: active?.name ?? "",
       author: active?.Author ?? "",
       price: active?.price ?? 0,
       Language: active?.Language ?? "",
       Available_Copies: active?.Available_Copies ?? 0
-
     })
     setCopies({
       current: 0,
@@ -207,6 +217,13 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
 
     }
   }, [Copies])
+  useEffect(() => {
+    console.log(lenedbookinfo);
+
+    return () => {
+
+    }
+  }, [lenedbookinfo])
 
   return (
     <>
@@ -339,7 +356,7 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
         </div>
         <PaginationControls table={table} />
       </div>
-      <Dialog open={trigger} onOpenChange={setTrigger}>
+      <Dialog open={trigger} onOpenChange={setTrigger} >
         <DialogContent className="border-none shadow-md" onInteractOutside={e => e.preventDefault()} onEscapeKeyDown={e => e.preventDefault()}>
           <DialogHeader>
             <DialogTitle>Lend Book ?</DialogTitle>
@@ -373,11 +390,125 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
             <div className="font-semibold text-lg my-3">Final Price : {Copies.current * lenedbookinfo.price}</div>
             <button className="bg-[#154149] text-white p-2 cursor-pointer rounded-md w-full scale-95 hover:scale-100  transition-transform "> Proceed to checkout </button>
           </div>
-          <div onClick={() => { setTrigger(false); setLenedbookinfo({ name: "", author: "", price: 0, Language: "", Available_Copies: 0 }); setdisabledcartbuttons({ plus: false, minus: false }); setCopies({ current: 0, max: 0 }) }} className="bg-gray-400 w-fit p-1 rounded-full cursor-pointer absolute right-2.5 top-2.5 z-10" >
+          <div onClick={() => { setTrigger(false); setLenedbookinfo({ ...lenedbookinfo, name: "", author: "", price: 0, Language: "", Available_Copies: 0, }); setdisabledcartbuttons({ plus: false, minus: false }); setCopies({ current: 0, max: 0 }) }} className="bg-gray-400 w-fit p-1 rounded-full cursor-pointer absolute right-2.5 top-2.5 z-10" >
             <X size={20} />
           </div>
         </DialogContent>
       </Dialog>
+      {/* <Dialog open modal={false} onOpenChange={setTrigger}>
+        <DialogContent className="border-none shadow-md">
+          <DialogHeader>
+            <DialogTitle>Check Out</DialogTitle>
+            <DialogDescription />
+          </DialogHeader>
+          <div className="max-h-[70vh] overflow-hidden">
+            <Accordion className="border-none outline-none" type="single" collapsible>
+              <AccordionItem className="border-none" value="item-1">
+                <AccordionTrigger className="font-semibold">Book Details</AccordionTrigger>
+                <AccordionContent className="overflow-visible">
+                  <div className="my-2 flex flex-col justify-center gap-1.5 font-normal">
+                    <div className="flex items-center justify-between font-semibold">Name : <div>
+
+                      {lenedbookinfo.name}
+                    </div>
+                    </div>
+                    <div className="flex items-center justify-between font-semibold">Author : <div>
+
+                      {lenedbookinfo.author}
+                    </div>
+                    </div>
+                    <div className="flex items-center justify-between font-semibold">Price Per Copy : <div>
+
+                      {lenedbookinfo.price}
+                    </div>
+                    </div>
+                    <div className="flex items-center justify-between font-semibold">Language : <div>
+
+                      {lenedbookinfo.Language}
+                    </div>
+                    </div>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem  value="item-2">
+                <AccordionTrigger className="font-semibold">Lending Details</AccordionTrigger>
+                <AccordionContent>
+                  <div className="my-2 flex flex-col justify-center gap-1.5 font-normal">
+                    <DatePicker
+
+                      date={lenedbookinfo.Date}
+                      onChange={(newDate) =>
+                        setLenedbookinfo((prev) => ({
+                          ...prev,
+                          Date: newDate ?? new Date(), 
+                        }))
+                      }
+                      label="Date"
+                      disabled={false}
+                    />
+
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+
+          </div>
+          <div className="bg-gray-400 w-fit p-1 rounded-full cursor-pointer absolute right-2.5 top-2.5 z-10" >
+            <X size={20} />
+          </div>
+        </DialogContent>
+      </Dialog> */}
+      <Modal open={checkoutmodal} onClose={() => setCheckoutmodal(false)} title="Checkout" >
+        <Accordion className="border-none outline-none" type="single" collapsible>
+          <AccordionItem className="border-none" value="item-1">
+            <AccordionTrigger className="font-semibold">Book Details</AccordionTrigger>
+            <AccordionContent className="overflow-visible">
+              <div className="my-2 flex flex-col justify-center gap-1.5 font-normal">
+                <div className="flex items-center justify-between font-semibold">Name : <div>
+
+                  {lenedbookinfo.name}
+                </div>
+                </div>
+                <div className="flex items-center justify-between font-semibold">Author : <div>
+
+                  {lenedbookinfo.author}
+                </div>
+                </div>
+                <div className="flex items-center justify-between font-semibold">Price Per Copy : <div>
+
+                  {lenedbookinfo.price}
+                </div>
+                </div>
+                <div className="flex items-center justify-between font-semibold">Language : <div>
+
+                  {lenedbookinfo.Language}
+                </div>
+                </div>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="item-2">
+            <AccordionTrigger className="font-semibold">Lending Details</AccordionTrigger>
+            <AccordionContent>
+              <div className="my-2 flex flex-col justify-center gap-1.5 font-normal">
+                <DatePicker
+
+                  date={lenedbookinfo.Date}
+                  onChange={(newDate) =>
+                    setLenedbookinfo((prev) => ({
+                      ...prev,
+                      Date: newDate ?? new Date(),
+                    }))
+                  }
+                  label="Lending Date"
+                  disabled={{before: new Date(new Date().setDate(new Date().getDate() - 1)), after: new Date() }}
+                />
+
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      </Modal>
     </>
   )
 }
