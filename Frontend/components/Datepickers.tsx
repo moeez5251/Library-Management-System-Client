@@ -22,7 +22,6 @@ interface DatePickerProps {
 export function DatePicker({ label, date, onChange, disabled }: DatePickerProps) {
   const [open, setOpen] = React.useState(false)
 
-  // Convert our disabled prop into a function that Calendar understands
   const calendarDisabled = React.useCallback(
     (currentDate: Date) => {
       if (typeof disabled === "boolean") return disabled
@@ -37,7 +36,7 @@ export function DatePicker({ label, date, onChange, disabled }: DatePickerProps)
   )
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-3 ">
       <Label htmlFor="date" className="px-1 font-semibold text-sm gap-1">
         {label}
       </Label>

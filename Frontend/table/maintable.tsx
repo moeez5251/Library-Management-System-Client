@@ -73,21 +73,23 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
       plus: boolean
       minus: boolean
     }>({ plus: false, minus: false })
-  const [lenedbookinfo, setLenedbookinfo] = useState<Lendedinfo>({
+  const [lendedbookinfo, setlendedbookinfo] = useState<Lendedinfo>({
     name: "",
     author: "",
     price: 0,
     Language: "",
     Available_Copies: 0,
-    Date: new Date(),
-
+    Date: new Date(new Date().setDate(new Date().getDate() + 1))
   })
   const [active, setActive] = useState<TData | null>(null)
   const [checkoutmodal, setCheckoutmodal] = useState<boolean>(true)
   const id = useId()
   const ref = useRef<HTMLDivElement>(null)
   useOutsideClick(ref, () => setActive(null))
-
+  function getDaysDifference(date1: Date, date2: Date): number {
+    const diffInMs: number = Math.abs(date2.getDate() - date1.getDate());
+    return diffInMs;
+  }
   useEffect(() => {
     document.body.style.overflow = active ? "hidden" : "auto"
   }, [active])
@@ -144,8 +146,8 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
 
   const handleclick = (id: (number | string)) => {
     setdisabledcartbuttons({ plus: false, minus: false })
-    setLenedbookinfo({
-      ...lenedbookinfo,
+    setlendedbookinfo({
+      ...lendedbookinfo,
       name: active?.name ?? "",
       author: active?.Author ?? "",
       price: active?.price ?? 0,
@@ -218,12 +220,11 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
     }
   }, [Copies])
   useEffect(() => {
-    console.log(lenedbookinfo);
-
+    console.log(getDaysDifference(lendedbookinfo.Date, new Date()), lendedbookinfo.Date);
     return () => {
 
     }
-  }, [lenedbookinfo])
+  }, [lendedbookinfo])
 
   return (
     <>
@@ -369,11 +370,11 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
                 Book Details are as follows
               </h1>
               <div className="my-2 flex flex-col justify-center gap-1 font-normal">
-                <div>Name : {lenedbookinfo.name}</div>
-                <div>Author : {lenedbookinfo.author}</div>
-                <div>Price Per Copy : {lenedbookinfo.price}</div>
-                <div>Language : {lenedbookinfo.Language}</div>
-                <div>Available Copies : {lenedbookinfo.Available_Copies}</div>
+                <div>Name : {lendedbookinfo.name}</div>
+                <div>Author : {lendedbookinfo.author}</div>
+                <div>Price Per Copy : {lendedbookinfo.price}</div>
+                <div>Language : {lendedbookinfo.Language}</div>
+                <div>Available Copies : {lendedbookinfo.Available_Copies}</div>
 
               </div>
             </div>
@@ -387,77 +388,14 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
               <button disabled={disabledcartbuttons.minus} onClick={handleminus} className="cursor-pointer bg-[#154149] rounded-full p-1 scale-100 hover:scale-110  transition-transform  disabled:bg-gray-400 disabled:pointer-events-none disabled:cursor-auto"><Minus size={20} className="text-white" /></button>
 
             </div>
-            <div className="font-semibold text-lg my-3">Final Price : {Copies.current * lenedbookinfo.price}</div>
+            <div className="font-semibold text-lg my-3">Final Price : {Copies.current * lendedbookinfo.price}</div>
             <button className="bg-[#154149] text-white p-2 cursor-pointer rounded-md w-full scale-95 hover:scale-100  transition-transform "> Proceed to checkout </button>
           </div>
-          <div onClick={() => { setTrigger(false); setLenedbookinfo({ ...lenedbookinfo, name: "", author: "", price: 0, Language: "", Available_Copies: 0, }); setdisabledcartbuttons({ plus: false, minus: false }); setCopies({ current: 0, max: 0 }) }} className="bg-gray-400 w-fit p-1 rounded-full cursor-pointer absolute right-2.5 top-2.5 z-10" >
+          <div onClick={() => { setTrigger(false); setlendedbookinfo({ ...lendedbookinfo, name: "", author: "", price: 0, Language: "", Available_Copies: 0, }); setdisabledcartbuttons({ plus: false, minus: false }); setCopies({ current: 0, max: 0 }) }} className="bg-gray-400 w-fit p-1 rounded-full cursor-pointer absolute right-2.5 top-2.5 z-10" >
             <X size={20} />
           </div>
         </DialogContent>
       </Dialog>
-      {/* <Dialog open modal={false} onOpenChange={setTrigger}>
-        <DialogContent className="border-none shadow-md">
-          <DialogHeader>
-            <DialogTitle>Check Out</DialogTitle>
-            <DialogDescription />
-          </DialogHeader>
-          <div className="max-h-[70vh] overflow-hidden">
-            <Accordion className="border-none outline-none" type="single" collapsible>
-              <AccordionItem className="border-none" value="item-1">
-                <AccordionTrigger className="font-semibold">Book Details</AccordionTrigger>
-                <AccordionContent className="overflow-visible">
-                  <div className="my-2 flex flex-col justify-center gap-1.5 font-normal">
-                    <div className="flex items-center justify-between font-semibold">Name : <div>
-
-                      {lenedbookinfo.name}
-                    </div>
-                    </div>
-                    <div className="flex items-center justify-between font-semibold">Author : <div>
-
-                      {lenedbookinfo.author}
-                    </div>
-                    </div>
-                    <div className="flex items-center justify-between font-semibold">Price Per Copy : <div>
-
-                      {lenedbookinfo.price}
-                    </div>
-                    </div>
-                    <div className="flex items-center justify-between font-semibold">Language : <div>
-
-                      {lenedbookinfo.Language}
-                    </div>
-                    </div>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem  value="item-2">
-                <AccordionTrigger className="font-semibold">Lending Details</AccordionTrigger>
-                <AccordionContent>
-                  <div className="my-2 flex flex-col justify-center gap-1.5 font-normal">
-                    <DatePicker
-
-                      date={lenedbookinfo.Date}
-                      onChange={(newDate) =>
-                        setLenedbookinfo((prev) => ({
-                          ...prev,
-                          Date: newDate ?? new Date(), 
-                        }))
-                      }
-                      label="Date"
-                      disabled={false}
-                    />
-
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-
-          </div>
-          <div className="bg-gray-400 w-fit p-1 rounded-full cursor-pointer absolute right-2.5 top-2.5 z-10" >
-            <X size={20} />
-          </div>
-        </DialogContent>
-      </Dialog> */}
       <Modal open={checkoutmodal} onClose={() => setCheckoutmodal(false)} title="Checkout" >
         <Accordion className="border-none outline-none" type="single" collapsible>
           <AccordionItem className="border-none" value="item-1">
@@ -466,22 +404,22 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
               <div className="my-2 flex flex-col justify-center gap-1.5 font-normal">
                 <div className="flex items-center justify-between font-semibold">Name : <div>
 
-                  {lenedbookinfo.name}
+                  {lendedbookinfo.name}
                 </div>
                 </div>
                 <div className="flex items-center justify-between font-semibold">Author : <div>
 
-                  {lenedbookinfo.author}
+                  {lendedbookinfo.author}
                 </div>
                 </div>
                 <div className="flex items-center justify-between font-semibold">Price Per Copy : <div>
 
-                  {lenedbookinfo.price}
+                  {lendedbookinfo.price}
                 </div>
                 </div>
                 <div className="flex items-center justify-between font-semibold">Language : <div>
 
-                  {lenedbookinfo.Language}
+                  {lendedbookinfo.Language}
                 </div>
                 </div>
               </div>
@@ -490,18 +428,24 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
           <AccordionItem value="item-2">
             <AccordionTrigger className="font-semibold">Lending Details</AccordionTrigger>
             <AccordionContent>
-              <div className="my-2 flex flex-col justify-center gap-1.5 font-normal">
+              <div className="my-2 flex items-center justify-between font-normal ">
                 <DatePicker
 
-                  date={lenedbookinfo.Date}
+                  date={new Date()}
+                  onChange={() => { }}
+                  label="Lending Date"
+                  disabled={{ before: new Date(new Date().setDate(new Date().getDate() - 1)), after: new Date() }}
+                />
+                <DatePicker
+                  date={lendedbookinfo.Date}
                   onChange={(newDate) =>
-                    setLenedbookinfo((prev) => ({
+                    setlendedbookinfo((prev) => ({
                       ...prev,
                       Date: newDate ?? new Date(),
                     }))
                   }
-                  label="Lending Date"
-                  disabled={{before: new Date(new Date().setDate(new Date().getDate() - 1)), after: new Date() }}
+                  label="Return Date"
+                  disabled={{ before: new Date() }}
                 />
 
               </div>
