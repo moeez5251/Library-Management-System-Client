@@ -220,7 +220,7 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
     }
   }, [Copies])
   useEffect(() => {
-    console.log(getDaysDifference(lendedbookinfo.Date, new Date()), lendedbookinfo.Date);
+    console.log(getDaysDifference(lendedbookinfo.Date, new Date()));
     return () => {
 
     }
@@ -434,7 +434,7 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
                   date={new Date()}
                   onChange={() => { }}
                   label="Lending Date"
-                  disabled={{ before: new Date(new Date().setDate(new Date().getDate() - 1)), after: new Date() }}
+                  disabled={true}
                 />
                 <DatePicker
                   date={lendedbookinfo.Date}
@@ -452,6 +452,7 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
             </AccordionContent>
           </AccordionItem>
         </Accordion>
+        
       </Modal>
     </>
   )
