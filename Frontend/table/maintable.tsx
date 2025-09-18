@@ -82,7 +82,7 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
     Date: new Date(new Date().setDate(new Date().getDate() + 1))
   })
   const [active, setActive] = useState<TData | null>(null)
-  const [checkoutmodal, setCheckoutmodal] = useState<boolean>(true)
+  const [checkoutmodal, setCheckoutmodal] = useState<boolean>(false)
   const id = useId()
   const ref = useRef<HTMLDivElement>(null)
   useOutsideClick(ref, () => setActive(null))
@@ -389,14 +389,14 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
 
             </div>
             <div className="font-semibold text-lg my-3">Final Price : {Copies.current * lendedbookinfo.price}</div>
-            <button className="bg-[#154149] text-white p-2 cursor-pointer rounded-md w-full scale-95 hover:scale-100  transition-transform "> Proceed to checkout </button>
+            <button onClick={() => { setCheckoutmodal(true); setTrigger(false); setdisabledcartbuttons({ plus: false, minus: false }); }} className="bg-[#154149] text-white p-2 cursor-pointer rounded-md w-full scale-95 hover:scale-100  transition-transform "> Proceed to checkout </button>
           </div>
           <div onClick={() => { setTrigger(false); setlendedbookinfo({ ...lendedbookinfo, name: "", author: "", price: 0, Language: "", Available_Copies: 0, }); setdisabledcartbuttons({ plus: false, minus: false }); setCopies({ current: 0, max: 0 }) }} className="bg-gray-400 w-fit p-1 rounded-full cursor-pointer absolute right-2.5 top-2.5 z-10" >
             <X size={20} />
           </div>
         </DialogContent>
       </Dialog>
-      <Modal open={checkoutmodal} onClose={() => setCheckoutmodal(false)} title="Checkout" >
+      <Modal open={checkoutmodal} onClose={() => { setCheckoutmodal(false); setCopies({ current: 0, max: 0 }); setlendedbookinfo({ ...lendedbookinfo, name: "", author: "", price: 0, Language: "", Available_Copies: 0, }); setdisabledcartbuttons({ plus: false, minus: false }); }} title="Checkout" >
         <Accordion className="border-none outline-none" type="single" collapsible>
           <AccordionItem className="border-none" value="item-1">
             <AccordionTrigger className="font-semibold">Book Details</AccordionTrigger>
@@ -425,7 +425,7 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
               </div>
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="item-2">
+          <AccordionItem className="border-none" value="item-2">
             <AccordionTrigger className="font-semibold">Lending Details</AccordionTrigger>
             <AccordionContent>
               <div className="my-2 flex items-center justify-between font-normal ">
@@ -451,8 +451,27 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
               </div>
             </AccordionContent>
           </AccordionItem>
+          <AccordionItem className="border-none" value="item-3">
+            <AccordionTrigger className="font-semibold">Price Details</AccordionTrigger>
+            <AccordionContent>
+              <div className=" flex items-center justify-between font-normal">
+                <div className="font-semibold">Total Price</div>
+                <div>
+                  Rs {Copies.current * lendedbookinfo.price}
+                </div>
+              </div>
+              <div className="my-5 flex items-center justify-between font-normal">
+                <div className="font-semibold">Per Day Fine</div>
+                <div>
+                  Rs 100
+                </div>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
         </Accordion>
-        
+        <div>
+          <button className="bg-[#154149] text-white p-2 cursor-pointer rounded-md w-full scale-95 hover:scale-100  transition-transform mt-6">Check Out </button>
+        </div>
       </Modal>
     </>
   )

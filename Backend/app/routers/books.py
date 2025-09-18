@@ -22,5 +22,13 @@ def get_books():
 def lend_book(book:LendBook):
     conn=get_connection()
     cursor=conn.cursor()
-    # try:
+    try:
+        cursor.execute("INSERT INTO lent_books (Book_ID, User_ID, BookTitle, PhoneNumber, Author, IssuedDate, DueDate, CopiesLent, FinePerDay, Price) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                       (book.book_id, book.user_id, book.BookTitle, book.PhoneNumber, book.Author, book.IssuedDate, book.DueDate, book.CopiesLent, book.FinePerDay, book.Price))
         
+        conn.commit()
+        return {"message": "Book lent successfully."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Database error {e}",)
+    finally:
+        conn.close()
