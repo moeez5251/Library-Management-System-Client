@@ -5,7 +5,6 @@ class Book(BaseModel):
 class LendBook(BaseModel):
     book_id: str
     user_id: str
-    PhoneNumber: str
     IssuedDate: date
     DueDate: date
     CopiesLent: int

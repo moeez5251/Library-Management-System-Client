@@ -21,8 +21,9 @@ def get_books():
 def lend_book(book:LendBook):
     conn=get_connection()
     cursor=conn.cursor()
+    print(book)
     try:
-        cursor.execute("SELECT User_Name FROM users WHERE User_id=?", (book.user_id,))
+        cursor.execute("SELECT User_Name,PhoneNumber FROM users WHERE User_id=?", (book.user_id,))
         user = cursor.fetchone()
         cursor.execute("SELECT Category,Price,Book_Title,Author,Available from books WHERE Book_ID=?", (book.book_id,))
         category = cursor.fetchone()
@@ -44,7 +45,7 @@ def lend_book(book:LendBook):
             book.user_id,    
             user[0],         
             category[2],      
-            book.PhoneNumber, 
+            user[1], 
             category[3],      
             book.IssuedDate,  
             book.DueDate,     
@@ -56,10 +57,12 @@ def lend_book(book:LendBook):
 
 
         conn.commit()
-        if category[4] == book.CopiesLent:
-            conn.execute("UPDATE Books SET Available=Available - ?, Status='Borrowed' WHERE Book_ID=?", (book.CopiesLent, book.book_id))
+        print(category[4], book.CopiesLent, int(category[4]) == int(book.CopiesLent),type (category[4]), type(book.CopiesLent))
+        if int(category[4]) == int(book.CopiesLent):
+            conn.execute("UPDATE Books SET Available=?, Status='Borrowed' WHERE Book_ID=?", ("0", book.book_id))
         else:
-            conn.execute("UPDATE Books SET Available=Available - ? WHERE Book_ID=?", (book.CopiesLent, book.book_id))
+            conn.execute("UPDATE Books SET Available=? WHERE Book_ID=?", (str(int(category[4]) - int(book.CopiesLent)), book.book_id))
+        conn.commit()
         return {"message": "Book lent successfully."}
     except Exception as e:
         print(e)

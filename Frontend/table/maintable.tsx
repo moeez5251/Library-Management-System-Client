@@ -33,6 +33,9 @@ import {
 import { X, Plus, Minus } from "lucide-react"
 import { DatePicker } from "@/components/Datepickers"
 import { Modal } from "@/components/custommodal"
+import Loader from "@/components/loader"
+import { Toaster } from "@/components/ui/sonner"
+import { toast } from "sonner"
 interface ProductsGridProps<TData> {
   data: TData[]
   pageSize?: number
@@ -42,6 +45,7 @@ interface ProductsGridProps<TData> {
   columnFilter?: { columnId: keyof TData; value: string }[]
 }
 interface Lendedinfo {
+  id: string | number
   name: string
   author: string
   price: number
@@ -74,6 +78,7 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
       minus: boolean
     }>({ plus: false, minus: false })
   const [lendedbookinfo, setlendedbookinfo] = useState<Lendedinfo>({
+    id: "",
     name: "",
     author: "",
     price: 0,
@@ -83,16 +88,20 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
   })
   const [active, setActive] = useState<TData | null>(null)
   const [checkoutmodal, setCheckoutmodal] = useState<boolean>(false)
+  const [Loaderanimation, setLoaderanimation] = useState<boolean>(false)
+
+
   const id = useId()
   const ref = useRef<HTMLDivElement>(null)
+
+
+
   useOutsideClick(ref, () => setActive(null))
   function getDaysDifference(date1: Date, date2: Date): number {
     const diffInMs: number = Math.abs(date2.getDate() - date1.getDate());
     return diffInMs;
   }
-  useEffect(() => {
-    document.body.style.overflow = active ? "hidden" : "auto"
-  }, [active])
+
 
   const globalFilterFn: FilterFn<TData> = (row, _columnId, filterValue) => {
     const search = (filterValue as string).toLowerCase()
@@ -143,11 +152,14 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
       pageSize: initialPageSize,
     }))
   }, [initialPageSize])
-
+  useEffect(() => {
+    document.body.style.overflow = active ? "hidden" : "auto"
+  }, [active])
   const handleclick = (id: (number | string)) => {
     setdisabledcartbuttons({ plus: false, minus: false })
     setlendedbookinfo({
       ...lendedbookinfo,
+      id: id,
       name: active?.name ?? "",
       author: active?.Author ?? "",
       price: active?.price ?? 0,
@@ -225,9 +237,60 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
 
     }
   }, [lendedbookinfo])
+  const handlecheckout = async (): Promise<void> => {
+    setLoaderanimation(true)
+    const userid = JSON.parse(localStorage.getItem("user") || "")
+    if (!userid) {
+      toast.error("User not logged in")
+      setLoaderanimation(false)
+    }
+    try {
+      const data = await fetch("http://127.0.0.1:8000/books/lend", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          book_id: lendedbookinfo.id,
+          user_id: userid,
+          IssuedDate: new Date().toISOString().split('T')[0],
+          DueDate: lendedbookinfo.Date.toISOString().split('T')[0],
+          CopiesLent: Copies.current,
+          FinePerDay: 100
+        })
+      })
+      if (!data.ok) {
+        toast.error("Unable to lend book")
+        setLoaderanimation(false)
 
+        return
+      }
+      const res = await data.json()
+      setLoaderanimation(false)
+      setCheckoutmodal(false)
+      setCopies({ current: 0, max: 0 })
+      setlendedbookinfo({
+        id: "",
+        name: "",
+        author: "",
+        price: 0,
+        Language: "",
+        Available_Copies: 0,
+        Date: new Date(new Date().setDate(new Date().getDate() + 1))
+      })
+      setdisabledcartbuttons({ plus: false, minus: false })
+      toast.success("Book issued successfully")
+
+    }
+    catch {
+      setLoaderanimation(false)
+      toast.error("Unable to lend book")
+    }
+  }
   return (
     <>
+      <Toaster />
       <AnimatePresence>
         {active && (
           <motion.div
@@ -407,8 +470,8 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
               <button disabled={disabledcartbuttons.minus} onClick={handleminus} className="cursor-pointer bg-[#154149] rounded-full p-1 scale-100 hover:scale-110  transition-transform  disabled:bg-gray-400 disabled:pointer-events-none disabled:cursor-auto"><Minus size={20} className="text-white" /></button>
 
             </div>
-            <div className="font-semibold text-lg my-3">Final Price : {Copies.current * lendedbookinfo.price}</div>
-            <button onClick={() => { setCheckoutmodal(true); setTrigger(false); setdisabledcartbuttons({ plus: false, minus: false }); }} className="bg-[#154149] text-white p-2 cursor-pointer rounded-md w-full scale-95 hover:scale-100  transition-transform "> Proceed to checkout </button>
+            <div className="font-semibold text-lg my-3 ">Final Price : {Copies.current * lendedbookinfo.price}</div>
+            <button disabled={Copies.current === 0} onClick={() => { setCheckoutmodal(true); setTrigger(false); setdisabledcartbuttons({ plus: false, minus: false }); }} className="bg-[#154149] text-white p-2 cursor-pointer rounded-md w-full scale-95 hover:scale-100  transition-transform disabled:bg-gray-400 disabled:pointer-events-none disabled:cursor-auto"> Proceed to checkout </button>
           </div>
           <div onClick={() => { setTrigger(false); setlendedbookinfo({ ...lendedbookinfo, name: "", author: "", price: 0, Language: "", Available_Copies: 0, }); setdisabledcartbuttons({ plus: false, minus: false }); setCopies({ current: 0, max: 0 }) }} className="bg-gray-400 w-fit p-1 rounded-full cursor-pointer absolute right-2.5 top-2.5 z-10" >
             <X size={20} />
@@ -485,12 +548,12 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
                   Rs 100
                 </div>
               </div>
-                <div className="my-5 flex items-center justify-between font-normal">
-                  <div className="font-semibold">Total Price</div>
-                  <div>
-                    Rs {Copies.current * lendedbookinfo.price + 100}
-                  </div>
+              <div className="my-5 flex items-center justify-between font-normal">
+                <div className="font-semibold">Total Price</div>
+                <div>
+                  Rs {Copies.current * lendedbookinfo.price + 100}
                 </div>
+              </div>
             </AccordionContent>
           </AccordionItem>
           <div>
@@ -498,9 +561,10 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
           </div>
         </Accordion>
         <div>
-          <button className="bg-[#154149] text-white p-2 cursor-pointer rounded-md w-full scale-95 hover:scale-100  transition-transform mt-6">Check Out </button>
+          <button onClick={handlecheckout} className="bg-[#154149] text-white p-2 cursor-pointer rounded-md w-full scale-95 hover:scale-100  transition-transform mt-6">Check Out </button>
         </div>
       </Modal>
+      <Loader open={Loaderanimation} />
     </>
   )
 }
