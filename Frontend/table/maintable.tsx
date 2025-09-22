@@ -366,15 +366,34 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
           <div>
             <div className="mb-4">
               <h1 className="font-semibold">
-
                 Book Details are as follows
               </h1>
-              <div className="my-2 flex flex-col justify-center gap-1 font-normal">
-                <div>Name : {lendedbookinfo.name}</div>
-                <div>Author : {lendedbookinfo.author}</div>
-                <div>Price Per Copy : {lendedbookinfo.price}</div>
-                <div>Language : {lendedbookinfo.Language}</div>
-                <div>Available Copies : {lendedbookinfo.Available_Copies}</div>
+              <div className="my-2 flex flex-col justify-center gap-2 font-normal">
+                <div className="flex items-center gap-2 font-semibold">Name :
+                  <div>
+                    {lendedbookinfo.name}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 font-semibold">Author :
+                  <div>
+                    {lendedbookinfo.author}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 font-semibold">Price Per Copy :
+                  <div>
+                    {lendedbookinfo.price}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 font-semibold">Language :
+                  <div>
+                    {lendedbookinfo.Language}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 font-semibold">Available Copies :
+                  <div>
+                    {lendedbookinfo.Available_Copies}
+                  </div>
+                </div>
 
               </div>
             </div>
@@ -466,8 +485,17 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
                   Rs 100
                 </div>
               </div>
+                <div className="my-5 flex items-center justify-between font-normal">
+                  <div className="font-semibold">Total Price</div>
+                  <div>
+                    Rs {Copies.current * lendedbookinfo.price + 100}
+                  </div>
+                </div>
             </AccordionContent>
           </AccordionItem>
+          <div>
+            <div className="font-semibold text-base my-3">Final Price : {Copies.current * lendedbookinfo.price + 100}</div>
+          </div>
         </Accordion>
         <div>
           <button className="bg-[#154149] text-white p-2 cursor-pointer rounded-md w-full scale-95 hover:scale-100  transition-transform mt-6">Check Out </button>

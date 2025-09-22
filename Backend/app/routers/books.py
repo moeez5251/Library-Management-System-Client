@@ -3,7 +3,6 @@ from app.database import get_connection
 from app.schemas.book import Book,LendBook
 router = APIRouter(prefix="/books", tags=["books"])
 
-
 @router.get("/getall")
 def get_books():
     conn=get_connection()
@@ -23,12 +22,47 @@ def lend_book(book:LendBook):
     conn=get_connection()
     cursor=conn.cursor()
     try:
-        cursor.execute("INSERT INTO lent_books (Book_ID, User_ID, BookTitle, PhoneNumber, Author, IssuedDate, DueDate, CopiesLent, FinePerDay, Price) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                       (book.book_id, book.user_id, book.BookTitle, book.PhoneNumber, book.Author, book.IssuedDate, book.DueDate, book.CopiesLent, book.FinePerDay, book.Price))
-        
+        cursor.execute("SELECT User_Name FROM users WHERE User_id=?", (book.user_id,))
+        user = cursor.fetchone()
+        cursor.execute("SELECT Category,Price,Book_Title,Author,Available from books WHERE Book_ID=?", (book.book_id,))
+        category = cursor.fetchone()
+        print(user, category)
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found.")
+        if not category:
+            raise HTTPException(status_code=404, detail="Book not found.")
+        cursor.execute(
+        """
+        INSERT INTO borrower (
+            Book_ID, user_id, Name, BookTitle, PhoneNumber,
+            Author, IssuedDate, DueDate, CopiesLent,
+            FinePerDay, Price, Category
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        (
+            book.book_id,     
+            book.user_id,    
+            user[0],         
+            category[2],      
+            book.PhoneNumber, 
+            category[3],      
+            book.IssuedDate,  
+            book.DueDate,     
+            book.CopiesLent,  
+            book.FinePerDay,  
+            category[1],      
+            category[0]
+        ))
+
+
         conn.commit()
+        if category[4] == book.CopiesLent:
+            conn.execute("UPDATE Books SET Available=Available - ?, Status='Borrowed' WHERE Book_ID=?", (book.CopiesLent, book.book_id))
+        else:
+            conn.execute("UPDATE Books SET Available=Available - ? WHERE Book_ID=?", (book.CopiesLent, book.book_id))
         return {"message": "Book lent successfully."}
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=500, detail=f"Database error {e}",)
     finally:
         conn.close()

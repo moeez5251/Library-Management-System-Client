@@ -16,18 +16,22 @@ interface SelectComponentProps {
 
 const SelectComponent: React.FC<SelectComponentProps> = ({ array, name, value, onchange }) => {
     return (
-        <Select value={value} onValueChange={onchange} >
-            <SelectTrigger className="w-[150px] bg-white text-black  border-none    ">
-                <SelectValue className='text-black' placeholder={name} />
-            </SelectTrigger>
-            <SelectContent className='bg-white border-none'>
-                {array.map((item) => (
-                    <SelectItem key={item.toString()} value={item.toString()}>
-                        {item}
-                    </SelectItem>
-                ))}
-            </SelectContent>
-        </Select>
+        <div className='flex flex-col gap-2 font-semibold text-gray-600 text-sm'>
+            {name}
+            <Select value={value} onValueChange={onchange} >
+                <SelectTrigger className="w-[150px] bg-white text-black  border-none    ">
+                    <SelectValue className='text-black' placeholder={name} />
+                </SelectTrigger>
+                <SelectContent className='bg-white border-none'>
+                    {array.map((item) => (
+                        <SelectItem key={item.toString()} value={item.toString()}>
+                            {item}
+                        </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
+        </div>
+
     )
 }
 

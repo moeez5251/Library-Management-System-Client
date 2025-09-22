@@ -5,11 +5,9 @@ class Book(BaseModel):
 class LendBook(BaseModel):
     book_id: str
     user_id: str
-    BookTitle: str
     PhoneNumber: str
-    Author: str
     IssuedDate: date
     DueDate: date
     CopiesLent: int
     FinePerDay: int
-    Price: float
+    
