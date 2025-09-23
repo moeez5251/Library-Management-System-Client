@@ -2,7 +2,7 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { Lato } from 'next/font/google'
 import Providers from './provider';
-
+import { DataFetcherProvider } from '@/lib/datafetcher';
 const lato = Lato({
   variable: "--font-lato",
   subsets: ["latin"],
@@ -23,8 +23,9 @@ export default function RootLayout({
     <html lang="en">
       <body >
         <Providers>
-
-        {children}
+          <DataFetcherProvider>
+            {children}
+          </DataFetcherProvider>
         </Providers>
       </body>
     </html>

@@ -5,7 +5,6 @@ from app.core.config import settings
 def send_email(to_email, subject, text_body, html_body):
     app_password = settings.Password 
 
-    # Create the MIMEMultipart message
     msg = MIMEMultipart("alternative")
     msg['From'] = f"XLMS Support <{settings.Email}>"
     msg['To'] = to_email

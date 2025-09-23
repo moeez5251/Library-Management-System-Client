@@ -36,6 +36,7 @@ import { Modal } from "@/components/custommodal"
 import Loader from "@/components/loader"
 import { Toaster } from "@/components/ui/sonner"
 import { toast } from "sonner"
+import { useDataFetcher } from "@/lib/datafetcher"
 interface ProductsGridProps<TData> {
   data: TData[]
   pageSize?: number
@@ -93,7 +94,7 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
 
   const id = useId()
   const ref = useRef<HTMLDivElement>(null)
-
+  const { datafetcher, setDatafetcher } = useDataFetcher();
 
 
   useOutsideClick(ref, () => setActive(null))
@@ -101,8 +102,6 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
     const diffInMs: number = Math.abs(date2.getDate() - date1.getDate());
     return diffInMs;
   }
-
-
   const globalFilterFn: FilterFn<TData> = (row, _columnId, filterValue) => {
     const search = (filterValue as string).toLowerCase()
     return Object.values(row.original).some(val =>
@@ -231,12 +230,7 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
 
     }
   }, [Copies])
-  useEffect(() => {
-    console.log(getDaysDifference(lendedbookinfo.Date, new Date()));
-    return () => {
 
-    }
-  }, [lendedbookinfo])
   const handlecheckout = async (): Promise<void> => {
     setLoaderanimation(true)
     const userid = JSON.parse(localStorage.getItem("user") || "")
@@ -267,6 +261,7 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
         return
       }
       const res = await data.json()
+      setDatafetcher(!datafetcher);
       setLoaderanimation(false)
       setCheckoutmodal(false)
       setCopies({ current: 0, max: 0 })
@@ -281,13 +276,14 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
       })
       setdisabledcartbuttons({ plus: false, minus: false })
       toast.success("Book issued successfully")
-
     }
     catch {
       setLoaderanimation(false)
       toast.error("Unable to lend book")
     }
   }
+
+
   return (
     <>
       <Toaster />
@@ -355,7 +351,11 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
                   <Badge status={active.Status} />
                 </motion.div>
                 <motion.div className="flex items-center gap-1 w-full">
-                  <button onClick={() => handleclick(active.id)} disabled={active.Status !== "Available"} className='bg-[#154149] font-semibold text-white px-4 py-2 rounded-md w-full cursor-pointer scale-100 hover:scale-105 transition-transform disabled:bg-gray-400 disabled:cursor-auto disabled:pointer-events-none'>Lend Book</button>
+                  {
+                    active.Status==="Borrowed"?
+                   <button  className='bg-[#154149] font-semibold text-white px-4 py-2 rounded-md w-full cursor-pointer scale-100 hover:scale-105 transition-transform disabled:bg-gray-400 disabled:cursor-auto disabled:pointer-events-none'>Reserve Book</button>
+                    : <button onClick={() => handleclick(active.id)} disabled={active.Status !== "Available"} className='bg-[#154149] font-semibold text-white px-4 py-2 rounded-md w-full cursor-pointer scale-100 hover:scale-105 transition-transform disabled:bg-gray-400 disabled:cursor-auto disabled:pointer-events-none'>Lend Book</button>
+                  }
                 </motion.div>
 
               </div>
