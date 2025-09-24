@@ -23,7 +23,7 @@ def lend_book(book:LendBook):
     cursor=conn.cursor()
     print(book)
     try:
-        cursor.execute("SELECT User_Name,PhoneNumber FROM users WHERE User_id=?", (book.user_id,))
+        cursor.execute("SELECT User_Name FROM users WHERE User_id=?", (book.user_id,))
         user = cursor.fetchone()
         cursor.execute("SELECT Category,Price,Book_Title,Author,Available from books WHERE Book_ID=?", (book.book_id,))
         category = cursor.fetchone()
@@ -35,17 +35,16 @@ def lend_book(book:LendBook):
         cursor.execute(
         """
         INSERT INTO borrower (
-            Book_ID, user_id, Name, BookTitle, PhoneNumber,
+            Book_ID, user_id, Name, BookTitle,
             Author, IssuedDate, DueDate, CopiesLent,
             FinePerDay, Price, Category
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
             book.book_id,     
             book.user_id,    
             user[0],         
             category[2],      
-            user[1], 
             category[3],      
             book.IssuedDate,  
             book.DueDate,     
