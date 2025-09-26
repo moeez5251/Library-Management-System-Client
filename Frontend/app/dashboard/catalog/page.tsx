@@ -38,7 +38,6 @@ const Catalog = () => {
     setLoading(false)
   }
   useEffect(() => {
-    console.log("Datafetcher changed", datafetcher);
     fetch_data()
     return () => {
 
