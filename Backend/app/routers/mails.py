@@ -6,8 +6,6 @@ from app.database import get_connection
 import random
 from threading import Timer
 
-
-
 def otpremove(email):
     conn=get_connection()
     cursor=conn.cursor()

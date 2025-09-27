@@ -282,7 +282,42 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
       toast.error("Unable to lend book")
     }
   }
-
+  const handlereservation = async (id: string | number): Promise<void> => {
+    setActive(null)
+    setLoaderanimation(true)
+    try {
+      const userid = JSON.parse(localStorage.getItem("user") || "")
+      if (!userid) {
+        toast.error("Unable to reserve book")
+        setLoaderanimation(false)
+        return
+      }
+      const data=await fetch("http://127.0.0.1:8000/reservation/reserve",{
+        method:"POST",
+        credentials:"include",
+        headers:{
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          book_id: id,
+          user_id: userid,
+          reservation_date: new Date().toISOString(),
+        })
+      })
+      if(!data.ok){
+        toast.error("Unable to reserve book")
+        setLoaderanimation(false)
+        return
+      }
+      const res = await data.json()
+      setDatafetcher(!datafetcher);
+      setLoaderanimation(false)
+      toast.success("Book reserved successfully")
+    }
+    catch {
+      setLoaderanimation(false)
+    }
+  }
 
   return (
     <>
@@ -352,9 +387,9 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
                 </motion.div>
                 <motion.div className="flex items-center gap-1 w-full">
                   {
-                    active.Status==="Borrowed"?
-                   <button  className='bg-[#154149] font-semibold text-white px-4 py-2 rounded-md w-full cursor-pointer scale-100 hover:scale-105 transition-transform disabled:bg-gray-400 disabled:cursor-auto disabled:pointer-events-none'>Reserve Book</button>
-                    : <button onClick={() => handleclick(active.id)} disabled={active.Status !== "Available"} className='bg-[#154149] font-semibold text-white px-4 py-2 rounded-md w-full cursor-pointer scale-100 hover:scale-105 transition-transform disabled:bg-gray-400 disabled:cursor-auto disabled:pointer-events-none'>Lend Book</button>
+                    active.Status === "Borrowed" ?
+                      <button onClick={() => handlereservation(active.id)} className='bg-[#154149] font-semibold text-white px-4 py-2 rounded-md w-full cursor-pointer scale-100 hover:scale-105 transition-transform disabled:bg-gray-400 disabled:cursor-auto disabled:pointer-events-none'>Reserve Book</button>
+                      : <button onClick={() => handleclick(active.id)} disabled={active.Status !== "Available"} className='bg-[#154149] font-semibold text-white px-4 py-2 rounded-md w-full cursor-pointer scale-100 hover:scale-105 transition-transform disabled:bg-gray-400 disabled:cursor-auto disabled:pointer-events-none'>Lend Book</button>
                   }
                 </motion.div>
 

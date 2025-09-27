@@ -56,7 +56,7 @@ def lend_book(book:LendBook):
 
 
         conn.commit()
-        print(category[4], book.CopiesLent, int(category[4]) == int(book.CopiesLent),type (category[4]), type(book.CopiesLent))
+   
         if int(category[4]) == int(book.CopiesLent):
             conn.execute("UPDATE Books SET Available=?, Status='Borrowed' WHERE Book_ID=?", ("0", book.book_id))
         else:
