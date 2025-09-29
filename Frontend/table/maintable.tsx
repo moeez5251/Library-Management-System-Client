@@ -99,9 +99,13 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
 
   useOutsideClick(ref, () => setActive(null))
   function getDaysDifference(date1: Date, date2: Date): number {
-    const diffInMs: number = Math.abs(date2.getDate() - date1.getDate());
-    return diffInMs;
+    const d1 = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate());
+    const d2 = new Date(date2.getFullYear(), date2.getMonth(), date2.getDate());
+
+    const diffInMs = Math.abs(d2.getTime() - d1.getTime());
+    return diffInMs / (1000 * 60 * 60 * 24);
   }
+
   const globalFilterFn: FilterFn<TData> = (row, _columnId, filterValue) => {
     const search = (filterValue as string).toLowerCase()
     return Object.values(row.original).some(val =>
@@ -292,10 +296,10 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
         setLoaderanimation(false)
         return
       }
-      const data=await fetch("http://127.0.0.1:8000/reservation/reserve",{
-        method:"POST",
-        credentials:"include",
-        headers:{
+      const data = await fetch("http://127.0.0.1:8000/reservation/reserve", {
+        method: "POST",
+        credentials: "include",
+        headers: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
@@ -304,7 +308,7 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
           reservation_date: new Date().toISOString(),
         })
       })
-      if(!data.ok){
+      if (!data.ok) {
         toast.error("Unable to reserve book")
         setLoaderanimation(false)
         return
@@ -318,6 +322,7 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
       setLoaderanimation(false)
     }
   }
+
 
   return (
     <>
@@ -572,13 +577,13 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
             <AccordionTrigger className="font-semibold">Price Details</AccordionTrigger>
             <AccordionContent>
               <div className=" flex items-center justify-between font-normal">
-                <div className="font-semibold">Total Price</div>
+                <div className="font-semibold">Total Price of {Copies.current} Copies for {getDaysDifference(new Date(), lendedbookinfo.Date)} days</div>
                 <div>
-                  Rs {Copies.current * lendedbookinfo.price}
+                  Rs {Copies.current * lendedbookinfo.price * getDaysDifference(new Date(), lendedbookinfo.Date)}
                 </div>
               </div>
               <div className="my-5 flex items-center justify-between font-normal">
-                <div className="font-semibold">Per Day Fine</div>
+                <div className="font-semibold">Per Day Fine <span className="text-xs">(if book not returned on time)</span> </div>
                 <div>
                   Rs 100
                 </div>
@@ -586,13 +591,13 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
               <div className="my-5 flex items-center justify-between font-normal">
                 <div className="font-semibold">Total Price</div>
                 <div>
-                  Rs {Copies.current * lendedbookinfo.price + 100}
+                  Rs {(Copies.current * lendedbookinfo.price * getDaysDifference(new Date(), lendedbookinfo.Date)) + 100}
                 </div>
               </div>
             </AccordionContent>
           </AccordionItem>
           <div>
-            <div className="font-semibold text-base my-3">Final Price : {Copies.current * lendedbookinfo.price + 100}</div>
+            <div className="font-semibold text-base my-3">Final Price : {(Copies.current * lendedbookinfo.price * getDaysDifference(new Date(), lendedbookinfo.Date)) + 100}</div>
           </div>
         </Accordion>
         <div>

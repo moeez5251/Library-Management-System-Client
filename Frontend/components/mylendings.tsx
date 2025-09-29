@@ -66,12 +66,12 @@ const MyLendings = () => {
     return (
         <>
             <Toaster />
-            <div className='my-4 overflow-y-auto h-[48vh] overflow-x-hidden'>
+            <div className='my-5 overflow-y-auto h-[40vh] overflow-x-hidden'>
 
                 {
                     isloading ? <Loader /> :
                         <Accordion type="single" collapsible>
-                            {
+                            { Lendings.length > 0 ?
                                 Lendings.map((lending, index) => (
                                     <AccordionItem key={index} className='border-none ' value={`item-${index}`}>
                                         <AccordionTrigger className='text-base'>
@@ -114,7 +114,7 @@ const MyLendings = () => {
                                             </div>
                                         </AccordionContent>
                                     </AccordionItem>
-                                ))
+                                )): <div className='text-gray-600 font-semibold text-lg text-center my-10'>No Lendings Found</div>
                             }
                         </Accordion>
                 }

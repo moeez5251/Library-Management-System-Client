@@ -94,13 +94,13 @@ def return_book(lender: ReturnBook):
                 cursor.execute("DELETE FROM reserved WHERE Reservation_ID = ?", (reservation[0],))
                 conn.commit()
                 cursor.execute("SELECT Available from books WHERE Book_ID=?", (lender.book_id,))
-                result=cursor.fetchone()
-                cursor.execute("UPDATE books SET Available=? WHERE Book_ID = ?", (str(int(result[0]) ), lender.book_id))
+                result1=cursor.fetchone()
+                cursor.execute("UPDATE books SET Available=?,status='Available' WHERE Book_ID = ?", (str(int(result[0]) + int(result1[0])), lender.book_id))
                 conn.commit()
                 return {"message": "Book returned successfully"}
         cursor.execute("SELECT Available from books WHERE Book_ID=?", (lender.book_id,))
         result1=cursor.fetchone()
-        cursor.execute("UPDATE books SET Available=? WHERE Book_ID = ?", (str(int(result[0]) + int(result1[0])), lender.book_id))
+        cursor.execute("UPDATE books SET Available=?,Status='Available' WHERE Book_ID = ?", (str(int(result[0]) + int(result1[0])), lender.book_id))
         conn.commit()
         return {"message": "Book returned successfully"}
     except Exception as e:
