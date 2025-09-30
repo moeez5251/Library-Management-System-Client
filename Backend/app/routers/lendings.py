@@ -56,7 +56,7 @@ def return_book(lender: ReturnBook):
     (date.today() + timedelta(days=2)).strftime("%Y-%m-%d"),  # date
     int(1),                                           # CopiesLent (int)
     int(100),                                           # FinePerDay (int)
-    Decimal(book[3]),                                 # Price (decimal(10,2))
+    Decimal(book[3]),                              # Price (decimal(10,2))
     str(book[1]),                                     # varchar
 ))
             conn.commit()
@@ -95,7 +95,7 @@ def return_book(lender: ReturnBook):
                 conn.commit()
                 cursor.execute("SELECT Available from books WHERE Book_ID=?", (lender.book_id,))
                 result1=cursor.fetchone()
-                cursor.execute("UPDATE books SET Available=?,status='Available' WHERE Book_ID = ?", (str(int(result[0]) + int(result1[0])), lender.book_id))
+                cursor.execute("UPDATE books SET Available=?,status='Available' WHERE Book_ID = ?", (str(int(result[0]) + int(result1[0] - 1)), lender.book_id))
                 conn.commit()
                 return {"message": "Book returned successfully"}
         cursor.execute("SELECT Available from books WHERE Book_ID=?", (lender.book_id,))

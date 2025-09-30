@@ -1,6 +1,8 @@
 from fastapi import APIRouter, HTTPException
 from app.database import get_connection
 from app.schemas.book import Book,LendBook
+from datetime import datetime
+import pytz
 router = APIRouter(prefix="/books", tags=["books"])
 
 @router.get("/getall")
@@ -21,7 +23,6 @@ def get_books():
 def lend_book(book:LendBook):
     conn=get_connection()
     cursor=conn.cursor()
-    print(book)
     try:
         cursor.execute("SELECT User_Name FROM users WHERE User_id=?", (book.user_id,))
         user = cursor.fetchone()

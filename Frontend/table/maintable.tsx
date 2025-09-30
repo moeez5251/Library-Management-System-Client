@@ -253,7 +253,7 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
           book_id: lendedbookinfo.id,
           user_id: userid,
           IssuedDate: new Date().toISOString().split('T')[0],
-          DueDate: lendedbookinfo.Date.toISOString().split('T')[0],
+          DueDate: lendedbookinfo.Date.toLocaleString("en-CA").split(",")[0],
           CopiesLent: Copies.current,
           FinePerDay: 100
         })
@@ -322,6 +322,12 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
       setLoaderanimation(false)
     }
   }
+  useEffect(() => {
+    console.log(new Date().toISOString().split('T')[0],lendedbookinfo.Date.toLocaleString("en-CA"));
+    return () => {
+
+    }
+  }, [lendedbookinfo])
 
 
   return (
