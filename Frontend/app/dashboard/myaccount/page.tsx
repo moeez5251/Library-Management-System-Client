@@ -10,7 +10,7 @@ const MyAccount = () => {
         <div className='font-semibold text-lg border-b-2 pb-1 border-[#899598] '>
           Lending Details
         </div>
-        <h2 className='font-semibold text-lg my-4 text-gray-700'><Handshake size={20} className='inline mr-1 text-[#6941c5]' />My Lendings</h2>
+        <h2 className='font-semibold text-lg mt-4 text-gray-700'><Handshake size={20} className='inline mr-1 text-[#6941c5]' />My Lendings</h2>
         <MyLendings />
       </div>
     </>

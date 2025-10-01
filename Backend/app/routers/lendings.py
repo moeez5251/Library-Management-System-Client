@@ -81,7 +81,6 @@ def return_book(lender: ReturnBook):
     str(reservation[1]),                              # varchar 
     str(user[0]),                                     # varchar
     str(book[0]),                                     # varchar
-
     str(book[2]),                                     # varchar
     date.today().strftime("%Y-%m-%d"),                # date
     (date.today() + timedelta(days=2)).strftime("%Y-%m-%d"),  # date
@@ -95,7 +94,7 @@ def return_book(lender: ReturnBook):
                 conn.commit()
                 cursor.execute("SELECT Available from books WHERE Book_ID=?", (lender.book_id,))
                 result1=cursor.fetchone()
-                cursor.execute("UPDATE books SET Available=?,status='Available' WHERE Book_ID = ?", (str(int(result[0]) + int(result1[0] - 1)), lender.book_id))
+                cursor.execute("UPDATE books SET Available=?,status='Available' WHERE Book_ID = ?",str(int(result[0]) + int(result1[0]) -1), lender.book_id)
                 conn.commit()
                 return {"message": "Book returned successfully"}
         cursor.execute("SELECT Available from books WHERE Book_ID=?", (lender.book_id,))
