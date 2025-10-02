@@ -1,6 +1,5 @@
 "use client"
 import React, { useEffect, useState } from 'react'
-import Loader from '@/components/lendingloader'
 import { Toaster } from './ui/sonner'
 import { toast } from 'sonner'
 import DataTable from '@/Lendingstable/table'
@@ -23,7 +22,7 @@ interface Lending {
 }
 
 const MyLendings = () => {
-    const [isloading, setIsloading] = useState<Boolean>(true);
+    const [isloading, setIsloading] = useState<boolean>(true);
     const [Lendings, setLendings] = useState<Lending[]>([])
     const { datafetcher, setDatafetcher } = useDataFetcher();
 
@@ -65,13 +64,9 @@ const MyLendings = () => {
             <Toaster />
             <div className='my-5'>
 
-                {
-                    isloading ? <Loader /> :
-                        <DataTable data={Lendings} columns={LendingsColumns} pageSize={10} loading={isloading} />
-                }
+                <DataTable data={Lendings} columns={LendingsColumns} loading={isloading} />
             </div>
             <div>
-                
             </div>
         </>
     )

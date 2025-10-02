@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import {
     useReactTable,
     getCoreRowModel,
-    getPaginationRowModel,
     getFilteredRowModel,
     getSortedRowModel,
     getGroupedRowModel,
@@ -15,7 +14,6 @@ import {
 } from "@tanstack/react-table";
 
 import { ArrowUp, ArrowDown, ArrowUpDown, ChevronRight } from "lucide-react";
-import PaginationControls from "./pagination";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface DataTableProps<TData extends object> {
@@ -54,9 +52,8 @@ const DataTable = <TData extends Lending>({
         pageSize: initialPageSize || 10,
     });
 
-    const [grouping, setGrouping] = useState<string[]>(["BookTitle"]); // 👈 group by BookTitle
-    const [expanded, setExpanded] = useState({}); // track expand/collapse
-
+    const [grouping, setGrouping] = useState<string[]>(["BookTitle"]); 
+    const [expanded, setExpanded] = useState({}); 
     const table = useReactTable({
         data,
         columns,
@@ -88,12 +85,13 @@ const DataTable = <TData extends Lending>({
     return (
         <div className="p-2 space-y-4 rounded-sm">
             <table className="w-full text-left border-collapse">
+                {/* Table Header */}
                 <thead className="bg-[#f6f8fa] dark:bg-[#394455]">
                     {loading ? (
                         <tr>
                             {[...Array(columns.length)].map((_, idx) => (
                                 <th key={idx} className="p-2 border-b">
-                                    <div className="h-5 w-24 card__skeleton rounded-md" />
+                                    <div className="h-5 w-full rounded-md card__skeleton" />
                                 </th>
                             ))}
                         </tr>
@@ -118,9 +116,9 @@ const DataTable = <TData extends Lending>({
                                                 {header.isPlaceholder
                                                     ? null
                                                     : flexRender(
-                                                        header.column.columnDef.header,
-                                                        header.getContext()
-                                                    )}
+                                                          header.column.columnDef.header,
+                                                          header.getContext()
+                                                      )}
 
                                                 {isSortable && (
                                                     <>
@@ -140,13 +138,14 @@ const DataTable = <TData extends Lending>({
                     )}
                 </thead>
 
+                {/* Table Body */}
                 <tbody>
                     {loading ? (
                         [...Array(5)].map((_, rowIdx) => (
                             <tr key={`loading-row-${rowIdx}`}>
                                 {[...Array(columns.length)].map((_, colIdx) => (
                                     <td key={colIdx} className="p-2 border-b">
-                                        <div className="h-5 w-24 card__skeleton rounded-md" />
+                                        <div className="h-5 w-full rounded-md card__skeleton" />
                                     </td>
                                 ))}
                             </tr>
@@ -171,7 +170,6 @@ const DataTable = <TData extends Lending>({
                                                     {row.getValue("BookTitle")} ({row.subRows.length})
                                                 </div>
                                             </td>
-
                                         </tr>
 
                                         <AnimatePresence>
@@ -204,8 +202,6 @@ const DataTable = <TData extends Lending>({
                     )}
                 </tbody>
             </table>
-
-            <PaginationControls table={table} />
         </div>
     );
 };

@@ -73,9 +73,9 @@ const Catalog = () => {
       </div>
       <div className='flex items-center justify-between mx-3'>
         <div className='flex items-center gap-4'>
-          <SelectComponent value={Language} onchange={setLanguage} name="Language" array={LangugesFilter} />
-          <SelectComponent value={Author} onchange={setAuthor} name="Author" array={AuthorFilter} />
-          <SelectComponent value={status} onchange={setstatus} name="Availability" array={statusFilter} />
+          <SelectComponent disabled={Loading} value={Language} onchange={setLanguage} name="Language" array={LangugesFilter} />
+          <SelectComponent disabled={Loading} value={Author} onchange={setAuthor} name="Author" array={AuthorFilter} />
+          <SelectComponent disabled={Loading} value={status} onchange={setstatus} name="Availability" array={statusFilter} />
         </div>
         <div className='flex items-center gap-3'>
           <div className='font-semibold text-[#637277]'>

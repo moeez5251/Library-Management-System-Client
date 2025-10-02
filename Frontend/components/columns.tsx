@@ -19,33 +19,11 @@ interface Lendings {
   Status: string
 }
 export const LendingsColumns: ColumnDef<Lendings>[] = [
-  {
-    accessorKey: "Borrower_ID",
-    header: "Borrower ID",
-    cell: ({ getValue, row }) => {
-      return <div className="text-sm text-gray-500">{row.original.Borrower_ID}</div>;
-    },
-    aggregatedCell: ({ row }) => {
-
-      return (
-        <div className="text-sm text-black">
-          {row.subRows[0] && row.subRows[0].original.Borrower_ID}
-        </div>
-      );
-    },
-  },
+ 
   {
     accessorKey: "BookTitle",
     header: "Book Title",
     cell: ({ getValue }) => getValue(),
-  },
-  {
-    accessorKey: "user_id",
-    header: "User ID",
-    cell: ({ getValue, row }) => {
-      return <div className="text-sm text-gray-500">{row.original.user_id}</div>;
-    },
-
   },
   {
     accessorKey: "IssuedDate",
@@ -77,8 +55,7 @@ export const LendingsColumns: ColumnDef<Lendings>[] = [
             Borrower_ID
           );
           setDatafetcher(!datafetcher);
-        } catch (error) {
-          console.error(error);
+        } catch (e) {
         }
       };
       return (

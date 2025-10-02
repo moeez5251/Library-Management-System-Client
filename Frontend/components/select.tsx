@@ -12,13 +12,14 @@ interface SelectComponentProps {
     name: string
     value: string
     onchange: (value: string) => void
+    disabled: boolean
 }
 
-const SelectComponent: React.FC<SelectComponentProps> = ({ array, name, value, onchange }) => {
+const SelectComponent: React.FC<SelectComponentProps> = ({ array, name, value, onchange, disabled }) => {
     return (
         <div className='flex flex-col gap-2 font-semibold text-gray-600 text-sm'>
             {name}
-            <Select value={value} onValueChange={onchange} >
+            <Select disabled={disabled} value={value} onValueChange={onchange} >
                 <SelectTrigger className="w-[150px] bg-white text-black  border-none    ">
                     <SelectValue className='text-black' placeholder={name} />
                 </SelectTrigger>
