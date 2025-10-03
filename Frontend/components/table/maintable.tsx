@@ -589,7 +589,7 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
                 </div>
               </div>
               <div className="my-5 flex items-center justify-between font-normal">
-                <div className="font-semibold">Per Day Fine <span className="text-xs">(if book not returned on time)</span> </div>
+                <div className="font-semibold">Tax</div>
                 <div>
                   Rs 100
                 </div>

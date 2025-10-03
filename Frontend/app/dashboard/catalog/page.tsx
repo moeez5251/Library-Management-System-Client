@@ -1,6 +1,6 @@
 "use client"
 import SelectComponent from '@/components/select'
-import { ProductsGrid } from '@/table/maintable'
+import { ProductsGrid } from '@/components/table/maintable'
 import { X, Search } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { productColumns } from './components/column'

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from app.schemas.reservations import ReservationCreate
+from app.schemas.reservations import ReservationCreate,Reservationget
 from app.database import get_connection
 from app.mailer.mail import send_email
 router = APIRouter(prefix="/reservation", tags=["reservation"])
@@ -90,3 +90,20 @@ def reserve_book(reservation: ReservationCreate):
         raise HTTPException(status_code=500, detail=f"Database error {e}",)
     finally:
         conn.close()
+@router.post("/getbyid")
+def get_reservation(reservation: Reservationget):
+    conn=get_connection()
+    cursor=conn.cursor()
+    try:
+       cursor.execute("SELECT * FROM reserved WHERE User_ID	=?", (reservation.user_id,))
+       result=cursor.fetchall()
+       keys=["Reservation_ID", "User_ID", "Book_ID", "Reserved_Date"]
+       reservation_dict_list = [dict(zip(keys, reservation)) for reservation in result]
+       for book in reservation_dict_list:
+           cursor.execute("SELECT Book_Title,Author from books WHERE Book_ID=?", (book["Book_ID"],))
+           result=cursor.fetchone()
+           book["Book_Title"] = result[0]
+           book["Author"] = result[1]
+       return reservation_dict_list
+    except Exception as e:  
+        raise HTTPException(status_code=500, detail=f"Database error {e}",)

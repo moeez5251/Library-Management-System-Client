@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from 'react'
 import { Toaster } from './ui/sonner'
 import { toast } from 'sonner'
-import DataTable from '@/Lendingstable/table'
-import { LendingsColumns } from '@/components/columns'
+import DataTable from '@/components/Lendingstable/table'
+import { LendingsColumns } from '@/components/Lendingstable/columns'
 import { useDataFetcher } from '@/lib/datafetcher'
 interface Lending {
     Borrower_ID: number,
@@ -63,8 +63,13 @@ const MyLendings = () => {
         <>
             <Toaster />
             <div className='my-5'>
+                {
+                    Lendings.length > 0 || isloading ?
+                    
+                        <DataTable data={Lendings} columns={LendingsColumns} loading={isloading} /> :
+                        <div className='text-center font-semibold text-lg text-gray-700 py-8'>No Lending History Found</div>
 
-                <DataTable data={Lendings} columns={LendingsColumns} loading={isloading} />
+                }
             </div>
             <div>
             </div>

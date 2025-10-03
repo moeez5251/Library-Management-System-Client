@@ -1,8 +1,67 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { ReserverdColumns } from './reservations/columns'
+import ReservationsTable from './reservations/table'
+import { Toaster } from './ui/sonner'
+import { toast } from 'sonner'
+interface Reserverd {
+  Reservation_ID: number
+  Book_ID: string
+  Reserved_Date: string
+  Book_Title: string
+  Author: string
+}
 
 const MyReservation = () => {
+  const [reservationdata, setreservationdata] = useState<Reserverd[]>([])
+  const [isloading, setIsloading] = useState(true)
+  useEffect(() => {
+    (async () => {
+      const data = await fetch("http://127.0.0.1:8000/reservation/getbyid", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          user_id: JSON.parse(localStorage.getItem("user") || "")
+        })
+      })
+      if (!data.ok) {
+        toast.error("Unable to fetch reservations")
+        setIsloading(false)
+        return
+      }
+      const res = await data.json()
+      setIsloading(false)
+      setreservationdata(res.map((item: Reserverd) => {
+        return {
+          Reservation_ID: item.Reservation_ID,
+          Book_ID: item.Book_ID,
+          Reserved_Date: new Date(item.Reserved_Date).toLocaleDateString(),
+          Book_Title: item.Book_Title,
+          Author: item.Author
+        }
+      }))
+    })()
+
+    return () => {
+
+    }
+  }, [])
+
+
   return (
-    <div>MyReservation</div>
+    <>
+      <Toaster />
+      <div className='my-3'>
+        {
+          reservationdata.length >0 || isloading ?
+          <ReservationsTable data={reservationdata} columns={ReserverdColumns} loading={isloading} pageSize={5} />
+          :
+           <div className='text-center font-semibold text-lg text-gray-700 py-8'>No Active Reservation Found</div>
+        }
+      </div>
+    </>
   )
 }
 

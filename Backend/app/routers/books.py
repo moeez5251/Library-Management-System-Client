@@ -24,11 +24,10 @@ def lend_book(book:LendBook):
     conn=get_connection()
     cursor=conn.cursor()
     try:
-        cursor.execute("SELECT User_Name FROM users WHERE User_id=?", (book.user_id,))
+        cursor.execute("SELECT User_Name,Cost FROM users WHERE User_id=?", (book.user_id,))
         user = cursor.fetchone()
         cursor.execute("SELECT Category,Price,Book_Title,Author,Available from books WHERE Book_ID=?", (book.book_id,))
         category = cursor.fetchone()
-        print(user, category)
         if not user:
             raise HTTPException(status_code=404, detail="User not found.")
         if not category:
@@ -62,6 +61,8 @@ def lend_book(book:LendBook):
             conn.execute("UPDATE Books SET Available=?, Status='Borrowed' WHERE Book_ID=?", ("0", book.book_id))
         else:
             conn.execute("UPDATE Books SET Available=? WHERE Book_ID=?", (str(int(category[4]) - int(book.CopiesLent)), book.book_id))
+        conn.commit()
+        conn.execute("UPDATE users SET Cost=? WHERE User_id=?", (str(int(user[1]) + int(book.CopiesLent) * int(category[1]))), book.user_id)
         conn.commit()
         return {"message": "Book lent successfully."}
     except Exception as e:
