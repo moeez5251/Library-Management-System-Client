@@ -22,9 +22,6 @@ app.include_router(lendings.router)
 app.include_router(reservation.router)
 @app.get("/",response_class=HTMLResponse)
 async def read_root():
-    conn=get_connection()
-    cursor=conn.cursor()
-    
     return """
     <html>
         <head>
