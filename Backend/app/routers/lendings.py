@@ -26,6 +26,7 @@ def return_book(lender: ReturnBook):
     try:
         cursor.execute("UPDATE borrower SET Status = 'Returned'  OUTPUT INSERTED.CopiesLent WHERE user_id = ? AND Book_ID = ? AND Borrower_ID = ?", (lender.user_id, lender.book_id, lender.borrower_id))
         result=cursor.fetchone()
+        print(result,lender)
         conn.commit()
         if result[0] == 1:
             cursor.execute("SELECT TOP 1 * FROM reserved WHERE Book_ID = ?", (lender.book_id,))

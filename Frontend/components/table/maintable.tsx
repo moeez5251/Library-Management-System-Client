@@ -322,12 +322,6 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
       setLoaderanimation(false)
     }
   }
-  useEffect(() => {
-    console.log(new Date().toISOString().split('T')[0],lendedbookinfo.Date.toLocaleString("en-CA"));
-    return () => {
-
-    }
-  }, [lendedbookinfo])
 
 
   return (
@@ -589,7 +583,7 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
                 </div>
               </div>
               <div className="my-5 flex items-center justify-between font-normal">
-                <div className="font-semibold">Tax</div>
+                <div className="font-semibold">Per Day Fine</div>
                 <div>
                   Rs 100
                 </div>
@@ -597,13 +591,13 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
               <div className="my-5 flex items-center justify-between font-normal">
                 <div className="font-semibold">Total Price</div>
                 <div>
-                  Rs {(Copies.current * lendedbookinfo.price * getDaysDifference(new Date(), lendedbookinfo.Date)) + 100}
+                  Rs {(Copies.current * lendedbookinfo.price * getDaysDifference(new Date(), lendedbookinfo.Date))}
                 </div>
               </div>
             </AccordionContent>
           </AccordionItem>
           <div>
-            <div className="font-semibold text-base my-3">Final Price : {(Copies.current * lendedbookinfo.price * getDaysDifference(new Date(), lendedbookinfo.Date)) + 100}</div>
+            <div className="font-semibold text-base my-3">Final Price : {(Copies.current * lendedbookinfo.price * getDaysDifference(new Date(), lendedbookinfo.Date))}</div>
           </div>
         </Accordion>
         <div>

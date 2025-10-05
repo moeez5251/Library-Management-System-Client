@@ -3,6 +3,7 @@ from app.routers import users,mails,otp,resetpassword,books,lendings,reservation
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from fastapi.responses import HTMLResponse
+from app.database import get_connection
 app = FastAPI()
 origins=settings.origins.split(",")
 app.add_middleware(
@@ -21,6 +22,9 @@ app.include_router(lendings.router)
 app.include_router(reservation.router)
 @app.get("/",response_class=HTMLResponse)
 async def read_root():
+    conn=get_connection()
+    cursor=conn.cursor()
+    
     return """
     <html>
         <head>

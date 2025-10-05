@@ -34,10 +34,11 @@ const MyReservation = () => {
       const res = await data.json()
       setIsloading(false)
       setreservationdata(res.map((item: Reserverd) => {
+        const date = new Date(item.Reserved_Date);
         return {
           Reservation_ID: item.Reservation_ID,
           Book_ID: item.Book_ID,
-          Reserved_Date: new Date(item.Reserved_Date).toLocaleDateString(),
+          Reserved_Date: `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`,
           Book_Title: item.Book_Title,
           Author: item.Author
         }

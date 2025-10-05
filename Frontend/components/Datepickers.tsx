@@ -44,7 +44,7 @@ export function DatePicker({ label, date, onChange, disabled }: DatePickerProps)
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button variant="outline" id="date" className="w-48 justify-between font-normal">
-            {date ? date.toLocaleDateString() : "Select date"}
+            {date ?  `${new Date(date).getDate()}/${new Date(date).getMonth() + 1}/${new Date(date).getFullYear()}` : "Select date"}
             <CalendarDays className="ml-2 h-4 w-4 opacity-50" />
           </Button>
         </PopoverTrigger>
@@ -60,7 +60,7 @@ export function DatePicker({ label, date, onChange, disabled }: DatePickerProps)
             captionLayout="dropdown"
             fromYear={1900}
             toYear={new Date().getFullYear()}
-            disabled={calendarDisabled} // pass function for TS-safe range
+            disabled={calendarDisabled} 
           />
         </PopoverContent>
       </Popover>

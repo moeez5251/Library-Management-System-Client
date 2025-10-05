@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import DataTable from '@/components/Lendingstable/table'
 import { LendingsColumns } from '@/components/Lendingstable/columns'
 import { useDataFetcher } from '@/lib/datafetcher'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 interface Lending {
     Borrower_ID: number,
     user_id: string,
@@ -65,10 +66,29 @@ const MyLendings = () => {
             <div className='my-5'>
                 {
                     Lendings.length > 0 || isloading ?
-                    
-                        <DataTable data={Lendings} columns={LendingsColumns} loading={isloading} /> :
-                        <div className='text-center font-semibold text-lg text-gray-700 py-8'>No Lending History Found</div>
+                        <Tabs defaultValue="All" >
+                            <TabsList className='bg-white  dark:bg-[#1b2536]'>
+                                <TabsTrigger className="mx-2 px-2 py-4 bg-gray-100 dark:bg-gray-600 data-[state=active]:bg-[#6841c4] data-[state=active]:text-white data-[state=active]:shadow-md cursor-pointer" disabled={isloading} value="All">All</TabsTrigger>
+                                <TabsTrigger className="mx-2 px-2 py-4 bg-gray-100 dark:bg-gray-600 data-[state=active]:bg-red-600 data-[state=active]:text-white data-[state=active]:shadow-md cursor-pointer" disabled={isloading} value="Not-Returned">Not Returned</TabsTrigger>
+                                <TabsTrigger className="mx-2 px-2 py-4 bg-gray-100 dark:bg-gray-600 data-[state=active]:bg-green-600 data-[state=active]:text-white data-[state=active]:shadow-md cursor-pointer" disabled={isloading} value="Returned">Returned</TabsTrigger>
+                            </TabsList>
+                            <TabsContent className='w-full' value="All">
 
+                                <DataTable data={Lendings} columns={LendingsColumns} loading={isloading} />
+                            </TabsContent>
+                            <TabsContent value="Not-Returned">
+                                <DataTable data={Lendings.filter((item) => item.Status === "not returned")} columns={LendingsColumns} loading={isloading} />
+
+                            </TabsContent>
+                            <TabsContent value="Returned">
+                                <DataTable data={Lendings.filter((item) => item.Status === "Returned")} columns={LendingsColumns} loading={isloading} />
+
+                            </TabsContent>
+
+
+                        </Tabs>
+                        :
+                        <div className='text-center font-semibold text-lg text-gray-700 py-8'>No Lending History Found</div>
                 }
             </div>
             <div>
