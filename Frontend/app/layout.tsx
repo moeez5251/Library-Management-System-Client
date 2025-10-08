@@ -3,6 +3,9 @@ import type { Metadata } from 'next'
 import { Lato } from 'next/font/google'
 import Providers from './provider';
 import { DataFetcherProvider } from '@/lib/datafetcher';
+import { LendingFetcherProvider } from '@/lib/LendingModal';
+import { ReturnProvider } from '@/lib/ReturnDetails';
+
 const lato = Lato({
   variable: "--font-lato",
   subsets: ["latin"],
@@ -24,7 +27,11 @@ export default function RootLayout({
       <body >
         <Providers>
           <DataFetcherProvider>
-            {children}
+            <LendingFetcherProvider>
+              <ReturnProvider>
+                {children}
+              </ReturnProvider>
+            </LendingFetcherProvider>
           </DataFetcherProvider>
         </Providers>
       </body>

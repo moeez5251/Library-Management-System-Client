@@ -1,9 +1,8 @@
 "use client"
 import { useDataFetcher } from "@/lib/datafetcher"
-import { returnbook } from "@/lib/returnmanager"
+import { useLendingFetcher } from "@/lib/LendingModal"
+import { useReturn } from "@/lib/ReturnDetails"
 import { ColumnDef } from "@tanstack/react-table"
-import { useState } from "react"
-import { toast } from "sonner"
 interface Lendings {
   Borrower_ID: number,
   user_id: string,
@@ -46,27 +45,16 @@ export const LendingsColumns: ColumnDef<Lendings>[] = [
     accessorKey: "Status",
     header: "Status",
     cell: ({ getValue, row }) => {
-      const { datafetcher, setDatafetcher } = useDataFetcher();
-      const [isreturning, setisreturning] = useState(false);
-      const { Status, Book_ID, user_id, Borrower_ID } = row.original;
+      const { setReturnBook } = useReturn()
+      const { Lendingmodel, setLendingmodel } = useLendingFetcher();
+
       const handleReturn = async () => {
-        setisreturning(true);
-        try {
-          await returnbook(
-            Book_ID,
-            user_id,
-            Borrower_ID
-          );
-          toast.success("Book returned successfully");
-          setisreturning(false);
-          setDatafetcher(!datafetcher);
-        } catch (e) {
-          toast.error("Unable to return book");
-          setisreturning(false);
-        }
+        setReturnBook(row.original)
+        setLendingmodel(true)
+
       };
       return (
-        row.original.Status === "Returned" ? <div className="text-xs bg-green-500 text-white p-1 w-fit rounded-sm">Returned</div> : isreturning ? <div className="text-xs bg-gray-500 text-white p-1.5 w-fit rounded-sm">Returning...</div> :
+        row.original.Status === "Returned" ? <div className="text-xs bg-green-500 text-white p-1 w-fit rounded-sm">Returned</div> :
           <div onClick={handleReturn} className="text-xs text-white p-1.5 w-fit rounded-sm bg-red-500 cursor-pointer">Return Now</div>
 
       );

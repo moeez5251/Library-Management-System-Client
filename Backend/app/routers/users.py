@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from app.database import get_connection
-from app.schemas.user import UserCreate,UserSignUp,EmailRequest
+from app.schemas.user import UserCreate,UserSignUp,EmailRequest,GetUser
 from app.passwords.verify import hash_password,verify_password
 from app.schemas.authusers import AuthUser
 import uuid
@@ -84,6 +84,15 @@ def createuser(user:AuthUser):
             return {"userID":result.google_id}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Database error {e}",)
-@router.post("/resetpass")
-def resetpassword():
-    pass
+@router.post("/getbyid")
+def getbyid(user:GetUser):
+    conn=get_connection()
+    cursor=conn.cursor()
+    try:
+        cursor.execute("SELECT User_Name,Email,Role,Membership_Type, FROM users WHERE User_id = ?", (user.user_id,))
+        result=cursor.fetchone()
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Database error {e}",)
+    finally:
+        conn.close()

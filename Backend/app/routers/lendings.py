@@ -26,7 +26,11 @@ def return_book(lender: ReturnBook):
     try:
         cursor.execute("UPDATE borrower SET Status = 'Returned'  OUTPUT INSERTED.CopiesLent WHERE user_id = ? AND Book_ID = ? AND Borrower_ID = ?", (lender.user_id, lender.book_id, lender.borrower_id))
         result=cursor.fetchone()
-        print(result,lender)
+        conn.commit()
+        user=cursor.execute("SELECT Cost FROM users WHERE User_id=?", (lender.user_id,)).fetchone()
+        book=cursor.execute("SELECT IssuedDate,DueDate, Price,CopiesLent FROM borrower WHERE Borrower_ID=?", (lender.borrower_id,)).fetchone()
+        days=(book[1]-book[0]).days
+        cursor.execute("UPDATE users SET Cost = ? WHERE User_id=?", str(int(user[0]) - int(book[3]) * int(book[2]) * days), lender.user_id)
         conn.commit()
         if result[0] == 1:
             cursor.execute("SELECT TOP 1 * FROM reserved WHERE Book_ID = ?", (lender.book_id,))

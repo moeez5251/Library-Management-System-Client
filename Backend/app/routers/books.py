@@ -1,8 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from app.database import get_connection
 from app.schemas.book import Book,LendBook
-from datetime import datetime
-import pytz
+from datetime import date
 router = APIRouter(prefix="/books", tags=["books"])
 
 @router.get("/getall")
@@ -56,13 +55,13 @@ def lend_book(book:LendBook):
 
 
         conn.commit()
-   
+
         if int(category[4]) == int(book.CopiesLent):
             conn.execute("UPDATE Books SET Available=?, Status='Borrowed' WHERE Book_ID=?", ("0", book.book_id))
         else:
             conn.execute("UPDATE Books SET Available=? WHERE Book_ID=?", (str(int(category[4]) - int(book.CopiesLent)), book.book_id))
         conn.commit()
-        conn.execute("UPDATE users SET Cost=? WHERE User_id=?", (str(int(user[1]) + int(book.CopiesLent) * int(category[1]))), book.user_id)
+        conn.execute("UPDATE users SET Cost=? WHERE User_id=?", (str(int(user[1]) + int(book.CopiesLent) * int(category[1])* (book.DueDate - book.IssuedDate).days)), book.user_id)
         conn.commit()
         return {"message": "Book lent successfully."}
     except Exception as e:
