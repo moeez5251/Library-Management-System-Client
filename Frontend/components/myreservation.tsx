@@ -16,33 +16,40 @@ const MyReservation = () => {
   const [isloading, setIsloading] = useState(true)
   useEffect(() => {
     (async () => {
-      const data = await fetch("http://127.0.0.1:8000/reservation/getbyid", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          user_id: JSON.parse(localStorage.getItem("user") || "")
+      try {
+
+        const data = await fetch("http://127.0.0.1:8000/reservation/getbyid", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            user_id: JSON.parse(localStorage.getItem("user") || "")
+          })
         })
-      })
-      if (!data.ok) {
+        if (!data.ok) {
+          toast.error("Unable to fetch reservations")
+          setIsloading(false)
+          return
+        }
+        const res = await data.json()
+        setIsloading(false)
+        setreservationdata(res.map((item: Reserverd) => {
+          const date = new Date(item.Reserved_Date);
+          return {
+            Reservation_ID: item.Reservation_ID,
+            Book_ID: item.Book_ID,
+            Reserved_Date: `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`,
+            Book_Title: item.Book_Title,
+            Author: item.Author
+          }
+        }))
+      }
+      catch {
         toast.error("Unable to fetch reservations")
         setIsloading(false)
-        return
       }
-      const res = await data.json()
-      setIsloading(false)
-      setreservationdata(res.map((item: Reserverd) => {
-        const date = new Date(item.Reserved_Date);
-        return {
-          Reservation_ID: item.Reservation_ID,
-          Book_ID: item.Book_ID,
-          Reserved_Date: `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`,
-          Book_Title: item.Book_Title,
-          Author: item.Author
-        }
-      }))
     })()
 
     return () => {
@@ -56,10 +63,10 @@ const MyReservation = () => {
       <Toaster />
       <div className='my-3'>
         {
-          reservationdata.length >0 || isloading ?
-          <ReservationsTable data={reservationdata} columns={ReserverdColumns} loading={isloading} pageSize={5} />
-          :
-           <div className='text-center font-semibold text-lg text-gray-700 py-8'>No Active Reservation Found</div>
+          reservationdata.length > 0 || isloading ?
+            <ReservationsTable data={reservationdata} columns={ReserverdColumns} loading={isloading} pageSize={5} />
+            :
+            <div className='text-center font-semibold text-lg text-gray-700 py-8'>No Active Reservation Found</div>
         }
       </div>
     </>

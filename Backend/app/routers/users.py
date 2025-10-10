@@ -89,9 +89,10 @@ def getbyid(user:GetUser):
     conn=get_connection()
     cursor=conn.cursor()
     try:
-        cursor.execute("SELECT User_Name,Email,Role,Membership_Type, FROM users WHERE User_id = ?", (user.user_id,))
+        cursor.execute("SELECT User_Name,Email,Membership_Type FROM users WHERE User_id = ?", (user.user_id,))
         result=cursor.fetchone()
-        return result
+        result_dict=[dict(zip(["User_Name","Email","Membership_Type"], result))]
+        return result_dict
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Database error {e}",)
     finally:
