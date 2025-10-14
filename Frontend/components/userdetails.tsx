@@ -30,9 +30,10 @@ const UserDetails = () => {
         NewPassword: false,
         ConfirmPassword: false
     })
-    const [opening, setopening] = useState(true)
+    const [opening, setopening] = useState(false)
     const [isverifying, setisverifying] = useState(false);
     const [selectedTab, setSelectedTab] = useState("otp");
+    const [dialogpass, setdialogpass] = useState(true)
     const [dialoginputs, setDialoginputs] = useState({
         NewPassword: '',
         ReNew: ''
@@ -41,7 +42,6 @@ const UserDetails = () => {
         newPasswordVisible: false,
         reNewPasswordVisible: false
     })
-    const [disabledchange, setDisabledchange] = useState(true)
     const [otpvalue, setotpvalue] = useState("")
     const handlepasswordchange = (e: React.ChangeEvent<HTMLInputElement>): void => {
         setPasswords({ ...Passwords, [e.target.name]: e.target.value });
@@ -86,6 +86,71 @@ const UserDetails = () => {
             [e.target.name]: e.target.value
         })
     }
+    const handleforget = async (): Promise<void> => {
+        setopening(true)
+        try {
+
+            const api = await fetch("http://127.0.0.1:8000/mail/send-mail", {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    name: inputs.name,
+                    to: inputs.email
+                })
+            })
+            if (!api.ok) {
+                toast.error("Unable to send mail")
+            }
+            toast.success("Mail sent successfully")
+        }
+        catch {
+            toast.error("Unable to send mail")
+        }
+    }
+    const handleverify = async (a: string): Promise<void> => {
+        setisverifying(true)
+        try {
+            const api = await fetch("http://127.0.0.1:8000/otp/verify", {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    email: inputs.email,
+                    otp: a
+                })
+            })
+            if (!api.ok) {
+                toast.error("Invalid OTP")
+                setisverifying(false)
+                return
+            }
+            setSelectedTab("change")
+            setisverifying(false)
+        }
+        catch {
+            toast.error("Unable to verify")
+        }
+    }
+
+    const handlechangepass = async (): Promise<void> => {
+
+    }
+    useEffect(() => {
+        if (dialoginputs.NewPassword !== dialoginputs.ReNew || dialoginputs.NewPassword.trim() === "") {
+            setdialogpass(true)
+        }
+        else {
+            setdialogpass(false)
+        }
+        return () => {
+
+        }
+    }, [dialoginputs])
 
     return (
         <>
@@ -129,7 +194,7 @@ const UserDetails = () => {
                     <ShieldCheck size={22} className='inline mr-0.5 text-[#6941c5]' />
                     Privacy and Security
                 </h2>
-                <div className='text-[#6941c5] text-sm cursor-pointer font-semibold hover:underline'>
+                <div onClick={handleforget} className='text-[#6941c5] text-sm cursor-pointer font-semibold hover:underline'>
                     Forget Password ?
                 </div>
             </div>
@@ -211,13 +276,13 @@ const UserDetails = () => {
 
                 </div>
             </div>
-            <Dialog open={opening} onOpenChange={setopening}>
+            <Dialog open={opening} onOpenChange={setopening} >
                 <DialogContent >
                     <DialogHeader>
                         <DialogTitle className="text-center">{selectedTab === 'otp' ? "Enter OTP for Verification" : "Enter New Password"}</DialogTitle>
                     </DialogHeader>
                     <DialogDescription></DialogDescription>
-                    <button onClick={() => { setopening(false); }} className='absolute top-3 cursor-pointer right-3 bg-gray-300  p-1 rounded-2xl z-40 '>
+                    <button onClick={() => { setopening(false); setSelectedTab('otp');setisverifying(false);  }} className='absolute top-3 cursor-pointer right-3 bg-gray-300  p-1 rounded-2xl z-40 '>
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width={20}
@@ -251,7 +316,7 @@ const UserDetails = () => {
                                             <InputOTP maxLength={6} value={otpvalue} onChange={async (value) => {
                                                 setotpvalue(value)
                                                 if (value.length === 6) {
-                                                    // handleverify(value);
+                                                    handleverify(value);
                                                 }
                                             }}>
                                                 <InputOTPGroup>
@@ -268,16 +333,16 @@ const UserDetails = () => {
                                             </InputOTP>
                                             {
                                                 !isverifying &&
-                                                <Button disabled={otpvalue.length !== 6} className="w-[95%] btn-verify bg-[#6841c4] text-base h-10 mt-8 rounded-full cursor-pointer hover:bg-[#5917f3]">Verify</Button>
+                                                <Button onClick={() => handleverify(otpvalue)} disabled={otpvalue.length !== 6} className="w-[95%] btn-verify bg-[#6841c4] text-base h-10 mt-8 rounded-full cursor-pointer hover:bg-[#5917f3]">Verify</Button>
                                             }
                                             {
                                                 isverifying &&
-                                                <Button disabled className="w-[95%]  bg-[#6841c4] text-base h-10 mt-8 rounded-full cursor-pointer hover:bg-[#5917f3]">Verify</Button>
+                                                <Button disabled className="w-[95%]  bg-[#6841c4] text-base h-10 mt-8 rounded-full cursor-pointer hover:bg-[#5917f3]">Verifying</Button>
                                             }
 
                                         </div>
 
-                                        <DialogFooter className="text-center block my-3 ">Didn&apos;t receive code? <span className='text-[#6841c4] cursor-pointer'>Click to resend.</span></DialogFooter>
+                                        <DialogFooter className="text-center block my-3 ">Didn&apos;t receive code? <span onClick={handleforget} className='text-[#6841c4] cursor-pointer'>Click to resend.</span></DialogFooter>
 
                                     </div>
                                 </motion.div>
@@ -328,7 +393,7 @@ const UserDetails = () => {
                                         {
                                             !isverifying &&
                                             <div className='mx-auto'>
-                                                <Button disabled={disabledchange} className=" btn-verify bg-[#6841c4] text-base h-10 mt-8 rounded-full cursor-pointer hover:bg-[#5917f3] dark:text-white">Change Password</Button>
+                                                <Button onClick={handlechangepass} disabled={dialogpass} className=" btn-verify bg-[#6841c4] text-base h-10 mt-8 rounded-full cursor-pointer hover:bg-[#5917f3] dark:text-white">Change Password</Button>
 
                                             </div>
                                         }

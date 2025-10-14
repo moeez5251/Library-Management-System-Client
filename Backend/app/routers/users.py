@@ -1,99 +1,25 @@
-from fastapi import APIRouter, HTTPException
-from app.database import get_connection
+from fastapi import APIRouter
 from app.schemas.user import UserCreate,UserSignUp,EmailRequest,GetUser
-from app.passwords.verify import hash_password,verify_password
 from app.schemas.authusers import AuthUser
-import uuid
+from app.controllers.users import read_users,sign_up,exist,createuser,getbyid
 router = APIRouter(prefix="/users", tags=["users"])
 
 @router.post("/login")
-def read_users(user: UserCreate):
-    conn = get_connection()
-    cursor = conn.cursor()
-    try:
-        cursor.execute("SELECT * FROM users WHERE email = ? AND Role='Standard-User'", (user.email,))
-        result=cursor.fetchone()
-        if result is None:
-            raise HTTPException(status_code=401, detail="Invalid credentials")
-        columns = [col[0] for col in cursor.description]
-        row_dict = dict(zip(columns, result))
-        if verify_password(user.password, row_dict["password"]):
-            result = cursor.fetchone()
-            return {"user_id": row_dict["User_id"]}
-        else:
-            raise HTTPException(status_code=401, detail="Invalid credentials")
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Database error {e}",)
-    finally:
-        conn.close()
+def login(user:UserCreate):
+    return read_users(user)
+
 @router.post("/signup")
-def sign_up(user:UserSignUp):
-    conn=get_connection()
-    cursor=conn.cursor()
-    try:
-        olduser=cursor.execute("SELECT * FROM users WHERE email = ?", (user.email,))
-        if olduser.fetchone() is  None:
-            uid=str(uuid.uuid4())
-            userid=user.name[0]+uid[0:7]
-            cursor.execute("INSERT INTO users (User_id,User_Name, Email, password,	Role,Membership_Type,Cost,Status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (userid,user.name,user.email,hash_password(user.password),"Standard-User","English",0,"Active"))
-            conn.commit()
-            return {"message": "User created successfully","user_id":userid}
-        else:
-            raise HTTPException(status_code=401,detail="User with this email already exist")
-    except HTTPException:
-        raise  
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to create user: {e}",)
-    finally:
-        conn.close()
+def signup(user:UserSignUp):
+    return sign_up(user)
+
 @router.post("/exist")
 def exist(email:EmailRequest):
-    conn=get_connection()
-    cursor=conn.cursor()
-    try:
-        cursor.execute("SELECT * FROM users WHERE Email = ?", (email.email,))
-        result=cursor.fetchone()
-        cursor.execute("SELECT * FROM Google WHERE Email = ?", (email.email,))
-        result2=cursor.fetchone()
-        if result is None and result2 is None:
-            return {"exist":False}
-        else:
-            return {"exist":True}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Database error {e}",)
-    finally:
-        conn.close()
+    return exist(email)
+
 @router.post("/auth-users")
-def createuser(user:AuthUser):
-    conn=get_connection()
-    cursor=conn.cursor()
-    try:
-        cursor.execute("Select * FROM Google WHERE email = ?", (user.email,))
-        result=cursor.fetchone()
-        cursor.execute("Select * FROM users WHERE email = ?", (user.email,))
-        result2=cursor.fetchone()
-        if result2 is not None:
-            return {"userID":result2.User_id}
-        if result is  None:
-            cursor.execute("INSERT into Google (google_id,email,name) VALUES (?,?,?)", (user.google_id,user.email,user.name))
-            conn.commit()
-            return {"userID":user.google_id}
-        else:
-            return {"userID":result.google_id}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Database error {e}",)
+def auth_users(user:AuthUser):
+    return createuser(user)
+
 @router.post("/getbyid")
-def getbyid(user:GetUser):
-    conn=get_connection()
-    cursor=conn.cursor()
-    try:
-        cursor.execute("SELECT User_Name,Email,Membership_Type FROM users WHERE User_id = ?", (user.user_id,))
-        result=cursor.fetchone()
-        result_dict=[dict(zip(["User_Name","Email","Membership_Type"], result))]
-        return result_dict
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Database error {e}",)
-    finally:
-        conn.close()
+def getter(user:GetUser):
+    return getbyid(user)

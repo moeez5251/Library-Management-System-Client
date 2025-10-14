@@ -9,8 +9,8 @@ class Settings(BaseSettings):
     GOOGLE_CLIENT_SECRET: str
     GOOGLE_REFRESH_TOKEN: str
     GOOGLE_USER_EMAIL: str
-
     origins: str
+    
     class Config:
         env_file = ".env"
 
