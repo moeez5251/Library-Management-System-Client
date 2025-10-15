@@ -21,10 +21,9 @@ const MyAccount = () => {
           Account Information
         </div>
         <UserDetails />
-
       </div>
 
-      <LendingModal/>
+      <LendingModal />
     </>
   )
 }

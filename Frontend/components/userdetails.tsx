@@ -1,5 +1,5 @@
 "use client"
-import { User, ShieldCheck, Eye, EyeOff } from 'lucide-react'
+import { User, ShieldCheck, Eye, EyeOff, CircleAlert } from 'lucide-react'
 import React, { useState, useEffect } from 'react'
 import { Toaster } from './ui/sonner'
 import { toast } from 'sonner'
@@ -12,8 +12,8 @@ import {
 } from "@/components/ui/input-otp"
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence, transformValue } from "motion/react"
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
-
+import { Tabs } from "@/components/ui/tabs"
+import DangerZone from './dangerzone'
 const UserDetails = () => {
     const [inputs, setInputs] = useState({
         name: '',
@@ -43,6 +43,7 @@ const UserDetails = () => {
         reNewPasswordVisible: false
     })
     const [otpvalue, setotpvalue] = useState("")
+    const [changepasswordbutton, setchangepasswordbutton] = useState(true)
     const handlepasswordchange = (e: React.ChangeEvent<HTMLInputElement>): void => {
         setPasswords({ ...Passwords, [e.target.name]: e.target.value });
     }
@@ -90,7 +91,7 @@ const UserDetails = () => {
         setopening(true)
         try {
 
-            const api = await fetch("http://127.0.0.1:8000/mail/send-mail", {
+            const api = await fetch("http://127.0.0.1:8000/mail/reset-mail", {
                 method: "POST",
                 credentials: "include",
                 headers: {
@@ -138,6 +139,93 @@ const UserDetails = () => {
     }
 
     const handlechangepass = async (): Promise<void> => {
+        setisverifying(true)
+        if (dialoginputs.NewPassword.length < 8) {
+            toast.custom((id: string | number) => (
+                <div className="bg-red-700 text-white p-4 rounded-md shadow-lg flex items-center gap-3">
+                    <CircleAlert size={20} />
+                    <p className="text-sm">Password must be at least 8 characters long.</p>
+                </div>
+            ));
+            setisverifying(false)
+            return
+        }
+        try {
+            const api = await fetch("http://127.0.0.1:8000/changepass/changebyotp", {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    user_id: JSON.parse(localStorage.getItem("user") || ""),
+                    password: dialoginputs.NewPassword
+                })
+            })
+            if (!api.ok) {
+                toast.error("New Password must be different from old password")
+                setisverifying(false)
+                return
+            }
+            setopening(false)
+            toast.success("Password changed successfully")
+            setotpvalue("")
+            setSelectedTab("otp")
+            setisverifying(false)
+            setDialoginputs({
+                NewPassword: '',
+                ReNew: ''
+            })
+        }
+        catch {
+            toast.error("Unable to change password")
+        }
+    }
+    const handleupdatepassword = async (): Promise<void> => {
+        setchangepasswordbutton(true)
+        if (Passwords.NewPassword.length < 8) {
+            toast.custom((id: string | number) => (
+                <div className="bg-red-700 text-white p-4 rounded-md shadow-lg flex items-center gap-3">
+                    <CircleAlert size={20} />
+                    <p className="text-sm">Password must be at least 8 characters long.</p>
+                </div>
+            ));
+            setchangepasswordbutton(false)
+            return
+        }
+        try {
+
+            const data = await fetch("http://127.0.0.1:8000/changepass/changebyoldpass", {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+
+                    user_id: "Sdd36ab6",
+                    old_password: Passwords.OldPassword,
+                    new_password: Passwords.NewPassword
+
+                })
+            })
+            if (!data.ok) {
+                const error=await data.json()
+                toast.error(error.detail)
+                setchangepasswordbutton(false)
+                return
+            }
+            toast.success("Password changed successfully")
+            setchangepasswordbutton(false)
+            setPasswords({
+                OldPassword: '',
+                NewPassword: '',
+                ConfirmPassword: ''
+            })
+        }
+        catch {
+            toast.error("Unable to change password")
+        }
 
     }
     useEffect(() => {
@@ -151,6 +239,18 @@ const UserDetails = () => {
 
         }
     }, [dialoginputs])
+    useEffect(() => {
+
+        if (Passwords.NewPassword !== Passwords.ConfirmPassword || Passwords.NewPassword.trim() === "" || Passwords.OldPassword.trim() === "") {
+            setchangepasswordbutton(true)
+        }
+        else {
+            setchangepasswordbutton(false)
+        }
+        return () => {
+
+        }
+    }, [Passwords])
 
     return (
         <>
@@ -276,13 +376,18 @@ const UserDetails = () => {
 
                 </div>
             </div>
+            <div className='w-full flex items-center justify-center my-6'>
+
+                <button onClick={handleupdatepassword} disabled={changepasswordbutton} className='bg-[#6941c5] px-4 py-2 text-white rounded-md cursor-pointer disabled:opacity-50 disabled:pointer-events-none disabled:cursor-auto scale-100 hover:scale-105 transition-transform '>Update</button>
+            </div>
+            <DangerZone/>
             <Dialog open={opening} onOpenChange={setopening} >
-                <DialogContent >
+                <DialogContent onPointerDownOutside={(e) => e.preventDefault()} >
                     <DialogHeader>
                         <DialogTitle className="text-center">{selectedTab === 'otp' ? "Enter OTP for Verification" : "Enter New Password"}</DialogTitle>
                     </DialogHeader>
                     <DialogDescription></DialogDescription>
-                    <button onClick={() => { setopening(false); setSelectedTab('otp');setisverifying(false);  }} className='absolute top-3 cursor-pointer right-3 bg-gray-300  p-1 rounded-2xl z-40 '>
+                    <button onClick={() => { setopening(false); setSelectedTab('otp'); setisverifying(false); setotpvalue(''); }} className='absolute top-3 cursor-pointer right-3 bg-gray-300  p-1 rounded-2xl z-40 '>
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width={20}
@@ -412,7 +517,6 @@ const UserDetails = () => {
                             )}
                         </AnimatePresence>
                     </Tabs>
-
 
                 </DialogContent>
 

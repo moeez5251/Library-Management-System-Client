@@ -10,7 +10,6 @@ from app.utils.mailer.mail import send_email
 def resetpassword(user:EmailRequest):
     conn=get_connection()
     cursor=conn.cursor()
-    print(user)
     try:
         pk_tz = pytz.timezone("Asia/Karachi")
         now = datetime.now(pk_tz)
