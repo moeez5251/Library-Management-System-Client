@@ -79,7 +79,7 @@ def createuser(user:AuthUser):
             conn.commit()
             return {"userID":user.google_id}
         else:
-            return {"userID":result.google_id}
+            return {"GoogleID":result.google_id}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Database error {e}",)
 
@@ -91,6 +91,26 @@ def getbyid(user:GetUser):
         result=cursor.fetchone()
         result_dict=[dict(zip(["User_Name","Email","Membership_Type"], result))]
         return result_dict
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Database error {e}",)
+    finally:
+        conn.close()
+
+def delete_user(user:GetUser):
+    conn=get_connection()
+    cursor=conn.cursor()
+    try:
+        cursor.execute("SELECT * from borrower WHERE user_id = ? AND Status='not returned'", (user.user_id,))
+        result=cursor.fetchone()
+        if result is not None:
+            raise HTTPException(status_code=401, detail="Return the book first")
+        cursor.execute("DELETE from reserved WHERE user_id = ?", (user.user_id,))
+        cursor.execute("DELETE FROM notifications WHERE UserId = ?", (user.user_id,))
+        cursor.execute("DELETE FROM users WHERE User_id = ?", (user.user_id,))
+        conn.commit()
+        return {"message": "User deleted successfully"}
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Database error {e}",)
     finally:

@@ -7,6 +7,7 @@ const DangerZone = () => {
                 <TriangleAlert strokeWidth={2.2} size={22} className='inline mr-0.5 text-red-600' />
                 Danger Zone
             </h2>
+            
         </>
     )
 }

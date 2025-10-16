@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from app.schemas.user import UserCreate,UserSignUp,EmailRequest,GetUser
 from app.schemas.authusers import AuthUser
-from app.controllers.users import read_users,sign_up,exist,createuser,getbyid
+from app.controllers.users import read_users,sign_up,exist,createuser,getbyid,delete_user
 router = APIRouter(prefix="/users", tags=["users"])
 
 @router.post("/login")
@@ -13,7 +13,7 @@ def signup(user:UserSignUp):
     return sign_up(user)
 
 @router.post("/exist")
-def exist(email:EmailRequest):
+def exists(email:EmailRequest):
     return exist(email)
 
 @router.post("/auth-users")
@@ -23,3 +23,7 @@ def auth_users(user:AuthUser):
 @router.post("/getbyid")
 def getter(user:GetUser):
     return getbyid(user)
+
+@router.post("/delete")
+def delete_account(user:GetUser):
+    return delete_user(user)

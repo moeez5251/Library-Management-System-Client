@@ -311,7 +311,7 @@ export default function HomePage() {
 
 
       <Dialog open={otp} onOpenChange={setotp} >
-        <DialogContent className="w-full lg:w-1/3 rounded-3xl shadow-lg " >
+        <DialogContent  onPointerDownOutside={(e) => e.preventDefault()} className="w-full lg:w-1/3 rounded-3xl shadow-lg " >
           <DialogTitle></DialogTitle>
           <DialogDescription />
           <div className="flex flex-col items-center  gap-2 my-0">
