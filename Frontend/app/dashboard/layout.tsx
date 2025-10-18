@@ -13,8 +13,7 @@ export default function RootLayout({
     children: React.ReactNode
 }>) {
     return (
-        <html lang="en">
-            <body >
+                <>
                 <Navbar />
                 <div className='flex  gap-3 mx-3 mt-5 h-[83vh]'>
 
@@ -31,7 +30,6 @@ export default function RootLayout({
                         <div className='font-semibold text-[#7c7c7c] text-sm'>XLMS - LMS version 1.0</div>
                         <div className='font-semibold text-[#7c7c7c] text-sm'>&copy; 2025 XLMS, All Rights Reserved</div>
                 </div>
-            </body>
-        </html>
+                </>
     )
 }

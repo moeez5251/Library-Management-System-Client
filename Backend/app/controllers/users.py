@@ -104,6 +104,7 @@ def delete_user(user:GetUser):
         result=cursor.fetchone()
         if result is not None:
             raise HTTPException(status_code=401, detail="Return the book first")
+        cursor.execute("DELETE FROM borrower WHERE user_id = ?", (user.user_id,))
         cursor.execute("DELETE from reserved WHERE user_id = ?", (user.user_id,))
         cursor.execute("DELETE FROM notifications WHERE UserId = ?", (user.user_id,))
         cursor.execute("DELETE FROM users WHERE User_id = ?", (user.user_id,))

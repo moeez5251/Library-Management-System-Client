@@ -210,7 +210,7 @@ const UserDetails = () => {
                 })
             })
             if (!data.ok) {
-                const error=await data.json()
+                const error = await data.json()
                 toast.error(error.detail)
                 setchangepasswordbutton(false)
                 return
@@ -380,7 +380,7 @@ const UserDetails = () => {
 
                 <button onClick={handleupdatepassword} disabled={changepasswordbutton} className='bg-[#6941c5] px-4 py-2 text-white rounded-md cursor-pointer disabled:opacity-50 disabled:pointer-events-none disabled:cursor-auto scale-100 hover:scale-105 transition-transform '>Update</button>
             </div>
-            <DangerZone/>
+            <DangerZone />
             <Dialog open={opening} onOpenChange={setopening} >
                 <DialogContent onPointerDownOutside={(e) => e.preventDefault()} >
                     <DialogHeader>

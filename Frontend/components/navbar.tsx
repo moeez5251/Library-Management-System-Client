@@ -50,10 +50,6 @@ const Navbar = () => {
                        
                     </div>
                     <div className='bg-[#f1f1fd] p-2 rounded-full cursor-pointer scale-100 transition-all hover:scale-110 relative dark:bg-[#293750]'>
-                        <Settings size={19} color='#9499a1' />
-                       
-                    </div>
-                    <div className='bg-[#f1f1fd] p-2 rounded-full cursor-pointer scale-100 transition-all hover:scale-110 relative dark:bg-[#293750]'>
                         <UserRound size={19} color='#9499a1' />
                        
                     </div>

@@ -9,14 +9,12 @@ const Sidebar = () => {
         dashboard: boolean;
         bookcatalog: boolean;
         myaccount: boolean;
-        settings: boolean;
         notifications: boolean;
         helpandsupport: boolean;
     }>({
         dashboard: true,
         bookcatalog: false,
         myaccount: false,
-        settings: false,
         notifications: false,
         helpandsupport: false,
     })
@@ -25,7 +23,6 @@ const Sidebar = () => {
             dashboard: e === 'dashboard' ? true : false,
             bookcatalog: e === 'bookcatalog' ? true : false,
             myaccount: e === 'myaccount' ? true : false,
-            settings: e === 'settings' ? true : false,
             notifications: e === 'notifications' ? true : false,
             helpandsupport: e === 'helpandsupport' ? true : false,
         })
@@ -35,7 +32,6 @@ const Sidebar = () => {
             dashboard: pathname === '/dashboard' ? true : false,
             bookcatalog: pathname === '/dashboard/catalog' ? true : false,
             myaccount: pathname === '/dashboard/myaccount' ? true : false,
-            settings: pathname === '/dashboard/settings' ? true : false,
             notifications: pathname === '/dashboard/notifications' ? true : false,
             helpandsupport: pathname === '/dashboard/helpandsupport' ? true : false,
         })
@@ -47,7 +43,7 @@ const Sidebar = () => {
 
     return (
         <>
-            <div className='flex  flex-col gap-4 w-full items-baseline'>
+            <div className='flex  flex-col gap-4 relative top-3 w-full items-baseline'>
 
                 <Link href={'/dashboard'} prefetch={true} onClick={() => handletoggle('dashboard')} data-active={active.dashboard} className={` flex text-black px-4 py-2.5 rounded-md items-center gap-2 cursor-pointer text-lg font-semibold w-full transition-colors duration-100 ${active.dashboard ? 'bg-[#6941c5] text-white' : ''}`}>
                     <div>
@@ -67,23 +63,18 @@ const Sidebar = () => {
                     </div>
                     My Account
                 </Link>
-                <Link href={'/dashboard/settings'} prefetch={true} onClick={() => handletoggle('settings')} data-active={active.settings} className={` flex text-black font-semibold px-4 py-2.5 rounded-md items-center gap-2 cursor-pointer text-lg w-full transition-colors duration-100 ${active.settings ? 'bg-[#6941c5] text-white' : ''}`}>
+            
+                <Link href={'/dashboard/helpandsupport'} prefetch={true} onClick={() => handletoggle('helpandsupport')} data-active={active.helpandsupport} className={`flex text-black font-semibold px-4 py-2.5 rounded-md items-center gap-2  cursor-pointer text-lg w-full transition-colors duration-100 ${active.helpandsupport ? 'bg-[#6941c5] text-white' : ''} `}>
                     <div>
-                        <Bolt size={22} className={active.settings ? 'text-white' : 'text-[#4f6065]'} />
+                        <MessageSquareText size={22} className={active.helpandsupport ? 'text-white' : 'text-[#4f6065]'} />
                     </div>
-                    Settings
+                    Help and Support
                 </Link>
                 <Link href={'/dashboard/notifications'} prefetch={true} onClick={() => handletoggle('notifications')} data-active={active.notifications} className={` flex text-black font-semibold px-4 py-2.5 rounded-md items-center gap-2  cursor-pointer text-lg w-full transition-colors duration-100 ${active.notifications ? 'bg-[#6941c5] text-white' : ''} `}>
                     <div>
                         <Bell size={22} className={active.notifications ? 'text-white' : 'text-[#4f6065]'} />
                     </div>
                     Notifications
-                </Link>
-                <Link href={'/dashboard/helpandsupport'} prefetch={true} onClick={() => handletoggle('helpandsupport')} data-active={active.helpandsupport} className={`flex text-black font-semibold px-4 py-2.5 rounded-md items-center gap-2  cursor-pointer text-lg w-full transition-colors duration-100 ${active.helpandsupport ? 'bg-[#6941c5] text-white' : ''} `}>
-                    <div>
-                        <MessageSquareText size={22} className={active.helpandsupport ? 'text-white' : 'text-[#4f6065]'} />
-                    </div>
-                    Help and Support
                 </Link>
                 <div className=' flex text-black font-semibold px-4 py-2.5 rounded-md items-center gap-2  cursor-pointer text-lg w-full '>
                     <div>

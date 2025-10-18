@@ -5,7 +5,7 @@ import Providers from './provider';
 import { DataFetcherProvider } from '@/lib/datafetcher';
 import { LendingFetcherProvider } from '@/lib/LendingModal';
 import { ReturnProvider } from '@/lib/ReturnDetails';
-
+import { DeleteModal } from '@/lib/DeleteModal';
 const lato = Lato({
   variable: "--font-lato",
   subsets: ["latin"],
@@ -29,7 +29,10 @@ export default function RootLayout({
           <DataFetcherProvider>
             <LendingFetcherProvider>
               <ReturnProvider>
-                {children}
+                <DeleteModal>
+
+                  {children}
+                </DeleteModal>
               </ReturnProvider>
             </LendingFetcherProvider>
           </DataFetcherProvider>
