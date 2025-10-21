@@ -146,7 +146,7 @@ export const ModalContent = ({
     className?: string;
 }) => {
     return (
-        <div className={cn("flex flex-col flex-1 p-8 md:p-10", className)}>
+        <div className={cn("flex flex-col flex-1 p-6 ", className)}>
             {children}
         </div>
     );
@@ -185,7 +185,7 @@ const Overlay = ({ className }: { className?: string }) => {
                 opacity: 0,
                 backdropFilter: "blur(0px)",
             }}
-            className={`fixed inset-0 h-full w-full bg-black bg-opacity-50 z-50 ${className}`}
+            className={`fixed inset-0 h-full w-full  bg-opacity-50 z-50 ${className}`}
         ></motion.div>
     );
 };
@@ -195,7 +195,7 @@ const CloseIcon = () => {
     return (
         <button
             onClick={() => setOpen(false)}
-            className="absolute top-4 right-4 group"
+            className="absolute top-4 right-4 group bg-gray-500 p-2 rounded-full cursor-pointer scale-95 hover:scale-100 transition-transform "
         >
             <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -207,7 +207,7 @@ const CloseIcon = () => {
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="text-black dark:text-white h-4 w-4 group-hover:scale-125 group-hover:rotate-3 transition duration-200"
+                className="text-white d h-4 w-4  transition duration-200"
             >
                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                 <path d="M18 6l-12 12" />

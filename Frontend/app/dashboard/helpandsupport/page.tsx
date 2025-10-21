@@ -20,7 +20,7 @@ const Help = () => {
           <AccordionTrigger className='hover:no-underline font-semibold'>How can I borrow a book?</AccordionTrigger>
           <AccordionContent>
             You can borrow a book by selecting it from the catalog and clicking the <strong>“Lend a Book ”</strong> button.
-            The librarian will confirm your request and assign a due date.
+            The book will be immediately issued for you.
           </AccordionContent>
         </AccordionItem>
 
@@ -53,15 +53,26 @@ const Help = () => {
           </AccordionTrigger>
           <AccordionContent>
             If you face any issues, contact the library support team via the{" "}
-            <strong>Help & Support</strong> section or email{" "}
-            <a className='hover:underline text-[#6941c5] pb-0.5' href='mailto:ma16849u@gmail.com'>ma16849u@gmail.com</a>.
+            <strong className='text-[#6941c5]'>Help & Support</strong> section or email{" "}
+            <a className='hover:underline text-[#6941c5] pb-0.5'  href='mailto:moeez66656@gmail.com'>moeez66656@gmail.com</a>.
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem
+          className="border border-gray-500 px-3 rounded-md shadow-xs last:border "
+          value="item-6"
+        >
+          <AccordionTrigger className="hover:no-underline font-semibold ">
+            How many copies of a book I reserve at a time?
+          </AccordionTrigger>
+          <AccordionContent>
+            You can reserve up to <strong className='text-[#6941c5] font-semibold'>1</strong> copies of a book at a time.
           </AccordionContent>
         </AccordionItem>
       </Accordion>
-       <h1 className='mx-3 mt-8 text-3xl font-extrabold'>Contact Support</h1>
+      <h1 className='mx-3 mt-8 text-3xl font-extrabold'>Contact Support</h1>
       <p className=" mx-3 my-3 text-gray-600">If you need further assistance , please contact us by submitting a ticket </p>
-     
-      <AnimatedModalDemo/>
+
+      <AnimatedModalDemo />
     </>
   )
 }

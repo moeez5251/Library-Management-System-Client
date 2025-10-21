@@ -6,3 +6,9 @@ class Mail(BaseModel):
 class Otp(BaseModel):
     otp:str
     email:EmailStr
+
+class Issue_mail(BaseModel):
+    sender:EmailStr
+    subject:str
+    issue:str
+    name:str

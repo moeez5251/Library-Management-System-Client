@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 router = APIRouter(prefix="/mail", tags=["mails"])
 from app.utils.mailer.mail import send_email
-from app.schemas.mails import Mail
+from app.schemas.mails import Mail,Issue_mail
 from app.database import get_connection
 import random
 from threading import Timer
@@ -360,3 +360,108 @@ This email was sent to: {body.to}
         raise HTTPException(status_code=500, detail=f"Failed to send email: {e}")
     finally:
         conn.close()
+
+def issue_mail(body:Issue_mail):
+    try:
+        admin_html = f"""
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>New Support Ticket</title>
+  </head>
+  <body style="font-family: Arial, sans-serif; background-color: #f6f7fb; padding: 30px; color: #333;">
+    <table style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);" cellpadding="0" cellspacing="0">
+      <tr>
+        <td style="padding: 25px;">
+          <h2 style="color: #6941c5;">📩 New Support Ticket Received</h2>
+          <p style="font-size: 15px;">A new support ticket has been submitted with the following details:</p>
+
+          <table style="width: 100%; margin-top: 15px; border-collapse: collapse;">
+            <tr><td style="padding: 8px 0; font-weight: bold;">Name:</td><td style="padding: 8px 0;">{body.name}</td></tr>
+            <tr><td style="padding: 8px 0; font-weight: bold;">Email:</td><td style="padding: 8px 0;">{body.sender}</td></tr>
+            <tr><td style="padding: 8px 0; font-weight: bold;">Subject:</td><td style="padding: 8px 0;">{body.subject}</td></tr>
+          </table>
+
+          <div style="margin-top: 15px; background-color: #f4f4f4; padding: 15px; border-radius: 6px;">
+            <p style="margin: 0; font-size: 15px; white-space: pre-line;">{body.issue}</p>
+          </div>
+
+          <p style="margin-top: 20px; font-size: 14px; color: #777;">
+            Please respond to this ticket at your earliest convenience.
+          </p>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+"""
+        user_html = f"""
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Ticket Confirmation</title>
+  </head>
+  <body style="font-family: Arial, sans-serif; background-color: #f6f7fb; padding: 30px; color: #333;">
+    <table style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);" cellpadding="0" cellspacing="0">
+      <tr>
+        <td style="padding: 25px;">
+          <h2 style="color: #6941c5;">✅ Ticket Submitted Successfully</h2>
+          <p style="font-size: 15px;">Hi <strong>{body.name}</strong>,</p>
+          <p style="font-size: 15px;">Your support ticket has been received. Our team will review your issue and get back to you soon.</p>
+
+          <h4 style="margin-top: 20px; color: #6941c5;">Ticket Details:</h4>
+          <ul style="line-height: 1.7; font-size: 15px; padding-left: 20px;">
+            <li><strong>Subject:</strong> {body.subject}</li>
+            <li><strong>Issue:</strong> {body.issue}</li>
+          </ul>
+
+          <p style="margin-top: 25px; font-size: 14px; color: #777;">
+            Thank you for contacting support.<br/>
+            — The Support Team
+          </p>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+"""     
+        user_text = f"""
+✅ Ticket Submitted Successfully
+
+Hi {body.name},
+
+Your support ticket has been received. Our team will review your issue and get back to you soon.
+
+Ticket Details:
+- Subject: {body.subject}
+- Issue: {body.issue}
+
+Thank you for contacting support.
+— The Support Team
+"""
+        admin_text = f"""
+📩 New Support Ticket Submitted
+
+A new support ticket has been submitted.
+
+Ticket Details:
+- Name: {body.name}
+- Sender Email: {body.sender}
+- Subject: {body.subject}
+- Issue: {body.issue}
+
+Please review and respond to this ticket in the admin dashboard.
+— Automated Notification System
+"""
+
+
+        send_email(body.sender,body.subject,user_text,user_html)
+        send_email("moeez66656@gmail.com",body.subject,admin_text,admin_html)
+
+        return {"message": "Email sent successfully"}
+    except HTTPException:
+        raise 
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to send email: {e}")
