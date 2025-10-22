@@ -8,7 +8,7 @@
 
 [[redirects]]
   from = "/req/*"
-  to = "https://library-management-system-client-wkjs.onrender.com/req/:splat"
+  to = "https://library-management-system-client-1.onrender.com/req/:splat"
   status = 200
   force = true
 
