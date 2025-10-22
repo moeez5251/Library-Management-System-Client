@@ -18,7 +18,7 @@ const MyReservation = () => {
     (async () => {
       try {
 
-        const data = await fetch("http://127.0.0.1:8000/reservation/getbyid", {
+        const data = await fetch("/req/reservation/getbyid", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"

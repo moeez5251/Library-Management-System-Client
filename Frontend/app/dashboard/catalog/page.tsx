@@ -27,7 +27,7 @@ const Catalog = () => {
   const [Loading, setLoading] = useState(true)
   const { datafetcher, setDatafetcher } = useDataFetcher();
   const fetch_data = async () => {
-    const data = await fetch("http://127.0.0.1:8000/books/getall")
+    const data = await fetch("/req/books/getall")
     if (!data.ok) {
       const res = await data.json()
       toast.error("Unable to fetch data")

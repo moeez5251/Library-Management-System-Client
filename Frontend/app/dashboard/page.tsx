@@ -17,7 +17,7 @@ export default function DashboardPage() {
   // React.useEffect(() => {
   //   if (session && !Trigger) {
   //     (async () => {
-  //       const data = await fetch("http://127.0.0.1:8000/users/auth-users", {
+  //       const data = await fetch("/req/users/auth-users", {
   //         method: "POST",
   //         credentials: "include",
   //         headers: {

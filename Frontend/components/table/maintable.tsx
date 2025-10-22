@@ -243,7 +243,7 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
       setLoaderanimation(false)
     }
     try {
-      const data = await fetch("http://127.0.0.1:8000/books/lend", {
+      const data = await fetch("/req/books/lend", {
         method: "POST",
         credentials: "include",
         headers: {
@@ -296,7 +296,7 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
         setLoaderanimation(false)
         return
       }
-      const data = await fetch("http://127.0.0.1:8000/reservation/reserve", {
+      const data = await fetch("/req/reservation/reserve", {
         method: "POST",
         credentials: "include",
         headers: {

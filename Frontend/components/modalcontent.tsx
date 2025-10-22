@@ -43,7 +43,7 @@ const Modal_Content = () => {
         }
         try {
 
-            const data = await fetch("http://127.0.0.1:8000/mail/issue-mail", {
+            const data = await fetch("/req/mail/issue-mail", {
                 method: "POST",
                 credentials: "include",
                 headers: {

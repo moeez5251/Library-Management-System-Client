@@ -30,7 +30,7 @@ const MyLendings = () => {
     async function fetchlendings() {
         const userid = JSON.parse(localStorage.getItem("user") || "");
         try {
-            const data = await fetch("http://127.0.0.1:8000/lenders/getbyid", {
+            const data = await fetch("/req/lenders/getbyid", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

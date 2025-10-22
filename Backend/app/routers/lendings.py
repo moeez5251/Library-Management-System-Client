@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from app.schemas.lenders import Lenderget, ReturnBook
 from app.controllers.lenders import get_lendings,return_book
-router = APIRouter(prefix="/lenders", tags=["lenders"])
+router = APIRouter(prefix="/req/lenders", tags=["lenders"])
 
 @router.post("/getbyid")
 def getbyid(lender:Lenderget):

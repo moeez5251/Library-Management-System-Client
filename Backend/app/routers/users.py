@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from app.schemas.user import UserCreate,UserSignUp,EmailRequest,GetUser
 from app.schemas.authusers import AuthUser
 from app.controllers.users import read_users,sign_up,exist,createuser,getbyid,delete_user
-router = APIRouter(prefix="/users", tags=["users"])
+router = APIRouter(prefix="/req/users", tags=["users"])
 
 @router.post("/login")
 def login(user:UserCreate):

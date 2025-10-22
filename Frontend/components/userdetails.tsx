@@ -50,7 +50,7 @@ const UserDetails = () => {
     useEffect(() => {
         (async () => {
             try {
-                const data = await fetch("http://127.0.0.1:8000/users/getbyid", {
+                const data = await fetch("/req/users/getbyid", {
                     method: "POST",
                     credentials: "include",
                     headers: {
@@ -91,7 +91,7 @@ const UserDetails = () => {
         setopening(true)
         try {
 
-            const api = await fetch("http://127.0.0.1:8000/mail/reset-mail", {
+            const api = await fetch("/req/mail/reset-mail", {
                 method: "POST",
                 credentials: "include",
                 headers: {
@@ -114,7 +114,7 @@ const UserDetails = () => {
     const handleverify = async (a: string): Promise<void> => {
         setisverifying(true)
         try {
-            const api = await fetch("http://127.0.0.1:8000/otp/verify", {
+            const api = await fetch("/req/otp/verify", {
                 method: "POST",
                 credentials: "include",
                 headers: {
@@ -151,7 +151,7 @@ const UserDetails = () => {
             return
         }
         try {
-            const api = await fetch("http://127.0.0.1:8000/changepass/changebyotp", {
+            const api = await fetch("/req/changepass/changebyotp", {
                 method: "POST",
                 credentials: "include",
                 headers: {
@@ -195,7 +195,7 @@ const UserDetails = () => {
         }
         try {
 
-            const data = await fetch("http://127.0.0.1:8000/changepass/changebyoldpass", {
+            const data = await fetch("/req/changepass/changebyoldpass", {
                 method: "POST",
                 credentials: "include",
                 headers: {

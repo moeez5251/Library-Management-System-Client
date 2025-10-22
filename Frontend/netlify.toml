@@ -6,5 +6,12 @@
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
-[functions]
-  directory = "netlify/functions"
+[[redirects]]
+  from = "/req/*"
+  to = "https://library-management-system-client-wkjs.onrender.com/req/:splat"
+  status = 200
+  force = true
+
+[redirects.headers]
+    Access-Control-Allow-Origin = "https://xlms-client.netlify.app"
+    Access-Control-Allow-Credentials = "true"

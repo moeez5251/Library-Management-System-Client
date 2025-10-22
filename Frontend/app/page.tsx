@@ -59,7 +59,7 @@ export default function HomePage() {
       setissubmitting(false)
       return
     }
-    const data = await fetch("http://127.0.0.1:8000/users/login", {
+    const data = await fetch("/req/users/login", {
       method: "POST",
       credentials: "include",
       headers: {
@@ -98,7 +98,7 @@ export default function HomePage() {
       setresetting(false)
       return
     }
-    const data = await fetch("http://127.0.0.1:8000/resetpass/create", {
+    const data = await fetch("/req/resetpass/create", {
       method: "POST",
       credentials: "include",
       headers: {

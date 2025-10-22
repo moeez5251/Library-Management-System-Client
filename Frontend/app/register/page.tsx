@@ -75,7 +75,7 @@ export default function HomePage() {
     }
 
     try {
-      const existinguser = await fetch("http://127.0.0.1:8000/users/exist", {
+      const existinguser = await fetch("/req/users/exist", {
         method: "POST",
         credentials: "include",
         headers: {
@@ -97,7 +97,7 @@ export default function HomePage() {
         return
       }
       setotp(true)
-      const data = await fetch("http://127.0.0.1:8000/mail/send-mail", {
+      const data = await fetch("/req/mail/send-mail", {
         method: "POST",
         credentials: "include",
         headers: {
@@ -125,7 +125,7 @@ export default function HomePage() {
     setotpinput(true)
     try {
 
-      const verify = await fetch("http://127.0.0.1:8000/otp/verify", {
+      const verify = await fetch("/req/otp/verify", {
         method: "POST",
         credentials: "include",
         headers: {
@@ -144,7 +144,7 @@ export default function HomePage() {
         return
       }
       const r = await verify.json()
-      const data = await fetch("http://127.0.0.1:8000/users/signup", {
+      const data = await fetch("/req/users/signup", {
         method: "POST",
         credentials: "include",
         headers: {

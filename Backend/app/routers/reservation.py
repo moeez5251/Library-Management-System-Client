@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from app.schemas.reservations import ReservationCreate,Reservationget
 from app.controllers.reservations import reserve_book,get_reservation
-router = APIRouter(prefix="/reservation", tags=["reservation"])
+router = APIRouter(prefix="/req/reservation", tags=["reservation"])
 
 @router.post("/reserve")
 def reserve(reservation: ReservationCreate):

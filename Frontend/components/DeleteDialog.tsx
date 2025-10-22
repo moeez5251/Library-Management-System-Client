@@ -18,7 +18,7 @@ const Card: React.FC<Props> = ({ open, setOpen }) => {
         try {
 
             const user = JSON.parse(localStorage.getItem("user") || "")
-            const data = await fetch("http://127.0.0.1:8000/users/delete", {
+            const data = await fetch("/req/users/delete", {
                 method: "POST",
                 credentials: "include",
                 headers: {
