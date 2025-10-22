@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/req/:path*",
-        destination: "https://library-management-system-client-wkjs.onrender.com/req/:path*", 
+        destination: "http://127.0.0.1:8000/req/:path*", 
       },
     ];
   },
