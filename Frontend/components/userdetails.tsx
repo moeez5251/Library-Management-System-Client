@@ -11,7 +11,7 @@ import {
     InputOTPSlot,
 } from "@/components/ui/input-otp"
 import { Button } from '@/components/ui/button';
-import { motion, AnimatePresence, transformValue } from "motion/react"
+import { motion, AnimatePresence } from "motion/react"
 import { Tabs } from "@/components/ui/tabs"
 import DangerZone from './dangerzone'
 const UserDetails = () => {

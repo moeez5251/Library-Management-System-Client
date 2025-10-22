@@ -7,6 +7,8 @@ import { Asterisk } from 'lucide-react';
 import { Toaster } from './ui/sonner';
 import { validate } from 'email-validator';
 import { toast } from 'sonner';
+import { usesubmitmodal } from '@/lib/Submitmodal';
+
 const Modal_Content = () => {
     const [inputs, setinputs] = useState({
         name: "",
@@ -17,6 +19,7 @@ const Modal_Content = () => {
     const [submitdisabled, setsubmitdisabled] = useState(true)
     const [emailvalidator, setemailvalidator] = useState(false)
     const { setOpen } = useModal();
+    const { submitmodal, setsubmitmodal } = usesubmitmodal()
     const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
         setinputs({ ...inputs, [e.target.name]: e.target.value })
     }
@@ -65,13 +68,47 @@ const Modal_Content = () => {
             toast.success("Mail sent successfully")
             setsubmitdisabled(false)
             setOpen(false)
+            setsubmitmodal(true)
         }
-        catch(e) {
-            console.log(e)
+        catch (e) {
             toast.error("Unable to send mail")
             setsubmitdisabled(false)
         }
     }
+    useEffect(() => {
+        (async () => {
+            try {
+                const data = await fetch("/req/users/getbyid", {
+                    method: "POST",
+                    credentials: "include",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        user_id: JSON.parse(localStorage.getItem("user") || "")
+                    })
+                })
+                if (!data.ok) {
+                    toast.error("Unable to fetch user details")
+                    return
+                }
+                const res = await data.json()
+                setinputs({
+                    ...inputs,
+                    name: res[0]?.User_Name,
+                    email: res[0]?.Email
+                })
+
+            }
+            catch {
+                toast.error("Unable to fetch user details")
+            }
+        })()
+
+        return () => {
+
+        }
+    }, [])
     return (
         <>
             <Toaster />
@@ -119,7 +156,6 @@ const Modal_Content = () => {
         </>
     )
 }
-
 export default Modal_Content
 
 function CloseButtonInsideModal() {

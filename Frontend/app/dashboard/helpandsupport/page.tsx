@@ -1,5 +1,5 @@
 "use client"
-import React from 'react'
+import React, { useState } from 'react'
 import {
   Accordion,
   AccordionContent,
@@ -7,8 +7,10 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { AnimatedModalDemo } from '@/components/ticketmodal'
-
+import SubmitDialog from '@/components/submitdialog';
+import { usesubmitmodal } from '@/lib/Submitmodal';
 const Help = () => {
+  const { submitmodal, setsubmitmodal } = usesubmitmodal()
   return (
     <>
       <h1 className='mx-3 my-4 text-3xl font-extrabold'>Help and Support</h1>
@@ -54,7 +56,7 @@ const Help = () => {
           <AccordionContent>
             If you face any issues, contact the library support team via the{" "}
             <strong className='text-[#6941c5]'>Help & Support</strong> section or email{" "}
-            <a className='hover:underline text-[#6941c5] pb-0.5'  href='mailto:moeez66656@gmail.com'>moeez66656@gmail.com</a>.
+            <a className='hover:underline text-[#6941c5] pb-0.5' href='mailto:moeez66656@gmail.com'>moeez66656@gmail.com</a>.
           </AccordionContent>
         </AccordionItem>
         <AccordionItem
@@ -71,8 +73,8 @@ const Help = () => {
       </Accordion>
       <h1 className='mx-3 mt-8 text-3xl font-extrabold'>Contact Support</h1>
       <p className=" mx-3 my-3 text-gray-600">If you need further assistance , please contact us by submitting a ticket </p>
-
       <AnimatedModalDemo />
+      <SubmitDialog open={submitmodal} onOpenChange={setsubmitmodal} />
     </>
   )
 }
