@@ -12,5 +12,9 @@
   status = 200
   force = true
 
+  [redirects.headers]
+    Access-Control-Allow-Origin = "https://xlms-client.netlify.app"
+    Access-Control-Allow-Credentials = "true"
+
 [functions]
   directory = "netlify/functions"
