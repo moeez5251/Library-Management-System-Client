@@ -4,7 +4,9 @@ from app.schemas.user import UserCreate,UserSignUp,EmailRequest,GetUser
 from app.utils.passwords.verify import hash_password,verify_password
 from app.schemas.authusers import AuthUser
 import uuid
-
+import bcrypt
+from app.utils.jwt_handler import create_token
+from fastapi.responses import JSONResponse
 def read_users(user: UserCreate):
     conn = get_connection()
     cursor = conn.cursor()
@@ -68,19 +70,54 @@ def createuser(user:AuthUser):
     conn=get_connection()
     cursor=conn.cursor()
     try:
-        cursor.execute("Select * FROM Google WHERE email = ?", (user.email,))
-        result=cursor.fetchone()
         cursor.execute("Select * FROM users WHERE email = ?", (user.email,))
         result2=cursor.fetchone()
         if result2 is not None:
-            return {"userID":result2.User_id}
-        if result is  None:
-            cursor.execute("INSERT into Google (google_id,email,name) VALUES (?,?,?)", (user.google_id,user.email,user.name))
-            conn.commit()
-            return {"userID":user.google_id}
+            if result2[3]=="Admin":
+                raise HTTPException(status_code=401,detail="Only Users Allowed")
+            token=create_token({ 
+                "user_id":result2[0],
+                "email":result2[2]
+            })
+            response_data= {"userID":result2[0]}
+            response = JSONResponse(content=response_data)
+            response.set_cookie(
+        key="token",
+        value=token,
+        httponly=True,      
+        secure=True,       
+        samesite="lax",    
+        max_age=60*60*24, # 1 day     
+        path="/",           
+    )
+            print(token)
+            return response
         else:
-            return {"GoogleID":result.google_id}
+            uid=str(uuid.uuid4())
+            userid=user.name[0]+uid[0:7]
+            dummy_password = "google_oauth_user"  # You can customize this
+            hashed_password = bcrypt.hashpw(dummy_password.encode('utf-8'), bcrypt.gensalt())
+            cursor.execute("INSERT INTO users (User_id,User_Name, Email, password,	Role,Membership_Type,Cost,Status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (userid,user.name,user.email,hashed_password,"Standard-User","English",0,"Active"))
+            conn.commit()
+            token=create_token({
+                "user_id":userid,
+                "email":user.email
+            })
+            response_data= {"userID":userid}
+            response = JSONResponse(content=response_data)
+            response.set_cookie(
+        key="token",
+        value=token,
+        httponly=True,      
+        secure=True,       
+        samesite="lax",    
+        max_age=60*60*24, # 1 day     
+        path="/",           
+    )
+            print(token)
+            return response
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=500, detail=f"Database error {e}",)
 
 def getbyid(user:GetUser):

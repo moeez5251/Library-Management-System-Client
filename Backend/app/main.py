@@ -3,7 +3,7 @@ from app.routers import users,mails,otp,resetpassword,books,lendings,reservation
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from fastapi.responses import HTMLResponse
-from app.database import get_connection
+from app.middleware.middleware import AuthMiddleware
 app = FastAPI()
 origins=settings.origins.split(",")
 app.add_middleware(
@@ -13,6 +13,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+# app.add_middleware(AuthMiddleware )
 app.include_router(users.router)
 app.include_router(mails.router)
 app.include_router(otp.router)

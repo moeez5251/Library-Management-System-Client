@@ -34,7 +34,7 @@ def lending_activity(user: User):
         }
 
         for month_name, count in cursor.fetchall():
-            if month_name:  # Avoid None
+            if month_name: 
                 months[month_name] = count
 
         return months
@@ -44,3 +44,17 @@ def lending_activity(user: User):
     finally:
         conn.close()
 
+def other_get(user:User):
+    conn=get_connection()
+    cursor=conn.cursor()
+    try:
+        lended=cursor.execute("SELECT COUNT(*) FROM borrower WHERE user_id = ? AND Status='not returned'", (user.user_id,)).fetchone()[0]
+        overdue=cursor.execute("SELECT COUNT(*) FROM borrower WHERE DueDate < GETDATE() AND Status='not returned'  AND user_id = ? ", (user.user_id,)).fetchone()[0]
+        reserved=cursor.execute("SELECT COUNT(*) FROM reserved WHERE user_id = ?", (user.user_id,)).fetchone()[0]
+        return {"lended":lended,"overdue":overdue,"reserved":reserved}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Database error {e}",)
+    finally:
+        conn.close()

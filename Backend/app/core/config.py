@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     GOOGLE_REFRESH_TOKEN: str
     GOOGLE_USER_EMAIL: str
     origins: str
-    
+    JWT: str
     class Config:
         env_file = ".env"
 
