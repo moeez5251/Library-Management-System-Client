@@ -2,6 +2,9 @@ from fastapi import  HTTPException
 from app.database import get_connection
 from app.utils.passwords.verify import hash_password,verify_password
 from app.schemas.changepass import changebyotpclass,changebyoldpassclass
+from app.controllers.notifications import add_notification
+from app.schemas.notifications import Notification_ADD
+from datetime import datetime
 def changebyotp(body:changebyotpclass):
     conn=get_connection()
     cursor=conn.cursor()
@@ -12,6 +15,7 @@ def changebyotp(body:changebyotpclass):
         
         cursor.execute("UPDATE users SET password = ? WHERE User_id = ? ", (hash_password(body.password),body.user_id))
         conn.commit()
+        add_notification(Notification_ADD(UserId=body.user_id,Message="Your password has been changed",IsRead=0,CreatedAt=datetime.now().strftime("%d/%m/%Y, %H:%M:%S")))
         return {"message": "Password changed successfully"}
     except HTTPException:
         raise
@@ -30,6 +34,7 @@ def change_by_oldpassword(body:changebyoldpassclass):
                 raise HTTPException(status_code=401,detail="New Password must be different from old password")
             cursor.execute("UPDATE users SET password = ? WHERE User_id = ? ", (hash_password(body.new_password),body.user_id))
             conn.commit()
+            add_notification(Notification_ADD(UserId=body.user_id,Message="Your password has been changed",IsRead=0,CreatedAt=datetime.now().strftime("%d/%m/%Y, %H:%M:%S")))
             return {"message": "Password changed successfully"}
         else:
             raise HTTPException(status_code=401,detail="Invalid old password")

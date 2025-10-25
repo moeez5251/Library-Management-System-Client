@@ -22,6 +22,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "dayjs": "^1.11.18",
     "email-validator": "^2.0.4",
     "framer-motion": "^12.23.12",
     "input-otp": "^1.4.2",

@@ -22,36 +22,63 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
+import { useEffect, useState } from "react"
 
 export const description = "A multiple line chart"
-
-const chartData = [
-  { month: "ABC", desktop: 1811, mobile: 840 },
-  { month: "June", desktop: 2114, mobile: 140 },
-  { month: "June", desktop: 1114, mobile: 10 },
-  { month: "June", desktop: 114, mobile: 2110 },
-  { month: "June", desktop: 1114, mobile: 0 },
-  { month: "June", desktop: 14, mobile: 11111 },
-]
-
 const chartConfig = {
   desktop: { label: "Desktop", color: "var(--chart-1)" },
   mobile: { label: "Mobile", color: "var(--chart-2)" },
 } satisfies ChartConfig
 
-export function ChartLineMultiple() {
+export function ChartLineMultiple({ data }: { data: any }) {
+  const [chartData, setchartData] = useState([
+    { month: "January", desktop: 0, mobile: 0 },
+    { month: "February", desktop: 0, mobile: 0 },
+    { month: "March", desktop: 0, mobile: 0 },
+    { month: "April", desktop: 0, mobile: 0 },
+    { month: "May", desktop: 0, mobile: 0 },
+    { month: "June", desktop: 0, mobile: 0 },
+    { month: "July", desktop: 0, mobile: 0 },
+    { month: "August", desktop: 0, mobile: 0 },
+    { month: "September", desktop: 0, mobile: 0 },
+    { month: "October", desktop: 0, mobile: 0 },
+    { month: "November", desktop: 0, mobile: 0 },
+    { month: "December", desktop: 0, mobile: 0 },
+  ])
+  useEffect(() => {
+    const keys = Object.keys(data)
+
+    for (let i = 0; i < keys.length; i++) {
+      const month = keys[i];
+      const value = data[month];
+      const index = chartData.findIndex((item) => item.month === month);
+      if (index !== -1) {
+        setchartData((prevData) => {
+          const newData = [...prevData];
+          newData[index].desktop = Math.floor(value + Math.random()* 3);
+          newData[index].mobile = value;
+          return newData;
+        })
+      }
+    }
+    return () => {
+
+    }
+  }, [data])
+
+
   return (
     <Card data-swapy-item="b" className="flex flex-col dark:bg-[#1b2536] h-full border-none">
       <CardHeader>
         <CardTitle>Lending Activity</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardDescription>January - December {new Date().getFullYear()}</CardDescription>
       </CardHeader>
       <CardContent className="w-full h-[290px] flex">
         <ChartContainer config={chartConfig} className="w-full h-full min-w-[200px]">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
               data={chartData}
-              margin={{ top: 10, bottom: 20, left: 10, right: 10 }} 
+              margin={{ top: 10, bottom: 20, left: 10, right: 10 }}
             >
               <CartesianGrid vertical={false} />
 
@@ -61,13 +88,13 @@ export function ChartLineMultiple() {
                 axisLine={false}
                 tickMargin={8}
                 interval={0}
-                padding={{ left: 5, right: 5 }} 
+                padding={{ left: 5, right: 5 }}
                 tickFormatter={(value) => value.slice(0, 3)}
                 textAnchor="end"
               />
 
               <YAxis
-                tickFormatter={(value) => `${Math.ceil(value / 3000)}x`} 
+                tickFormatter={(value) => `${Math.ceil(value / 3000)}x`}
               />
 
               <ChartTooltip cursor={false} content={<ChartTooltipContent />} />

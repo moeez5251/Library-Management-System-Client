@@ -16,20 +16,16 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
+import { useEffect, useState } from "react"
 
 export const description = "Fines and lost/damaged books"
 
-const chartData = [
-  { type: "Overdue Fines", stock: 275, fill: "#01e497" },
-  { type: "Lost Books Fines", stock: 200, fill: "#fe4b00" },
-]
-
 const chartConfig = {
   stock: {
-    label: "Stock",
+    label: "Borrowed Books",
   },
   available: {
-    label: "Overdue Fines",
+    label: "Overdue Books",
     color: "var(--chart-1)",
   },
   unavailable: {
@@ -37,15 +33,29 @@ const chartConfig = {
     color: "var(--chart-2)",
   },
 } satisfies ChartConfig
+interface ChartData {
+  overdue: number
+  returned: number
+}
 
-const totalStock = chartData.reduce((acc, curr) => acc + curr.stock, 0)
+export function ChartPieDonut<T extends ChartData>({ overdue, returned }: T) {
+  const [chartData, setchartData] = useState([
+    { type: "Overdue Books", stock: 0 , fill: "#01e497" },
+    { type: "Returned Books", stock: 0, fill: "#fe4b00" },
+  ])
 
-export function ChartPieDonut() {
+  useEffect(() => {
+    setchartData([
+      { type: "Overdue Books", stock: overdue, fill: "#01e497" },
+      { type: "Returned Books", stock: returned, fill: "#fe4b00" },
+    ])
+  }, [overdue, returned])
+  const totalStock = chartData.reduce((acc, curr) => acc + curr.stock, 0)
   return (
     <Card data-swapy-item="a" className="flex flex-col dark:bg-[#1b2536] h-full border-none">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Fines</CardTitle>
-        <CardDescription className="font-semibold">Overview of fines</CardDescription>
+        <CardTitle>Borrowed Books</CardTitle>
+        <CardDescription className="font-semibold">Overview of borrowed books</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
@@ -62,7 +72,7 @@ export function ChartPieDonut() {
               dataKey="stock"
               nameKey="type"
               innerRadius={60}
-              outerRadius={90}   
+              outerRadius={90}
               strokeWidth={5}
             >
               <Label
@@ -80,7 +90,7 @@ export function ChartPieDonut() {
                           y={viewBox.cy}
                           className="fill-foreground text-3xl font-bold"
                         >
-                         100%
+                          100%
                         </tspan>
                         <tspan
                           x={viewBox.cx}
@@ -106,8 +116,8 @@ export function ChartPieDonut() {
               />
               <div className="flex flex-col">
                 <span className="font-semibold text-nowrap">
-                    {item.stock} (
-                  {((item.stock / totalStock) * 100).toFixed(1)}%)
+                  {item.stock} (
+                  { item.stock > 0 && ( (item.stock / totalStock) * 100).toFixed(1)}%)
                 </span>
                 <span className="text-xs text-[#9297a3] font-semibold">{item.type}</span>
               </div>

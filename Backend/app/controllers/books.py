@@ -1,7 +1,9 @@
 from fastapi import APIRouter, HTTPException
 from app.database import get_connection
 from app.schemas.book import LendBook
-
+from app.controllers.notifications import add_notification
+from app.schemas.notifications import Notification_ADD
+from datetime import datetime
 def get_books():
     conn=get_connection()
     cursor=conn.cursor()
@@ -60,9 +62,9 @@ def lend_book(book:LendBook):
         conn.commit()
         conn.execute("UPDATE users SET Cost=? WHERE User_id=?", (str(int(user[1]) + int(book.CopiesLent) * int(category[1])* (book.DueDate - book.IssuedDate).days)), book.user_id)
         conn.commit()
+        add_notification(Notification_ADD(UserId=book.user_id, Message=f"You have borrowed {category[2]} from {book.IssuedDate.strftime('%d/%m/%Y')} to {book.DueDate.strftime('%d/%m/%Y')}   ", IsRead=0, CreatedAt=datetime.now().strftime("%d/%m/%Y, %H:%M:%S")))
         return {"message": "Book lent successfully."}
     except Exception as e:
-        print(e)
         raise HTTPException(status_code=500, detail=f"Database error {e}",)
     finally:
         conn.close()

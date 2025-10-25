@@ -14,6 +14,12 @@ export default function DashboardPage() {
   const router = useRouter();
   const { data: session } = useSession();
   const [Trigger, settrigger] = React.useState<boolean>(false)
+  const [chartData, setchartData] = React.useState({
+    overdue: 0,
+    returned: 0
+  })
+  const [secondchartData, setsecondchartData] = React.useState([])
+
   // React.useEffect(() => {
   //   if (session && !Trigger) {
   //     (async () => {
@@ -53,7 +59,10 @@ export default function DashboardPage() {
 
   }, [router])
   React.useEffect(() => {
-
+    // if (!session) {
+    //   router.replace("/")
+    //   return
+    // }
     const container = document.querySelector('.swapy') as HTMLElement
     if (container) {
 
@@ -65,6 +74,54 @@ export default function DashboardPage() {
     return () => {
 
     }
+  }, [])
+  React.useEffect(() => {
+    // if (!session) {
+    //   router.replace("/")
+    //   return
+    // }
+   ( async () => {
+      const data = await fetch("/req/other/borrowedoverview", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: JSON.parse(localStorage.getItem("user") || "")
+        })
+      })
+      if (!data.ok) {
+        toast.error("Unable to fetch data")
+        return
+      }
+      const res = await data.json()
+      setchartData(res)
+    })()
+  }, [])
+  React.useEffect(() => {
+    // if (!session) {
+    //   router.replace("/")
+    //   return
+    // }
+   ( async () => {
+      const data = await fetch("/req/other/lendingactivity", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: JSON.parse(localStorage.getItem("user") || "")
+        })
+      })
+      if (!data.ok) {
+        toast.error("Unable to fetch data")
+        return
+      }
+      const res = await data.json()
+      setsecondchartData(res)
+    })()
   }, [])
   return <>
     <Toaster />
@@ -122,10 +179,10 @@ export default function DashboardPage() {
     <div className="flex items-start mx-5 gap-3 swapy">
       <div data-swapy-slot="a" className="w-[30%] ">
 
-        <ChartPieDonut />
+        <ChartPieDonut overdue={chartData.overdue} returned={chartData.returned} />
       </div>
       <div data-swapy-slot="b" className="w-[70%]">
-        <ChartLineMultiple />
+        <ChartLineMultiple data={secondchartData} />
       </div>
     </div>
   </>

@@ -2,7 +2,9 @@ from fastapi import HTTPException
 from app.schemas.reservations import ReservationCreate,Reservationget
 from app.database import get_connection
 from app.utils.mailer.mail import send_email
-
+from app.controllers.notifications import add_notification
+from app.schemas.notifications import Notification_ADD
+from datetime import datetime
 def reserve_book(reservation: ReservationCreate):
     conn=get_connection()
     cursor=conn.cursor()
@@ -83,6 +85,7 @@ def reserve_book(reservation: ReservationCreate):
 </html>
 """
        send_email(to_email=user[1], subject="Your Book Reservation is Confirmed", text_body=f"Hi {user[0]},\n\nYour reservation for '{book[0]}' is confirmed.\n\nWhen a copy becomes available, we'll issue it to you.\n\nIf you want to cancel the reservation or have questions, reply to this email or contact the library staff.\n\nXLMS", html_body=html_body)
+       add_notification(Notification_ADD(UserId=reservation.user_id,Message="Your Book Reservation is Confirmed",IsRead=0,CreatedAt=datetime.now()))
        return {"message": "Book reserved successfully"}
     except Exception as e:  
         print(e)
