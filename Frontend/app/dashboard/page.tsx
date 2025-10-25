@@ -18,39 +18,107 @@ export default function DashboardPage() {
     overdue: 0,
     returned: 0
   })
+  const [other, setother] = React.useState({
+    lended: "XX",
+    overdue: "XX",
+    reserved: "XX",
+    isgetted: false
+  })
   const [secondchartData, setsecondchartData] = React.useState([])
+  const chartdatagetter = async (): Promise<void> => {
+    const data = await fetch("/req/other/lendingactivity", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user_id: JSON.parse(localStorage.getItem("user") || "")
+      })
+    })
+    if (!data.ok) {
+      toast.error("Unable to fetch data")
+      return
+    }
+    const res = await data.json()
+    setsecondchartData(res)
+  }
+  const chartdatagetter2 = async (): Promise<void> => {
+    const data = await fetch("/req/other/borrowedoverview", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user_id: JSON.parse(localStorage.getItem("user") || "")
+      })
+    })
+    if (!data.ok) {
+      toast.error("Unable to fetch data")
+      return
+    }
+    const res = await data.json()
+    setchartData(res)
+  }
+  const otherdata = async (): Promise<void> => {
+    const data = await fetch("/req/other/data", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        user_id: JSON.parse(localStorage.getItem("user") || "")
+      })
+    })
+    if (!data.ok) {
+      toast.error("Unable to fetch data")
+      return
+    }
+    const res = await data.json()
+    setother({
+      lended: res.lended,
+      overdue: res.overdue,
+      reserved: res.reserved,
+      isgetted: true
+    })
+  }
 
-  // React.useEffect(() => {
-  //   if (session && !Trigger) {
-  //     (async () => {
-  //       const data = await fetch("/req/users/auth-users", {
-  //         method: "POST",
-  //         credentials: "include",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({
-  //           email: session.user?.email,
-  //           google_id: session.user?.googleId,
-  //           name: session.user?.name
+  React.useEffect(() => {
+    if (session && !Trigger) {
+      (async () => {
+        const data = await fetch("/req/users/auth-users", {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: session.user?.email,
+            google_id: session.user?.googleId,
+            name: session.user?.name
 
-  //         })
-  //       })
-  //       if (!data.ok) {
-  //         toast.error("Failed to authenticate user")
-  //         router.push("/")
-  //         return
-  //       }
-  //       const response = await data.json()
-  //       localStorage.setItem("user", JSON.stringify(response.userID))
-  //       settrigger(true)
-  //     })()
-  //   }
+          })
+        })
+        if (!data.ok) {
+          toast.error("Failed to authenticate user")
+          router.push("/")
+          return
+        }
+        const response = await data.json()
+        localStorage.setItem("user", JSON.stringify(response.userID))
+        settrigger(true)
+        chartdatagetter()
+        chartdatagetter2()
+        otherdata()
+      })()
+    }
 
-  //   return () => {
+    return () => {
 
-  //   }
-  // }, [session])
+    }
+  }, [session])
   React.useEffect(() => {
     router.prefetch("/");
     return () => {
@@ -59,10 +127,7 @@ export default function DashboardPage() {
 
   }, [router])
   React.useEffect(() => {
-    // if (!session) {
-    //   router.replace("/")
-    //   return
-    // }
+
     const container = document.querySelector('.swapy') as HTMLElement
     if (container) {
 
@@ -74,54 +139,6 @@ export default function DashboardPage() {
     return () => {
 
     }
-  }, [])
-  React.useEffect(() => {
-    // if (!session) {
-    //   router.replace("/")
-    //   return
-    // }
-   ( async () => {
-      const data = await fetch("/req/other/borrowedoverview", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          user_id: JSON.parse(localStorage.getItem("user") || "")
-        })
-      })
-      if (!data.ok) {
-        toast.error("Unable to fetch data")
-        return
-      }
-      const res = await data.json()
-      setchartData(res)
-    })()
-  }, [])
-  React.useEffect(() => {
-    // if (!session) {
-    //   router.replace("/")
-    //   return
-    // }
-   ( async () => {
-      const data = await fetch("/req/other/lendingactivity", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          user_id: JSON.parse(localStorage.getItem("user") || "")
-        })
-      })
-      if (!data.ok) {
-        toast.error("Unable to fetch data")
-        return
-      }
-      const res = await data.json()
-      setsecondchartData(res)
-    })()
   }, [])
   return <>
     <Toaster />
@@ -142,8 +159,8 @@ export default function DashboardPage() {
     </div>
     <div className="flex items-center justify-between my-8 mx-5">
       <div className="bg-white w-fit flex items-center justify-center px-6 py-5 gap-4 rounded-lg">
-        <div className="bg-[#28cac9] px-3 py-2 rounded-md text-white animate-pulse ">
-          XX
+        <div className={`bg-[#28cac9] px-3 py-2 rounded-md text-white ${other.isgetted ? "" : "animate-pulse"} `}>
+          {other.lended}
         </div>
         <div className="flex flex-col gap-1">
           <p className="font-semibold">
@@ -153,8 +170,8 @@ export default function DashboardPage() {
         </div>
       </div>
       <div className="bg-white w-fit flex items-center justify-center px-6 py-5 gap-4 rounded-lg">
-        <div className="bg-[#f44f7e] px-3 py-2 rounded-md text-white animate-pulse">
-          XX
+        <div className={`bg-[#f44f7e] px-3 py-2 rounded-md text-white ${other.isgetted ? "" : "animate-pulse"}`}>
+          {other.overdue}
         </div>
         <div className="flex flex-col gap-1">
           <p className="font-semibold">
@@ -164,8 +181,8 @@ export default function DashboardPage() {
         </div>
       </div>
       <div className="bg-white w-fit flex items-center justify-center px-6 py-5 gap-4 rounded-lg">
-        <div className="bg-[#6740c7] px-3 py-2 rounded-md text-white animate-pulse">
-          XX
+        <div className={`bg-[#6740c7] px-3 py-2 rounded-md text-white  ${other.isgetted ? "" : "animate-pulse"} `}>
+          {other.reserved}
         </div>
         <div className="flex flex-col gap-1">
           <p className="font-semibold">

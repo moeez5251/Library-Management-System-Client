@@ -75,7 +75,6 @@ export function ChartLineMultiple({ data }: { data: any }) {
       </CardHeader>
       <CardContent className="w-full h-[290px] flex">
         <ChartContainer config={chartConfig} className="w-full h-full min-w-[200px]">
-          <ResponsiveContainer width="100%" height="100%">
             <LineChart
               data={chartData}
               margin={{ top: 10, bottom: 20, left: 10, right: 10 }}
@@ -114,7 +113,6 @@ export function ChartLineMultiple({ data }: { data: any }) {
                 dot={false}
               />
             </LineChart>
-          </ResponsiveContainer>
         </ChartContainer>
       </CardContent>
     </Card>
