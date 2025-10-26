@@ -3,11 +3,10 @@ import React, { useState, useEffect } from 'react'
 
 import { MessageSquareWarning } from 'lucide-react';
 import { Toaster } from '@/components/ui/sonner';
-import { toast } from 'sonner';
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
+
 import Image from 'next/image';
+import { useNotifications } from '@/lib/notifications';
+import { toast } from 'sonner';
 interface Notification {
   id: string;
   message: string;
@@ -16,39 +15,9 @@ interface Notification {
   formatted: string;
 }
 const Notifications = () => {
-  const [Notifications, setNotifications] = useState<Notification[]>([])
+  const { Notifications, setNotifications } = useNotifications();
   useEffect(() => {
     (async () => {
-      const data = await fetch("/req/notifications/get", {
-        method: "POST",
-        credentials: "include",
-
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-
-        },
-        body: JSON.stringify({ user_id: JSON.parse(localStorage.getItem("user") || "") })
-      })
-      if (!data.ok) {
-        toast.error("Failed to fetch notifications");
-        return;
-      }
-      const response = await data.json();
-      if(response.length === 0){
-        setNotifications([]);
-        return;
-      }
-      setNotifications(response.map((item: any) => {
-        const parsed = dayjs(item.CreatedAt, "DD-MM-YYYY, HH:mm:ss");
-
-        return {
-          id: item.Id,
-          message: item.Message,
-          read: item.IsRead,
-          time: parsed.isValid() ? parsed.fromNow() : "Invalid date",
-          formatted: parsed.isValid() ? parsed.format("DD/MM/YYYY, HH:mm:ss") : "Invalid date"
-        };
-      }));
       const read = await fetch("/req/notifications/markasread", {
         method: "POST",
         credentials: "include",
@@ -59,20 +28,18 @@ const Notifications = () => {
         },
         body: JSON.stringify({ user_id: JSON.parse(localStorage.getItem("user") || "") })
       })
-
-    })()
-
+      if(!read.ok){
+        toast.error("Unable to mark notifications as read")
+        return
+      }
+    }
+    )()
     return () => {
 
     }
   }, [])
-  useEffect(() => {
-    dayjs.extend(relativeTime);
-    dayjs.extend(customParseFormat);
-    return () => {
 
-    }
-  }, [Notifications])
+
   return (
     <>
       <Toaster />
@@ -93,7 +60,7 @@ const Notifications = () => {
               </div>
             )
           }
-          {Notifications.map((item, index) => (
+          {Notifications.map((item: Notification, index: number) => (
             <div
               key={index}
               className={`flex items-center px-4 py-3 rounded-xl border ${item.read

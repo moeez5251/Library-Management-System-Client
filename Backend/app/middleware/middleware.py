@@ -8,24 +8,32 @@ class AuthMiddleware(BaseHTTPMiddleware):
         Middleware to verify JWT token for every request except public routes.
         Looks for the token in cookies (preferred) or Authorization header.
         """
-        # Public routes that don’t need authentication
+
+        # ✅ Add commas between items
         public_paths = [
-            "/"
-            "/req/users/auth-users",          # Login
+            "/",                      # Home
+            "/favicon.ico",            # Browser icon
+            "/req/users/auth-users",   # Login endpoint
         ]
 
-        # Skip verification for OPTIONS (CORS preflight), root, or public routes
+        # Skip verification for OPTIONS, root, favicon, or any public route
         if (
             request.method == "OPTIONS"
-            or request.url.path == "/"  # Exact match for root only
-            or any(request.url.path.startswith(path) for path in public_paths)
+            or request.url.path in public_paths  # ✅ exact match check
         ):
+            return await call_next(request)
+
+        # ✅ Optionally allow prefix-based public routes
+        public_prefixes = [
+            "/docs", "/openapi.json", "/static", "/public"
+        ]
+        if any(request.url.path.startswith(prefix) for prefix in public_prefixes):
             return await call_next(request)
 
         # Get token from cookies
         token = request.cookies.get("token")
-        
-        # Optional: support Bearer tokens (e.g., for testing via Postman)
+
+        # Optional: support Bearer tokens (for Postman, etc.)
         if not token:
             auth_header = request.headers.get("Authorization")
             if auth_header and auth_header.startswith("Bearer "):

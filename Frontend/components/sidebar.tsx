@@ -3,7 +3,15 @@ import { LibraryBig, LayoutGrid, User, Bolt, Bell, Power, MessageSquareText } fr
 import React, { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
+import { toast } from 'sonner'
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import { useNotifications } from '@/lib/notifications';
+
 const Sidebar = () => {
+    const { Notifications, setNotifications } = useNotifications();
+
     const pathname = usePathname()
     const [active, setActive] = useState<{
         dashboard: boolean;
@@ -40,7 +48,52 @@ const Sidebar = () => {
 
         }
     }, [])
+    useEffect(() => {
+        (async () => {
+            const data = await fetch("/req/notifications/get", {
+                method: "POST",
+                credentials: "include",
 
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8",
+
+                },
+                body: JSON.stringify({ user_id: JSON.parse(localStorage.getItem("user") || "") })
+            })
+            if (!data.ok) {
+                toast.error("Failed to fetch notifications");
+                return;
+            }
+            const response = await data.json();
+            if (response.length === 0) {
+                setNotifications([]);
+                return;
+            }
+            setNotifications(response.map((item: any) => {
+                const parsed = dayjs(item.CreatedAt, "DD-MM-YYYY, HH:mm:ss");
+
+                return {
+                    id: item.Id,
+                    message: item.Message,
+                    read: item.IsRead,
+                    time: parsed.isValid() ? parsed.fromNow() : "Invalid date",
+                    formatted: parsed.isValid() ? parsed.format("DD/MM/YYYY, HH:mm:ss") : "Invalid date"
+                };
+            }));
+         
+        })()
+
+        return () => {
+
+        }
+    }, [active])
+    useEffect(() => {
+        dayjs.extend(relativeTime);
+        dayjs.extend(customParseFormat);
+        return () => {
+
+        }
+    }, [Notifications])
     return (
         <>
             <div className='flex  flex-col gap-4 relative top-3 w-full items-baseline'>
@@ -63,7 +116,7 @@ const Sidebar = () => {
                     </div>
                     My Account
                 </Link>
-            
+
                 <Link href={'/dashboard/helpandsupport'} prefetch={true} onClick={() => handletoggle('helpandsupport')} data-active={active.helpandsupport} className={`flex text-black font-semibold px-4 py-2.5 rounded-md items-center gap-2  cursor-pointer text-lg w-full transition-colors duration-100 ${active.helpandsupport ? 'bg-[#6941c5] text-white' : ''} `}>
                     <div>
                         <MessageSquareText size={22} className={active.helpandsupport ? 'text-white' : 'text-[#4f6065]'} />

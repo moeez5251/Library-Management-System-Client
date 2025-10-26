@@ -23,7 +23,7 @@ const authOptions = {
       return session;
     },
     async redirect({ url, baseUrl }) {
-      return `${baseUrl}/dashboard`;
+      return `${baseUrl}/auth/init`;
     },
   },
 };
@@ -31,3 +31,4 @@ const authOptions = {
 const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
+  

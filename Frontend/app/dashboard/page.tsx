@@ -4,16 +4,12 @@ import { ChartLineMultiple } from "@/components/lendingchart";
 import { ChartPieDonut } from "@/components/pricingchart";
 import { Toaster } from "@/components/ui/sonner";
 import { BadgeAlert } from "lucide-react";
-import { useSession } from "next-auth/react";
-import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import * as React from "react"
 import { toast } from "sonner";
 import { createSwapy } from 'swapy'
 export default function DashboardPage() {
   const router = useRouter();
-  const { data: session } = useSession();
-  const [Trigger, settrigger] = React.useState<boolean>(false)
   const [chartData, setchartData] = React.useState({
     overdue: 0,
     returned: 0
@@ -86,39 +82,14 @@ export default function DashboardPage() {
   }
 
   React.useEffect(() => {
-    if (session && !Trigger) {
-      (async () => {
-        const data = await fetch("/req/users/auth-users", {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: session.user?.email,
-            google_id: session.user?.googleId,
-            name: session.user?.name
-
-          })
-        })
-        if (!data.ok) {
-          toast.error("Failed to authenticate user")
-          router.push("/")
-          return
-        }
-        const response = await data.json()
-        localStorage.setItem("user", JSON.stringify(response.userID))
-        settrigger(true)
-        chartdatagetter()
-        chartdatagetter2()
-        otherdata()
-      })()
-    }
+    chartdatagetter()
+    chartdatagetter2()
+    otherdata()
 
     return () => {
 
     }
-  }, [session])
+  }, [])
   React.useEffect(() => {
     router.prefetch("/");
     return () => {

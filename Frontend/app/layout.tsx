@@ -7,6 +7,8 @@ import { LendingFetcherProvider } from '@/lib/LendingModal';
 import { ReturnProvider } from '@/lib/ReturnDetails';
 import { DeleteModal } from '@/lib/DeleteModal';
 import { SubmitmodalProvider } from '@/lib/Submitmodal';
+import { NotificationsProvider } from '@/lib/notifications';
+
 const lato = Lato({
   variable: "--font-lato",
   subsets: ["latin"],
@@ -28,16 +30,18 @@ export default function RootLayout({
       <body >
         <Providers>
           <DataFetcherProvider>
-            <LendingFetcherProvider>
-              <ReturnProvider>
-                <DeleteModal>
-                  <SubmitmodalProvider>
+            <NotificationsProvider>
+              <LendingFetcherProvider>
+                <ReturnProvider>
+                  <DeleteModal>
+                    <SubmitmodalProvider>
 
-                    {children}
-                  </SubmitmodalProvider>
-                </DeleteModal>
-              </ReturnProvider>
-            </LendingFetcherProvider>
+                      {children}
+                    </SubmitmodalProvider>
+                  </DeleteModal>
+                </ReturnProvider>
+              </LendingFetcherProvider>
+            </NotificationsProvider>
           </DataFetcherProvider>
         </Providers>
       </body>

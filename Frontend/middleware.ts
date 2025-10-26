@@ -6,7 +6,6 @@ const SECRET = new TextEncoder().encode(process.env.JWT)
 export async function middleware(request: any) {
     const token = request.cookies.get('token')?.value;
     if (!token) {
-        console.log(token)
         return NextResponse.redirect(new URL('/', request.url));
     }
 
@@ -20,5 +19,5 @@ export async function middleware(request: any) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path((?!$).*)'],
+  matcher: ['/dashboard/:path*'],
 };

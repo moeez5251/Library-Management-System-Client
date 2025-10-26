@@ -90,7 +90,6 @@ def createuser(user:AuthUser):
         max_age=60*60*24, # 1 day     
         path="/",           
     )
-            print(token)
             return response
         else:
             uid=str(uuid.uuid4())
@@ -114,10 +113,10 @@ def createuser(user:AuthUser):
         max_age=60*60*24, # 1 day     
         path="/",           
     )
-            print(token)
             return response
+    except HTTPException:
+        raise
     except Exception as e:
-        print(e)
         raise HTTPException(status_code=500, detail=f"Database error {e}",)
 
 def getbyid(user:GetUser):
@@ -153,3 +152,8 @@ def delete_user(user:GetUser):
         raise HTTPException(status_code=500, detail=f"Database error {e}",)
     finally:
         conn.close()
+
+def logout():
+    response = JSONResponse(content={"message": "Logged out successfully "})
+    response.delete_cookie(key="token",path="/")
+    return response
