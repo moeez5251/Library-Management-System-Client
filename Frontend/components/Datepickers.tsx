@@ -36,14 +36,14 @@ export function DatePicker({ label, date, onChange, disabled }: DatePickerProps)
   )
 
   return (
-    <div className="flex flex-col gap-3 ">
+    <div className="flex flex-col gap-3  ">
       <Label htmlFor="date" className="px-1 font-semibold text-sm gap-1">
         {label}
       </Label>
 
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button variant="outline" id="date" className="w-48 justify-between font-normal">
+          <Button variant="outline" id="date" className="sm:w-48 w-full justify-between font-normal">
             {date ?  `${new Date(date).getDate()}/${new Date(date).getMonth() + 1}/${new Date(date).getFullYear()}` : "Select date"}
             <CalendarDays className="ml-2 h-4 w-4 opacity-50" />
           </Button>

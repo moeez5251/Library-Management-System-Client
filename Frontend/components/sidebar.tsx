@@ -1,5 +1,5 @@
 "use client"
-import { LibraryBig, LayoutGrid, User, Bolt, Bell, Power, MessageSquareText } from 'lucide-react'
+import { LibraryBig, LayoutGrid, User, Bolt, Bell, Power, MessageSquareText, X } from 'lucide-react'
 import React, { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
@@ -8,10 +8,11 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useNotifications } from '@/lib/notifications';
-
+import { logout } from "@/lib/logout";
+import { useSession } from "next-auth/react";
 const Sidebar = () => {
     const { Notifications, setNotifications } = useNotifications();
-
+    const { status } = useSession();
     const pathname = usePathname()
     const [active, setActive] = useState<{
         dashboard: boolean;
@@ -34,6 +35,7 @@ const Sidebar = () => {
             notifications: e === 'notifications' ? true : false,
             helpandsupport: e === 'helpandsupport' ? true : false,
         })
+        if (document.querySelector(".sidebar")?.classList.contains("left-0")) document.querySelector(".sidebar")?.classList.remove("left-0")
     }
     useEffect(() => {
         setActive({
@@ -80,7 +82,7 @@ const Sidebar = () => {
                     formatted: parsed.isValid() ? parsed.format("DD/MM/YYYY, HH:mm:ss") : "Invalid date"
                 };
             }));
-         
+
         })()
 
         return () => {
@@ -94,8 +96,14 @@ const Sidebar = () => {
 
         }
     }, [Notifications])
+    const handlesidebar = (): void => {
+        document.querySelector(".sidebar")?.classList.contains("left-0") ? document.querySelector(".sidebar")?.classList.remove("left-0") : ""
+    }
     return (
         <>
+            <div>
+                <X onClick={handlesidebar} size={30} className='text-[#6941c5]  absolute top-3 right-3 cursor-pointer block xl:hidden' />
+            </div>
             <div className='flex  flex-col gap-4 relative top-3 w-full items-baseline'>
 
                 <Link href={'/dashboard'} prefetch={true} onClick={() => handletoggle('dashboard')} data-active={active.dashboard} className={` flex text-black px-4 py-2.5 rounded-md items-center gap-2 cursor-pointer text-lg font-semibold w-full transition-colors duration-100 ${active.dashboard ? 'bg-[#6941c5] text-white' : ''}`}>
@@ -129,7 +137,7 @@ const Sidebar = () => {
                     </div>
                     Notifications
                 </Link>
-                <div className=' flex text-black font-semibold px-4 py-2.5 rounded-md items-center gap-2  cursor-pointer text-lg w-full '>
+                <div onClick={() => logout(status)} className=' flex text-black font-semibold px-4 py-2.5 rounded-md items-center gap-2  cursor-pointer text-lg w-full '>
                     <div>
                         <Power size={22} className='text-[#4f6065]' />
                     </div>

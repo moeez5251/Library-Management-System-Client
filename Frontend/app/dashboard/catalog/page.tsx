@@ -61,8 +61,8 @@ const Catalog = () => {
     <>
       <Toaster />
 
-      <h1 className='text-2xl font-extrabold mx-3 my-2  '>Browse Books</h1>
-      <div className='flex items-center mx-3 my-3 gap-3 bg-white p-3 rounded-lg'>
+      <h1 className='text-2xl font-extrabold sm:mx-3 my-2  '>Browse Books</h1>
+      <div className='flex items-center  sm:mx-3 my-3 gap-3 bg-white p-3 rounded-lg'>
         <div>
           <Search className='text-[#6841c4]' size={22} />
         </div>
@@ -71,14 +71,14 @@ const Catalog = () => {
       </div>
       <div>
       </div>
-      <div className='flex items-center justify-between mx-3'>
+      <div className='flex items-end lg:items-center justify-between gap-4  sm:mx-3 overflow-auto'>
         <div className='flex items-center gap-4'>
           <SelectComponent disabled={Loading} value={Language} onchange={setLanguage} name="Language" array={LangugesFilter} />
           <SelectComponent disabled={Loading} value={Author} onchange={setAuthor} name="Author" array={AuthorFilter} />
           <SelectComponent disabled={Loading} value={status} onchange={setstatus} name="Availability" array={statusFilter} />
         </div>
         <div className='flex items-center gap-3'>
-          <div className='font-semibold text-[#637277]'>
+          <div className='font-semibold text-[#637277] text-nowrap'>
             No of rows :
           </div>
           <Select disabled={Loading} value={pageSize} onValueChange={setPageSize}>

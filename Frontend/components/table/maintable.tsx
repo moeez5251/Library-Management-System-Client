@@ -405,7 +405,7 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
       </AnimatePresence>
 
       {/* Grid */}
-      <div className="p-4 space-y-6">
+      <div className="px-2 py-4 sm:p-4 space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {loading ? (
             [...Array(initialPageSize)].map((_, idx) => (
@@ -550,7 +550,7 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
           <AccordionItem className="border-none" value="item-2">
             <AccordionTrigger className="font-semibold">Lending Details</AccordionTrigger>
             <AccordionContent>
-              <div className="my-2 flex items-center justify-between font-normal ">
+              <div className="my-2 flex gap-2 sm:gap-0 sm:items-center justify-between font-normal flex-col sm:flex-row ">
                 <DatePicker
 
                   date={new Date()}

@@ -113,23 +113,23 @@ export default function DashboardPage() {
   }, [])
   return <>
     <Toaster />
-    <div className="flex items-center justify-between mx-5 my-3">
+    <div className="flex items-center justify-between md:mx-5 my-3 ">
       <div className="font-semibold">
         Hello User
       </div>
       <div className="flex items-center text-sm bg-[#fff3df] border-2 border-[#d5cebf] p-1 rounded-sm gap-2">
-        <div className="bg-[#e09a1c] p-1 rounded-sm">
+        <div className="bg-[#e09a1c] p-1 rounded-sm ">
           <BadgeAlert size={15} color="white" />
         </div>
-        <div className="text-[#bf9f4f] font-semibold">
+        <div className="text-[#bf9f4f] font-semibold text-xs sm:text-sm md:text-base">
 
           Library Operating Hours: Monday to Saturday: 9:00 AM to 7:00 PM, Sunday: Closed
         </div>
       </div>
 
     </div>
-    <div className="flex items-center justify-between my-8 mx-5">
-      <div className="bg-white w-fit flex items-center justify-center px-6 py-5 gap-4 rounded-lg">
+    <div className="flex items-start lg:items-center justify-between my-8 md:mx-5 flex-col lg:flex-row gap-3 ">
+      <div className="bg-white w-full lg:w-fit flex items-center  lg:justify-center px-6 py-5 gap-4 rounded-lg">
         <div className={`bg-[#28cac9] px-3 py-2 rounded-md text-white ${other.isgetted ? "" : "animate-pulse"} `}>
           {other.lended}
         </div>
@@ -140,7 +140,7 @@ export default function DashboardPage() {
           <p className="text-sm text-[#c2c6c9] font-semibold">Total Books currently borrowed.</p>
         </div>
       </div>
-      <div className="bg-white w-fit flex items-center justify-center px-6 py-5 gap-4 rounded-lg">
+      <div className="bg-white w-full lg:w-fit flex items-center  lg:justify-center px-6 py-5 gap-4 rounded-lg">
         <div className={`bg-[#f44f7e] px-3 py-2 rounded-md text-white ${other.isgetted ? "" : "animate-pulse"}`}>
           {other.overdue}
         </div>
@@ -151,7 +151,7 @@ export default function DashboardPage() {
           <p className="text-sm text-[#c2c6c9] font-semibold">Total Books currently overdue.</p>
         </div>
       </div>
-      <div className="bg-white w-fit flex items-center justify-center px-6 py-5 gap-4 rounded-lg">
+      <div className="bg-white w-full lg:w-fit flex items-center  lg:justify-center px-6 py-5 gap-4 rounded-lg">
         <div className={`bg-[#6740c7] px-3 py-2 rounded-md text-white  ${other.isgetted ? "" : "animate-pulse"} `}>
           {other.reserved}
         </div>
@@ -164,12 +164,12 @@ export default function DashboardPage() {
       </div>
     </div>
 
-    <div className="flex items-start mx-5 gap-3 swapy">
-      <div data-swapy-slot="a" className="w-[30%] ">
+    <div className="flex items-center lg:items-start md:mx-5 gap-3 swapy lg:flex-row flex-col">
+      <div data-swapy-slot="a" className="w-full lg:w-[30%] ">
 
         <ChartPieDonut overdue={chartData.overdue} returned={chartData.returned} />
       </div>
-      <div data-swapy-slot="b" className="w-[70%]">
+      <div data-swapy-slot="b" className="w-full lg:w-[70%]">
         <ChartLineMultiple data={secondchartData} />
       </div>
     </div>

@@ -14,6 +14,12 @@ class AuthMiddleware(BaseHTTPMiddleware):
             "/",                      # Home
             "/favicon.ico",            # Browser icon
             "/req/users/auth-users",   # Login endpoint
+            "/req/users/login",       # Login endpoint
+            "/req/users/signup",       # Login endpoint
+            "/req/users/exist",       # Login endpoint
+            "/req/resetpass/create",       # Login endpoint
+            "/req/mail/send-mail",       # Login endpoint
+            "/req/otp/verify",       # Login endpoint
         ]
 
         # Skip verification for OPTIONS, root, favicon, or any public route

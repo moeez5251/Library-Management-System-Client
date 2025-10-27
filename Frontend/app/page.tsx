@@ -59,30 +59,37 @@ export default function HomePage() {
       setissubmitting(false)
       return
     }
-    const data = await fetch("/req/users/login", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(inputs)
-    })
-    if (!data.ok) {
-      const errormessage = await data.json()
-      toast.custom((id: string | number) => (
-        <div
-          className="bg-red-700 text-white p-4 rounded-md shadow-lg flex items-center gap-3"
-        >
-          <CircleAlert size={20} />
-          <p className="text-sm">{errormessage.detail}</p>
-        </div>
-      ))
-      setissubmitting(false)
-      return
+    try {
+
+      const data = await fetch("/req/users/login", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(inputs)
+      })
+      if (!data.ok) {
+        const errormessage = await data.json()
+        toast.custom((id: string | number) => (
+          <div
+            className="bg-red-700 text-white p-4 rounded-md shadow-lg flex items-center gap-3"
+          >
+            <CircleAlert size={20} />
+            <p className="text-sm">{errormessage.detail}</p>
+          </div>
+        ))
+        setissubmitting(false)
+        return
+      }
+      const response = await data.json()
+      localStorage.setItem("user", JSON.stringify(response.user_id))
+      router.push("/dashboard")
     }
-    const response = await data.json()
-    localStorage.setItem("user", JSON.stringify(response.user_id))
-    router.push("/dashboard")
+    catch (err) {
+      toast.error("Something went wrong")
+      setissubmitting(false)
+    }
   }
   const handleReset = async (): Promise<void> => {
     setresetting(true)
@@ -137,7 +144,7 @@ export default function HomePage() {
     <>
       <Toaster />
       <div className='w-full h-screen flex items-center justify-center'>
-        <div className="w-[45%] h-full relative">
+        <div className="w-[45%] h-full relative hidden lg:block">
           <Image
             src="/Main.jpeg"
             alt="logo"
@@ -147,8 +154,8 @@ export default function HomePage() {
           />
         </div>
 
-        <div className='w-[55%]  h-full flex flex-col justify-center'>
-          <div className='w-[65%] flex flex-col gap-5  mx-auto'>
+        <div className='lg:w-[55%] w-full h-full flex flex-col justify-center'>
+          <div className='md:w-[65%] w-[90%] flex flex-col gap-5  mx-auto'>
 
             <div className="flex items-center  text-[#6841c4] text-xl font-bold gap-2 border border-[#e3e7ea] w-fit px-2 py-1 mx-auto ">
               <div>
@@ -224,7 +231,7 @@ export default function HomePage() {
               <label className='font-semibold text-sm' htmlFor="email">Email</label>
               <div className='border border-[#dedede] flex items-center rounded-sm py-2 px-3 gap-2'>
                 <User size={20} />
-                <input value={inputs.email} onChange={handlechange} autoFocus className='border-none outline-0 w-full' name='email' type="email" placeholder='Email' />
+                <input  value={inputs.email} onChange={handlechange} autoFocus className='border-none outline-0 w-full' name='email' type="email" placeholder='Email' />
               </div>
             </div>
             <div className='flex flex-col gap-2 relative '>
