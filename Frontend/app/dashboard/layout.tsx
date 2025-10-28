@@ -15,7 +15,7 @@ export default function RootLayout({
     return (
         <>
             <Navbar />
-            <div className='flex  gap-3 mx-3 mt-5 h-[83vh]'>
+            <div className='flex  gap-3 mx-3 mt-5 h-[83vh] overflow-hidden'>
 
                 <div className='sidebar w-full  sm:w-1/2 md:w-[40%] lg:w-[30%] top-0 xl:w-[20%] xl:px-6 fixed xl:relative xl:left-0 -left-full bg-white transition-all min-h-screen z-10 py-16 px-3 xl:py-0'>
                     <Sidebar />
