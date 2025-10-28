@@ -26,9 +26,9 @@ export default function RootLayout({
                     {children}
                 </section>
             </div>
-            <div className='flex items-center justify-between mx-2 sm:mx-5 my-1'>
-                <div className='font-semibold text-[#7c7c7c] text-xs sm:text-sm'>XLMS - LMS version 1.0</div>
-                <div className='font-semibold text-[#7c7c7c] text-xs sm:text-sm'>&copy; 2025 XLMS, All Rights Reserved</div>
+            <div className='flex items-center justify-between mx-2 sm:mx-5 my-3 sm:my-1'>
+                <div className='font-semibold text-[#7c7c7c] relative z-10 text-xs sm:text-sm'>XLMS - LMS version 1.0</div>
+                <div className='font-semibold text-[#7c7c7c] relative z-10 text-xs sm:text-sm'>&copy; 2025 XLMS, All Rights Reserved</div>
             </div>
         </>
     )
