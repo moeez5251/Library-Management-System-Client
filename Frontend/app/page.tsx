@@ -84,7 +84,7 @@ export default function HomePage() {
       }
       const response = await data.json()
       localStorage.setItem("user", JSON.stringify(response.user_id))
-      router.push("/dashboard")
+      window.location.href="/dashboard"
     }
     catch (err) {
       toast.error("Something went wrong")

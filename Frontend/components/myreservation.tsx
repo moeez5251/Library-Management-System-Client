@@ -61,7 +61,7 @@ const MyReservation = () => {
   return (
     <>
       <Toaster />
-      <div className='my-3'>
+      <div className='my-3 w-full overflow-x-auto'>
         {
           reservationdata.length > 0 || isloading ?
             <ReservationsTable data={reservationdata} columns={ReserverdColumns} loading={isloading} pageSize={5} />

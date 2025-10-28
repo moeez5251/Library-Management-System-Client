@@ -255,11 +255,11 @@ const UserDetails = () => {
     return (
         <>
             <Toaster />
-            <h2 className='font-semibold text-lg mt-4 text-gray-700'>
+            <h2 className='font-semibold text-base sm:text-lg mt-4 text-gray-700'>
                 <User strokeWidth={2.2} size={22} className='inline mr-0.5 text-[#6941c5]' />
                 User Details
             </h2>
-            <div className='my-4 flex items-center justify-between mx-2 '>
+            <div className='my-4 flex sm:items-center justify-between mx-2 flex-col sm:flex-row  gap-4 sm:gap-0'>
                 <div className='flex flex-col gap-1'>
                     <div className='font-semibold text-sm flex items-start gap-1'>
                         Name
@@ -298,7 +298,7 @@ const UserDetails = () => {
                     Forget Password ?
                 </div>
             </div>
-            <div className='my-4 flex items-center justify-between  mx-2'>
+            <div className='my-4 gap-3 sm:gap-0 flex sm:items-center justify-between  mx-2 flex-col sm:flex-row'>
                 <div className='flex flex-col gap-1 relative'>
                     <div className='font-semibold text-sm flex items-start gap-1'>
                         Old Password

@@ -8,8 +8,8 @@ import React from 'react'
 const MyAccount = () => {
   return (
     <>
-      <h2 className='font-semibold text-xl mx-2 my-1'>My Account</h2>
-      <div className='bg-white mx-2 my-4 px-3 py-4 rounded-md'>
+      <h2 className='font-semibold text-xl mx-1 sm:mx-2 my-1'>My Account</h2>
+      <div className='bg-white mx-1 sm:mx-2 my-4 px-3 py-4 rounded-md'>
         <div className='font-semibold text-lg border-b-2 pb-1 border-[#899598] '>
           Lending Details
         </div>

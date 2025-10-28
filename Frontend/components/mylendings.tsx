@@ -67,20 +67,20 @@ const MyLendings = () => {
                 {
                     Lendings.length > 0 || isloading ?
                         <Tabs defaultValue="All" >
-                            <TabsList className='bg-white  dark:bg-[#1b2536]'>
+                            <TabsList className='bg-white w-full sm:w-fit  dark:bg-[#1b2536] overflow-x-auto overflow-y-hidden'>
                                 <TabsTrigger className="mx-2 px-2 py-4 bg-gray-100 dark:bg-gray-600 data-[state=active]:bg-[#6841c4] data-[state=active]:text-white data-[state=active]:shadow-md cursor-pointer" disabled={isloading} value="All">All</TabsTrigger>
                                 <TabsTrigger className="mx-2 px-2 py-4 bg-gray-100 dark:bg-gray-600 data-[state=active]:bg-red-600 data-[state=active]:text-white data-[state=active]:shadow-md cursor-pointer" disabled={isloading} value="Not-Returned">Not Returned</TabsTrigger>
                                 <TabsTrigger className="mx-2 px-2 py-4 bg-gray-100 dark:bg-gray-600 data-[state=active]:bg-green-600 data-[state=active]:text-white data-[state=active]:shadow-md cursor-pointer" disabled={isloading} value="Returned">Returned</TabsTrigger>
                             </TabsList>
-                            <TabsContent className='w-full' value="All">
+                            <TabsContent className='w-full overflow-x-auto' value="All">
 
                                 <DataTable data={Lendings} columns={LendingsColumns} loading={isloading} />
                             </TabsContent>
-                            <TabsContent value="Not-Returned">
+                            <TabsContent className='w-full overflow-x-auto' value="Not-Returned">
                                 <DataTable data={Lendings.filter((item) => item.Status === "not returned")} columns={LendingsColumns} loading={isloading} />
 
                             </TabsContent>
-                            <TabsContent value="Returned">
+                            <TabsContent className='w-full overflow-x-auto' value="Returned">
                                 <DataTable data={Lendings.filter((item) => item.Status === "Returned")} columns={LendingsColumns} loading={isloading} />
 
                             </TabsContent>

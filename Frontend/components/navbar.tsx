@@ -38,7 +38,7 @@ const Navbar = () => {
         <>
             <div className='my-4 flex items-center justify-between mx-2 sm:mx-10'>
                     <Menu onClick={handlesidebar} size={30} className='text-[#6841c4] block xl:hidden' />
-                    <div className="flex items-center  text-[#6841c4] md:text-xl font-extrabold gap-2 border border-[#e3e7ea] w-fit px-2 py-1 text-sm ">
+                    <div className="sm:flex hidden items-center  text-[#6841c4] md:text-xl font-extrabold gap-2 border border-[#e3e7ea] w-fit px-2 py-1 text-sm ">
                         <div>
 
                             <svg

@@ -50,7 +50,7 @@ const LendingModal = () => {
         <>
             <Toaster />
             <Modal title='Return Book' open={Lendingmodel} onClose={() => setLendingmodel(false)}>
-                <div className='grid grid-cols-2 items-center gap-4'>
+                <div className='grid grid-cols-1 sm:grid-cols-2 items-center gap-4'>
 
                     <div className='flex items-center gap-1 '>
                         <div className='font-semibold'>
