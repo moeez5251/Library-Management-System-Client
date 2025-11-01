@@ -1,11 +1,51 @@
 import Navbar from '@/components/navbar'
 import Sidebar from '@/components/sidebar'
-import { useRouter } from "next/router";
 import type { Metadata } from 'next'
+
 export const metadata: Metadata = {
+  title: {
+    default: 'XLMS - User Dashboard',
+    template: '%s | XLMS',
+  },
+  description:
+    'Access your personalized XLMS User Dashboard to manage borrowed books, view transaction history, and track your library activity efficiently.',
+  keywords: [
+    'XLMS Dashboard',
+    'Library Management System',
+    'User Dashboard',
+    'Book Management',
+    'Library Portal',
+    'Digital Library',
+  ],
+  authors: [{ name: 'Xheikh Moeez', url: 'https://moeez5251.netlify.app' }],
+  creator: 'Xheikh Moeez',
+  publisher: 'XLMS',
+  metadataBase: new URL('https://xlms-client.netlify.app'),
+  alternates: {
+    canonical: '/dashboard',
+  },
+  openGraph: {
     title: 'XLMS - User Dashboard',
-    description: 'User Dashboard for Library Management System',
+    description:
+      'Manage your books, borrowing history, and profile using the XLMS User Dashboard.',
+    url: 'https://xlms-client.netlify.app/dashboard',
+    siteName: 'XLMS',
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'XLMS - User Dashboard',
+    description:
+      'User dashboard of XLMS — track books, borrowing records, and manage your library account easily.',
+    creator: '@xheikhmoeez',
+  },
+  icons: {
+    icon: '/favicon.ico',
+  },
+  category: 'Library Dashboard',
 }
+
 export default function RootLayout({
 
     children,
