@@ -17,9 +17,9 @@ RUN apt-get update && \
         libssl-dev \
         libffi-dev \
         git && \
-    # Add Microsoft repo securely
-    curl https://packages.microsoft.com/config/debian/12/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
+    # Add Microsoft repo for Debian 11 (bullseye)
     curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /usr/share/keyrings/microsoft.gpg && \
+    curl https://packages.microsoft.com/config/debian/11/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
     apt-get update && \
     ACCEPT_EULA=Y apt-get install -y msodbcsql18 && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
