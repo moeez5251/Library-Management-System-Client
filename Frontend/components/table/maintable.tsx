@@ -237,11 +237,6 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
 
   const handlecheckout = async (): Promise<void> => {
     setLoaderanimation(true)
-    const userid = JSON.parse(localStorage.getItem("user") || "")
-    if (!userid) {
-      toast.error("User not logged in")
-      setLoaderanimation(false)
-    }
     try {
       const data = await fetch("/req/books/lend", {
         method: "POST",
@@ -251,7 +246,6 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
         },
         body: JSON.stringify({
           book_id: lendedbookinfo.id,
-          user_id: userid,
           IssuedDate: new Date().toISOString().split('T')[0],
           DueDate: lendedbookinfo.Date.toLocaleString("en-CA").split(",")[0],
           CopiesLent: Copies.current,
@@ -290,12 +284,7 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
     setActive(null)
     setLoaderanimation(true)
     try {
-      const userid = JSON.parse(localStorage.getItem("user") || "")
-      if (!userid) {
-        toast.error("Unable to reserve book")
-        setLoaderanimation(false)
-        return
-      }
+     
       const data = await fetch("/req/reservation/reserve", {
         method: "POST",
         credentials: "include",
@@ -304,7 +293,6 @@ export function ProductsGrid<TData extends { id: string | number; name: string; 
         },
         body: JSON.stringify({
           book_id: id,
-          user_id: userid,
           reservation_date: new Date().toISOString(),
         })
       })

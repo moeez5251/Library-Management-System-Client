@@ -15,13 +15,13 @@ RUN apt-get update && \
         build-essential \
         libssl-dev \
         libffi-dev \
+        ca-certificates \
         git && \
-    # Add Microsoft GPG key
-    curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.gpg && \
-    # Add Microsoft repo
-    curl https://packages.microsoft.com/config/ubuntu/22.04/prod.list | tee /etc/apt/sources.list.d/mssql-release.list && \
+    # Add Microsoft repo for Debian
+    curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
+    curl https://packages.microsoft.com/config/debian/12/prod.list | tee /etc/apt/sources.list.d/mssql-release.list && \
     apt-get update && \
-    ACCEPT_EULA=Y apt-get install -y msodbcsql17 && \
+    ACCEPT_EULA=Y apt-get install -y msodbcsql18 && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # ===== Copy requirements =====

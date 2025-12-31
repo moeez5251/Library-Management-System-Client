@@ -83,7 +83,6 @@ export default function HomePage() {
         return
       }
       const response = await data.json()
-      localStorage.setItem("user", JSON.stringify(response.user_id))
       window.location.href="/dashboard"
     }
     catch (err) {

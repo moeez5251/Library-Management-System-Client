@@ -28,18 +28,8 @@ const MyLendings = () => {
     const { datafetcher, setDatafetcher } = useDataFetcher();
 
     async function fetchlendings() {
-        const userid = JSON.parse(localStorage.getItem("user") || "");
         try {
-            const data = await fetch("/req/lenders/getbyid", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                credentials: "include",
-                body: JSON.stringify({
-                    user_id: userid
-                })
-            })
+            const data = await fetch("/req/lenders/getbyid")
             if (!data.ok) {
                 toast.error("Unable to fetch lendings")
                 return;

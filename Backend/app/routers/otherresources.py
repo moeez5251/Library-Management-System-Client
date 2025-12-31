@@ -1,16 +1,15 @@
-from fastapi import APIRouter
-from app.schemas.other import User
+from fastapi import APIRouter,Request
 from app.controllers.other import chart_details,lending_activity,other_get
 router = APIRouter(prefix="/req/other", tags=["other"])
 
-@router.post("/borrowedoverview")
-def borrowed_overview(user:User):
-    return chart_details(user)
+@router.get("/borrowedoverview")
+def borrowed_overview(request:Request):
+    return chart_details(request)
 
-@router.post("/lendingactivity")
-def lendings(user:User):
-    return lending_activity(user)
+@router.get("/lendingactivity")
+def lendings(request:Request):
+    return lending_activity(request)
 
-@router.post("/data")
-def other(user:User):
-    return other_get(user)
+@router.get("/data")
+def other(request:Request):
+    return other_get(request)

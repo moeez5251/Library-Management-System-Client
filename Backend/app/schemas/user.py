@@ -9,5 +9,3 @@ class UserSignUp(BaseModel):
     password:str
 class EmailRequest(BaseModel):
     email: str
-class GetUser(BaseModel):
-    user_id:str

@@ -160,8 +160,6 @@ export default function HomePage() {
         return
       }
       const response = await data.json()
-      localStorage.setItem("user", JSON.stringify(response.user_id))
-
       setisubmitting(false)
       setotp(false)
       setInputs({

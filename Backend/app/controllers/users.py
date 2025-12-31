@@ -1,6 +1,6 @@
-from fastapi import  HTTPException
+from fastapi import  HTTPException,Request
 from app.database import get_connection
-from app.schemas.user import UserCreate,UserSignUp,EmailRequest,GetUser
+from app.schemas.user import UserCreate,UserSignUp,EmailRequest
 from app.utils.passwords.verify import hash_password,verify_password
 from app.schemas.authusers import AuthUser
 import uuid
@@ -145,11 +145,11 @@ def createuser(user:AuthUser):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Database error {e}",)
 
-def getbyid(user:GetUser):
+def getbyid(request:Request):
     conn=get_connection()
     cursor=conn.cursor()
     try:
-        cursor.execute("SELECT User_Name,Email,Membership_Type FROM users WHERE User_id = ?", (user.user_id,))
+        cursor.execute("SELECT User_Name,Email,Membership_Type FROM users WHERE User_id = ?", (request.state.user["user_id"],))
         result=cursor.fetchone()
         result_dict=[dict(zip(["User_Name","Email","Membership_Type"], result))]
         return result_dict
@@ -158,19 +158,27 @@ def getbyid(user:GetUser):
     finally:
         conn.close()
 
-def delete_user(user:GetUser):
+
+def logout():
+    response = JSONResponse(content={"message": "Logged out successfully "})
+    response.delete_cookie(key="token",path="/")
+    return response
+
+
+def delete_user(request:Request):
     conn=get_connection()
     cursor=conn.cursor()
     try:
-        cursor.execute("SELECT * from borrower WHERE user_id = ? AND Status='not returned'", (user.user_id,))
+        cursor.execute("SELECT * from borrower WHERE user_id = ? AND Status='not returned'", (request.state.user["user_id"],))
         result=cursor.fetchone()
         if result is not None:
             raise HTTPException(status_code=401, detail="Return the book first")
-        cursor.execute("DELETE FROM borrower WHERE user_id = ?", (user.user_id,))
-        cursor.execute("DELETE from reserved WHERE user_id = ?", (user.user_id,))
-        cursor.execute("DELETE FROM notifications WHERE UserId = ?", (user.user_id,))
-        cursor.execute("DELETE FROM users WHERE User_id = ?", (user.user_id,))
+        cursor.execute("DELETE FROM borrower WHERE user_id = ?", (request.state.user["user_id"],))
+        cursor.execute("DELETE from reserved WHERE user_id = ?", (request.state.user["user_id"],))
+        cursor.execute("DELETE FROM notifications WHERE UserId = ?", (request.state.user["user_id"],))
+        cursor.execute("DELETE FROM users WHERE User_id = ?", (request.state.user["user_id"],))
         conn.commit()
+        logout()
         return {"message": "User deleted successfully"}
     except HTTPException:
         raise
@@ -178,8 +186,3 @@ def delete_user(user:GetUser):
         raise HTTPException(status_code=500, detail=f"Database error {e}",)
     finally:
         conn.close()
-
-def logout():
-    response = JSONResponse(content={"message": "Logged out successfully "})
-    response.delete_cookie(key="token",path="/")
-    return response

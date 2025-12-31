@@ -52,16 +52,7 @@ const Sidebar = () => {
     }, [])
     useEffect(() => {
         (async () => {
-            const data = await fetch("/req/notifications/get", {
-                method: "POST",
-                credentials: "include",
-
-                headers: {
-                    "Content-type": "application/json; charset=UTF-8",
-
-                },
-                body: JSON.stringify({ user_id: JSON.parse(localStorage.getItem("user") || "") })
-            })
+            const data = await fetch("/req/notifications/get")
             if (!data.ok) {
                 toast.error("Failed to fetch notifications");
                 return;
