@@ -1,20 +1,20 @@
-from fastapi import HTTPException
-from app.schemas.reservations import ReservationCreate,Reservationget
+from fastapi import HTTPException,Request
+from app.schemas.reservations import ReservationCreate
 from app.database import get_connection
 from app.utils.mailer.mail import send_email
 from app.controllers.notifications import add_notification
 from app.schemas.notifications import Notification_ADD
 from datetime import datetime
-def reserve_book(reservation: ReservationCreate):
+def reserve_book(reservation: ReservationCreate,req:Request):
     conn=get_connection()
     cursor=conn.cursor()
     try:
-       cursor.execute("INSERT INTO reserved (User_ID, Book_ID, Reserved_Date) VALUES (?, ?, ?)", (reservation.user_id, reservation.book_id, reservation.reservation_date))
+       cursor.execute("INSERT INTO reserved (User_ID, Book_ID, Reserved_Date) VALUES (?, ?, ?)", (req.state.user["user_id"], reservation.book_id, reservation.reservation_date))
        conn.commit()
        cursor.execute("UPDATE books SET Status = 'Reserved' WHERE Book_ID = ?", (reservation.book_id,))
        conn.commit()
        # Fetch user email and book title for email notification
-       cursor.execute("SELECT User_Name, Email FROM users WHERE User_id = ?", (reservation.user_id,))
+       cursor.execute("SELECT User_Name, Email FROM users WHERE User_id = ?", (req.state.user["user_id"],))
        user = cursor.fetchone()
        cursor.execute("SELECT Book_Title FROM books WHERE Book_ID = ?", (reservation.book_id,))
        book = cursor.fetchone()
@@ -85,7 +85,7 @@ def reserve_book(reservation: ReservationCreate):
 </html>
 """
        send_email(to_email=user[1], subject="Your Book Reservation is Confirmed", text_body=f"Hi {user[0]},\n\nYour reservation for '{book[0]}' is confirmed.\n\nWhen a copy becomes available, we'll issue it to you.\n\nIf you want to cancel the reservation or have questions, reply to this email or contact the library staff.\n\nXLMS", html_body=html_body)
-       add_notification(Notification_ADD(UserId=reservation.user_id,Message="Your Book Reservation is Confirmed",IsRead=0,CreatedAt=datetime.now()))
+       add_notification(Notification_ADD(UserId=req.state.user["user_id"],Message="Your Book Reservation is Confirmed",IsRead=0,CreatedAt=datetime.now()), req)
        return {"message": "Book reserved successfully"}
     except Exception as e:  
         print(e)
@@ -93,11 +93,11 @@ def reserve_book(reservation: ReservationCreate):
     finally:
         conn.close()
 
-def get_reservation(reservation: Reservationget):
+def get_reservation(request:Request):
     conn=get_connection()
     cursor=conn.cursor()
     try:
-       cursor.execute("SELECT * FROM reserved WHERE User_ID	=?", (reservation.user_id,))
+       cursor.execute("SELECT * FROM reserved WHERE User_ID	=?", (request.state.user["user_id"],))
        result=cursor.fetchall()
        keys=["Reservation_ID", "User_ID", "Book_ID", "Reserved_Date"]
        reservation_dict_list = [dict(zip(keys, reservation)) for reservation in result]

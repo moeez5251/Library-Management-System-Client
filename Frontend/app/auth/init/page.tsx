@@ -38,12 +38,6 @@ export default function InitAuthPage() {
         }
 
         const data = await res.json();
-
-        if (data) {
-        localStorage.setItem("user", JSON.stringify(data.userID))
-         
-        }
-
         router.replace("/dashboard");
       } catch (err) {
         toast.error("Something went wrong");

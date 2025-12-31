@@ -1,13 +1,12 @@
-from fastapi import HTTPException
+from fastapi import HTTPException,Request
 from app.database import get_connection
-from app.schemas.other import User
 
-def chart_details(user:User):
+def chart_details(request:Request):
     conn=get_connection()
     cursor=conn.cursor()
     try:
-        returned=cursor.execute("SELECT COUNT(*) FROM borrower WHERE user_id = ? AND Status='Returned'", (user.user_id,)).fetchone()[0]
-        overdue=cursor.execute("SELECT COUNT(*) FROM borrower WHERE DueDate < GETDATE() AND Status='not returned'  AND user_id = ? ", (user.user_id,)).fetchone()[0]
+        returned=cursor.execute("SELECT COUNT(*) FROM borrower WHERE user_id = ? AND Status='Returned'", (request.state.user["user_id"],)).fetchone()[0]
+        overdue=cursor.execute("SELECT COUNT(*) FROM borrower WHERE DueDate < GETDATE() AND Status='not returned'  AND user_id = ? ", (request.state.user["user_id"],)).fetchone()[0]
         return {"returned":returned,"overdue":overdue}
     except HTTPException:
         raise
@@ -16,7 +15,7 @@ def chart_details(user:User):
     finally:
         conn.close()
 
-def lending_activity(user: User):
+def lending_activity(request:Request):
     conn = get_connection()
     cursor = conn.cursor()
     try:
@@ -25,7 +24,7 @@ def lending_activity(user: User):
             FROM borrower
             WHERE user_id = ?
             GROUP BY DATENAME(MONTH, TRY_CONVERT(datetime, IssuedDate, 101))
-        """, (user.user_id,))
+        """, (request.state.user["user_id"],))
         
         months = {
             "January": 0, "February": 0, "March": 0, "April": 0,
@@ -44,13 +43,13 @@ def lending_activity(user: User):
     finally:
         conn.close()
 
-def other_get(user:User):
+def other_get(request:Request):
     conn=get_connection()
     cursor=conn.cursor()
     try:
-        lended=cursor.execute("SELECT COUNT(*) FROM borrower WHERE user_id = ? AND Status='not returned'", (user.user_id,)).fetchone()[0]
-        overdue=cursor.execute("SELECT COUNT(*) FROM borrower WHERE DueDate < GETDATE() AND Status='not returned'  AND user_id = ? ", (user.user_id,)).fetchone()[0]
-        reserved=cursor.execute("SELECT COUNT(*) FROM reserved WHERE user_id = ?", (user.user_id,)).fetchone()[0]
+        lended=cursor.execute("SELECT COUNT(*) FROM borrower WHERE user_id = ? AND Status='not returned'", (request.state.user["user_id"],)).fetchone()[0]
+        overdue=cursor.execute("SELECT COUNT(*) FROM borrower WHERE DueDate < GETDATE() AND Status='not returned'  AND user_id = ? ", (request.state.user["user_id"],)).fetchone()[0]
+        reserved=cursor.execute("SELECT COUNT(*) FROM reserved WHERE user_id = ?", (request.state.user["user_id"],)).fetchone()[0]
         return {"lended":lended,"overdue":overdue,"reserved":reserved}
     except HTTPException:
         raise

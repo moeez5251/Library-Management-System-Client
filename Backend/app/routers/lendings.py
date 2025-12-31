@@ -1,13 +1,13 @@
-from fastapi import APIRouter
-from app.schemas.lenders import Lenderget, ReturnBook
+from fastapi import APIRouter,Request
+from app.schemas.lenders import  ReturnBook
 from app.controllers.lenders import get_lendings,return_book
 router = APIRouter(prefix="/req/lenders", tags=["lenders"])
 
-@router.post("/getbyid")
-def getbyid(lender:Lenderget):
-    return get_lendings(lender)
+@router.get("/getbyid")
+def getbyid(request:Request):
+    return get_lendings(request)
 
 
 @router.post("/returnbook")
-def returnbook(lender:ReturnBook):
-    return return_book(lender)
+def returnbook(lender:ReturnBook,request:Request):
+    return return_book(lender,request)

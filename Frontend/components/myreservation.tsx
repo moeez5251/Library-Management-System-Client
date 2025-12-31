@@ -18,16 +18,8 @@ const MyReservation = () => {
     (async () => {
       try {
 
-        const data = await fetch("/req/reservation/getbyid", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          credentials: "include",
-          body: JSON.stringify({
-            user_id: JSON.parse(localStorage.getItem("user") || "")
-          })
-        })
+        const data = await fetch("/req/reservation/getbyid")
+        
         if (!data.ok) {
           toast.error("Unable to fetch reservations")
           setIsloading(false)

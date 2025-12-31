@@ -17,17 +17,7 @@ const Card: React.FC<Props> = ({ open, setOpen }) => {
         setDisabledelete(true)
         try {
 
-            const user = JSON.parse(localStorage.getItem("user") || "")
-            const data = await fetch("/req/users/delete", {
-                method: "POST",
-                credentials: "include",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    user_id: user
-                })
-            })
+            const data = await fetch("/req/users/delete")
             if (!data.ok) {
                 toast.error("Unable to delete account")
                 setDisabledelete(false)
@@ -36,7 +26,6 @@ const Card: React.FC<Props> = ({ open, setOpen }) => {
             setDelete(false)
             setDisabledelete(false)
             toast.success("Account deleted successfully")
-            localStorage.removeItem("user")
             router.replace("/")
             
         }

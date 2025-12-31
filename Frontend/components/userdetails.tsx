@@ -50,22 +50,12 @@ const UserDetails = () => {
     useEffect(() => {
         (async () => {
             try {
-                const data = await fetch("/req/users/getbyid", {
-                    method: "POST",
-                    credentials: "include",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        user_id: JSON.parse(localStorage.getItem("user") || "")
-                    })
-                })
+                const data = await fetch("/req/users/getbyid")
                 if (!data.ok) {
                     toast.error("Unable to fetch user details")
                     return
                 }
                 const res = await data.json()
-                console.log(res);
                 setInputs({
                     name: res[0]?.User_Name,
                     email: res[0]?.Email,
@@ -158,7 +148,6 @@ const UserDetails = () => {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    user_id: JSON.parse(localStorage.getItem("user") || ""),
                     password: dialoginputs.NewPassword
                 })
             })
@@ -202,8 +191,6 @@ const UserDetails = () => {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-
-                    user_id: "Sdd36ab6",
                     old_password: Passwords.OldPassword,
                     new_password: Passwords.NewPassword
 

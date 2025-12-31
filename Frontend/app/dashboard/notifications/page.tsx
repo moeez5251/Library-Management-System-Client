@@ -18,16 +18,7 @@ const Notifications = () => {
   const { Notifications, setNotifications } = useNotifications();
   useEffect(() => {
     (async () => {
-      const read = await fetch("/req/notifications/markasread", {
-        method: "POST",
-        credentials: "include",
-
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-
-        },
-        body: JSON.stringify({ user_id: JSON.parse(localStorage.getItem("user") || "") })
-      })
+      const read = await fetch("/req/notifications/markasread")
       if(!read.ok){
         toast.error("Unable to mark notifications as read")
         return

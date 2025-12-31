@@ -1,15 +1,15 @@
 from decimal import Decimal
-from fastapi import APIRouter, HTTPException
-from app.schemas.lenders import Lenderget, ReturnBook
+from fastapi import APIRouter, HTTPException,Request
+from app.schemas.lenders import  ReturnBook
 from app.database import get_connection
 from datetime import date, timedelta,datetime
 from app.controllers.notifications import add_notification
 from app.schemas.notifications import Notification_ADD
-def get_lendings(lender: Lenderget):
+def get_lendings(request:Request):
     conn=get_connection()
     cursor=conn.cursor()
     try:
-       cursor.execute("SELECT * FROM borrower WHERE user_id=?", (lender.user_id,))
+       cursor.execute("SELECT * FROM borrower WHERE user_id=?", (request.state.user["user_id"],))
        result=cursor.fetchall()
        keys=["Borrower_ID", "user_id", "Name", "BookTitle","Category", "Author", "IssuedDate", "DueDate", "CopiesLent", "FinePerDay", "Price", "Book_ID","Status"]
        lendings_dict_list = [dict(zip(keys, lending)) for lending in result]
@@ -19,17 +19,17 @@ def get_lendings(lender: Lenderget):
     finally:
         conn.close()
 
-def return_book(lender: ReturnBook):
+def return_book(lender: ReturnBook,request:Request):
     conn=get_connection()
     cursor=conn.cursor()
     try:
-        cursor.execute("UPDATE borrower SET Status = 'Returned'  OUTPUT INSERTED.CopiesLent WHERE user_id = ? AND Book_ID = ? AND Borrower_ID = ?", (lender.user_id, lender.book_id, lender.borrower_id))
+        cursor.execute("UPDATE borrower SET Status = 'Returned'  OUTPUT INSERTED.CopiesLent WHERE user_id = ? AND Book_ID = ? AND Borrower_ID = ?", (request.state.user["user_id"], lender.book_id, lender.borrower_id))
         result=cursor.fetchone()
         conn.commit()
-        user=cursor.execute("SELECT Cost FROM users WHERE User_id=?", (lender.user_id,)).fetchone()
+        user=cursor.execute("SELECT Cost FROM users WHERE User_id=?", (request.state.user["user_id"],)).fetchone()
         book=cursor.execute("SELECT IssuedDate,DueDate, Price,CopiesLent FROM borrower WHERE Borrower_ID=?", (lender.borrower_id,)).fetchone()
         days=(book[1]-book[0]).days
-        cursor.execute("UPDATE users SET Cost = ? WHERE User_id=?", str(int(user[0]) - int(book[3]) * int(book[2]) * days), lender.user_id)
+        cursor.execute("UPDATE users SET Cost = ? WHERE User_id=?", str(int(user[0]) - int(book[3]) * int(book[2]) * days), request.state.user["user_id"])
         conn.commit()
         if result[0] == 1:
             cursor.execute("SELECT TOP 1 * FROM reserved WHERE Book_ID = ?", (lender.book_id,))
@@ -39,7 +39,7 @@ def return_book(lender: ReturnBook):
                 result=cursor.fetchone()
                 cursor.execute("UPDATE books SET Status = 'Available', Available=? OUTPUT INSERTED.Book_Title WHERE Book_ID = ?", (str(int(result[0]) + 1), lender.book_id))
                 book=cursor.fetchone()
-                add_notification(Notification_ADD(UserId=lender.user_id, Message=f"Book {book[0]} returned on {date.today().strftime('%d/%m/%Y')}", IsRead=0, CreatedAt=datetime.now().strftime("%d/%m/%Y, %H:%M:%S")))
+                add_notification(Notification_ADD(UserId=request.state.user["user_id"], Message=f"Book {book[0]} returned on {date.today().strftime('%d/%m/%Y')}", IsRead=0, CreatedAt=datetime.now().strftime("%d/%m/%Y, %H:%M:%S")), request)
                 conn.commit()
                 return {"message": "Book returned successfully"}
             cursor.execute("SELECT Book_Title,Category,Author,Price from books WHERE Book_ID=?", (lender.book_id,))
@@ -102,14 +102,14 @@ def return_book(lender: ReturnBook):
                 result1=cursor.fetchone()
                 cursor.execute("UPDATE books SET Available=?,status='Available' OUTPUT INSERTED.Book_Title WHERE Book_ID = ?",str(int(result[0]) + int(result1[0]) -1), lender.book_id)
                 book=cursor.fetchone()
-                add_notification(Notification_ADD(UserId=lender.user_id, Message=f"Book {book[0]} returned on {date.today().strftime('%d/%m/%Y')}", IsRead=0, CreatedAt=datetime.now().strftime("%d/%m/%Y, %H:%M:%S")))
+                add_notification(Notification_ADD(UserId=request.state.user["user_id"], Message=f"Book {book[0]} returned on {date.today().strftime('%d/%m/%Y')}", IsRead=0, CreatedAt=datetime.now().strftime("%d/%m/%Y, %H:%M:%S")), request)
                 conn.commit()
                 return {"message": "Book returned successfully"}
         cursor.execute("SELECT Available from books WHERE Book_ID=?", (lender.book_id,))
         result1=cursor.fetchone()
         cursor.execute("UPDATE books SET Available=?,Status='Available' OUTPUT INSERTED.Book_Title WHERE Book_ID = ?", (str(int(result[0]) + int(result1[0])), lender.book_id))
         book=cursor.fetchone()
-        add_notification(Notification_ADD(UserId=lender.user_id,Message=f"Book {book[0]} returned on {date.today().strftime('%d/%m/%Y')}", IsRead=0, CreatedAt=datetime.now().strftime("%d/%m/%Y, %H:%M:%S")))
+        add_notification(Notification_ADD(UserId=request.state.user["user_id"],Message=f"Book {book[0]} returned on {date.today().strftime('%d/%m/%Y')}", IsRead=0, CreatedAt=datetime.now().strftime("%d/%m/%Y, %H:%M:%S")),request)
         conn.commit()
         return {"message": "Book returned successfully"}
     except HTTPException:

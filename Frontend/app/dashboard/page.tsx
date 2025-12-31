@@ -22,16 +22,7 @@ export default function DashboardPage() {
   })
   const [secondchartData, setsecondchartData] = React.useState([])
   const chartdatagetter = async (): Promise<void> => {
-    const data = await fetch("/req/other/lendingactivity", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        user_id: JSON.parse(localStorage.getItem("user") || "")
-      })
-    })
+    const data = await fetch("/req/other/lendingactivity")
     if (!data.ok) {
       toast.error("Unable to fetch data")
       return
@@ -40,16 +31,7 @@ export default function DashboardPage() {
     setsecondchartData(res)
   }
   const chartdatagetter2 = async (): Promise<void> => {
-    const data = await fetch("/req/other/borrowedoverview", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        user_id: JSON.parse(localStorage.getItem("user") || "")
-      })
-    })
+    const data = await fetch("/req/other/borrowedoverview")
     if (!data.ok) {
       toast.error("Unable to fetch data")
       return
@@ -58,16 +40,8 @@ export default function DashboardPage() {
     setchartData(res)
   }
   const otherdata = async (): Promise<void> => {
-    const data = await fetch("/req/other/data", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        user_id: JSON.parse(localStorage.getItem("user") || "")
-      })
-    })
+    const data = await fetch("/req/other/data")
+    
     if (!data.ok) {
       toast.error("Unable to fetch data")
       return

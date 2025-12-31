@@ -78,16 +78,7 @@ const Modal_Content = () => {
     useEffect(() => {
         (async () => {
             try {
-                const data = await fetch("/req/users/getbyid", {
-                    method: "POST",
-                    credentials: "include",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        user_id: JSON.parse(localStorage.getItem("user") || "")
-                    })
-                })
+                const data = await fetch("/req/users/getbyid")
                 if (!data.ok) {
                     toast.error("Unable to fetch user details")
                     return

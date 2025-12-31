@@ -15,6 +15,5 @@ export async function logout(status) {
     if (status === "authenticated") {
         await signOut({ redirect: false });
     }
-    localStorage.removeItem("user");
     window.location.href = "/";
 }
