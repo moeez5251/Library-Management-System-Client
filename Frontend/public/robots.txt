@@ -1,0 +1,15 @@
+# *
+User-agent: *
+Allow: /
+
+# *
+User-agent: *
+Disallow: /admin
+Disallow: /api
+Disallow: /req
+
+# Host
+Host: https://xlms-client.netlify.app
+
+# Sitemaps
+Sitemap: https://xlms-client.netlify.app/sitemap.xml
