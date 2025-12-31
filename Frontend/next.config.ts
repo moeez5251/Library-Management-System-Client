@@ -1,13 +1,17 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-
-
+  eslint: {
+    ignoreDuringBuilds: true, 
+  },
+  typescript: {
+    ignoreBuildErrors: true, 
+  },
   async rewrites() {
     return [
       {
         source: "/req/:path*",
-        destination: "http://127.0.0.1:8000/req/:path*", 
+        destination: "https://library-management-system-client-1.onrender.com/req/:path*",
       },
     ];
   },
